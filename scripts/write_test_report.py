@@ -65,7 +65,7 @@ gui_path=root/'test-results/gui-selftest.json'
 if gui_path.exists():
     gui=json.loads(gui_path.read_text())
     text+=f"### 2.3 原生界面内部验证\n\n应用启动及三个页面离屏渲染已验证，预览位于 docs/screenshots。内部业务动作测试通过 {gui['assertions']} 项断言，覆盖空输入、加密开关、忙碌与按钮状态、备份、错误密码提示、恢复、列表、验证和自动任务停止。该结果与前述 {len(alltests)} 项自动用例分开统计，不把断言数量当成独立测试用例。文件选择器、真实点击和完整 GUI 人工验收仍待完成。见 gui-selftest.json 与 gui-validation.md。\n\n"
-text+=''''## 3 代码测试
+text+='''## 3 代码测试
 
 业务源码使用编译器严格告警，已执行 clang-format 与 cpplint。cpplint 使用 100 列规范，明确关闭六个与项目约定不一致的检查：build/c++17（本项目要求 C++17）、build/header_guard（使用项目稳定命名）、build/namespaces（CLI 局部 using）、build/include_order 和 build/include_subdir（本项目包含路径约定）、runtime/references（公开 API 使用 const 引用）。其它检查保留。输出见 lint.log；零剩余告警不能说明不存在逻辑缺陷。
 
