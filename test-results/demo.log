@@ -1,0 +1,22 @@
+Demo source: /Users/guochang/Desktop/codex/software_make/demo-UcVuO5/源文件
+Scanned 8 entries
+Packed: 说明硬链接
+Packed: 随机数据.bin
+Backup complete: /Users/guochang/Desktop/codex/software_make/demo-UcVuO5/课程演示.sqbk
+OK entries=8 files=3 source_bytes=315536 archive_bytes=134777
+Verification passed: 8 entries
+directory	0	"."
+fifo	0	"命名管道"
+directory	0	"空目录"
+symlink	0	"说明快捷方式"
+file	125000	"说明硬链接"
+directory	0	"课程资料"
+hardlink	125000	"课程资料/说明.txt"
+file	65536	"随机数据.bin"
+OK entries=8 files=3 source_bytes=315536 archive_bytes=134777
+Verification passed: 8 entries
+OK entries=8 files=3 source_bytes=315536 archive_bytes=134777
+Restore complete: /Users/guochang/Desktop/codex/software_make/demo-UcVuO5/恢复副本
+OK entries=8 files=3 source_bytes=315536 archive_bytes=134777
+PASS: 内容哈希、空目录、筛选、软硬链接与 FIFO。
+演示文件保留在 /Users/guochang/Desktop/codex/software_make/demo-UcVuO5

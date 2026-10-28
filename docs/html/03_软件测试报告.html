@@ -1,0 +1,515 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>松鼠备份软件测试报告</title><style>body{max-width:900px;margin:48px auto;padding:0 32px;font:16px/1.85 -apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif;color:#202833}h1{color:#111;font-size:30px;line-height:1.5;margin-bottom:32px}h2{margin-top:36px;font-size:23px}h3{margin-top:24px;font-size:19px}table{border-collapse:collapse;width:100%;font-size:13px;line-height:1.65;margin:18px 0}th,td{border:1px solid #dde1e4;padding:8px 10px;text-align:left;vertical-align:top;overflow-wrap:anywhere}th{background:#edf0f1}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f4f5f6;padding:16px}code{font-size:.9em}a{color:#914321}nav{margin-bottom:28px;color:#777}footer{margin-top:44px;color:#777;font-size:12px}@media print{body{margin:0;padding:0;font-size:10pt}nav{display:none}h1,h2,h3,h4{break-after:avoid}tr{break-inside:avoid}thead{display:table-header-group}@page{size:A4;margin:18mm}}</style><nav><a href="index.html">文档目录</a></nav><main><h1>松鼠备份软件测试报告</h1>
+<p>版本 0.1.0。结果生成时间 2026-10-29T00:37:30+08:00。本报告依据 test-results 中的 GoogleTest XML、集成与安全测试 JSON、Sanitizer 日志和性能实测生成。测试对象为本机编译的 C++ 核心与 CLI；另有 GUI 离屏渲染和内部动作测试，真实自动点击权限未获准，不能将这些结果等同于完整 GUI 验收。</p>
+<h2>1 引言</h2>
+<p>目标是验证备份内容、目录结构、扩展功能及异常情况下的原文件保护，满足讲义至少两种测试类型、15 个以上用例的要求。平台为 macOS 15.7.9 arm64、Apple Clang 17、C++17。测试数据通过临时目录隔离，普通文件恢复后用 SHA256 或完整字节比较，特殊文件用 lstat、read_symlink 和 inode 关系验证。测试人员栏请由执行并复核的学生填写；本轮由 AI 编程会话自动执行，不冒填真人。</p>
+<h2>2 功能测试</h2>
+<p>本轮共有 32 项 GoogleTest 测试、19 项 CLI 黑盒测试和 18 项异常归档与并发测试，合计 69 项，通过 69 项。单元和黑盒集成两种类型均有源码和可复现命令。安全测试是附加异常验证，不代替渗透测试或安全审计。</p>
+<h3>2.1 全部用例结果</h3>
+<table>
+<thead>
+<tr>
+<th>编号</th>
+<th>层次与名称</th>
+<th>实际结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>UT-01</td>
+<td>Huffman.Empty</td>
+<td>通过</td>
+</tr>
+<tr>
+<td>UT-02</td>
+<td>Huffman.SingleSymbol</td>
+<td>通过</td>
+</tr>
+<tr>
+<td>UT-03</td>
+<td>Huffman.AllSymbols</td>
+<td>通过</td>
+</tr>
+<tr>
+<td>UT-04</td>
+<td>Huffman.RandomRoundtrip</td>
+<td>通过</td>
+</tr>
+<tr>
+<td>UT-05</td>
+<td>Huffman.Compression</td>
+<td>通过</td>
+</tr>
+<tr>
+<td>UT-06</td>
+<td>Huffman.RejectTruncation</td>
+<td>通过</td>
+</tr>
+<tr>
+<td>UT-07</td>
+<td>Huffman.RejectFrequency</td>
+<td>通过</td>
+</tr>
+<tr>
+<td>UT-08</td>
+<td>Huffman.RejectOversize</td>
+<td>通过</td>
+</tr>
+<tr>
+<td>UT-09</td>
+<td>Huffman.RejectTrailing</td>
+<td>通过</td>
+</tr>
+<tr>
+<td>UT-10</td>
+<td>BackupTest.Roundtrip</td>
+<td>通过</td>
+</tr>
+<tr>
+<td>UT-11</td>
+<td>BackupTest.RawRoundtrip</td>
+<td>通过</td>
+</tr>
+<tr>
+<td>UT-12</td>
+<td>BackupTest.EncryptedRoundtrip</td>
+<td>通过</td>
+</tr>
+<tr>
+<td>UT-13</td>
+<td>BackupTest.WrongPasswordLeavesNoOutput</td>
+<td>通过</td>
+</tr>
+<tr>
+<td>UT-14</td>
+<td>BackupTest.RejectShortPassword</td>
+<td>通过</td>
+</tr>
+<tr>
+<td>UT-15</td>
+<td>BackupTest.TamperDetection</td>
+<td>通过</td>
+</tr>
+<tr>
+<td>UT-16</td>
+<td>BackupTest.RejectTruncated</td>
+<td>通过</td>
+</tr>
+<tr>
+<td>UT-17</td>
+<td>BackupTest.NoOverwriteBackup</td>
+<td>通过</td>
+</tr>
+<tr>
+<td>UT-18</td>
+<td>BackupTest.NoOverwriteRestore</td>
+<td>通过</td>
+</tr>
+<tr>
+<td>UT-19</td>
+<td>BackupTest.RejectOutputInSource</td>
+<td>通过</td>
+</tr>
+<tr>
+<td>UT-20</td>
+<td>BackupTest.MissingSource</td>
+<td>通过</td>
+</tr>
+<tr>
+<td>UT-21</td>
+<td>BackupTest.SymlinkHardlinkFifo</td>
+<td>通过</td>
+</tr>
+<tr>
+<td>UT-22</td>
+<td>BackupTest.Metadata</td>
+<td>通过</td>
+</tr>
+<tr>
+<td>UT-23</td>
+<td>BackupTest.ExcludePrunesDirectory</td>
+<td>通过</td>
+</tr>
+<tr>
+<td>UT-24</td>
+<td>BackupTest.NameFilter</td>
+<td>通过</td>
+</tr>
+<tr>
+<td>UT-25</td>
+<td>BackupTest.PathFilter</td>
+<td>通过</td>
+</tr>
+<tr>
+<td>UT-26</td>
+<td>BackupTest.SizeFilter</td>
+<td>通过</td>
+</tr>
+<tr>
+<td>UT-27</td>
+<td>BackupTest.TimeFilter</td>
+<td>通过</td>
+</tr>
+<tr>
+<td>UT-28</td>
+<td>BackupTest.OwnerFilter</td>
+<td>通过</td>
+</tr>
+<tr>
+<td>UT-29</td>
+<td>BackupTest.TypeFilter</td>
+<td>通过</td>
+</tr>
+<tr>
+<td>UT-30</td>
+<td>BackupTest.InvalidFilter</td>
+<td>通过</td>
+</tr>
+<tr>
+<td>UT-31</td>
+<td>BackupTest.EmptyTree</td>
+<td>通过</td>
+</tr>
+<tr>
+<td>UT-32</td>
+<td>BackupTest.UncompressedEncrypted</td>
+<td>通过</td>
+</tr>
+<tr>
+<td>IT-01</td>
+<td>CLI-01 help</td>
+<td>通过</td>
+</tr>
+<tr>
+<td>IT-02</td>
+<td>CLI-02 backup</td>
+<td>通过</td>
+</tr>
+<tr>
+<td>IT-03</td>
+<td>CLI-03 verify</td>
+<td>通过</td>
+</tr>
+<tr>
+<td>IT-04</td>
+<td>CLI-04 list</td>
+<td>通过</td>
+</tr>
+<tr>
+<td>IT-05</td>
+<td>CLI-05 content hashes</td>
+<td>通过</td>
+</tr>
+<tr>
+<td>IT-06</td>
+<td>CLI-06 restore no-clobber</td>
+<td>通过</td>
+</tr>
+<tr>
+<td>IT-07</td>
+<td>CLI-07 backup no-clobber</td>
+<td>通过</td>
+</tr>
+<tr>
+<td>IT-08</td>
+<td>CLI-08 reject self-backup</td>
+<td>通过</td>
+</tr>
+<tr>
+<td>IT-09</td>
+<td>CLI-09 unknown option</td>
+<td>通过</td>
+</tr>
+<tr>
+<td>IT-10</td>
+<td>CLI-10 missing value</td>
+<td>通过</td>
+</tr>
+<tr>
+<td>IT-11</td>
+<td>CLI-11 invalid numeric option</td>
+<td>通过</td>
+</tr>
+<tr>
+<td>IT-12</td>
+<td>CLI-12 combined filters</td>
+<td>通过</td>
+</tr>
+<tr>
+<td>IT-13</td>
+<td>CLI-13 encrypted CLI</td>
+<td>通过</td>
+</tr>
+<tr>
+<td>IT-14</td>
+<td>CLI-14 schedule retention isolation</td>
+<td>通过</td>
+</tr>
+<tr>
+<td>IT-15</td>
+<td>CLI-15 change detection</td>
+<td>通过</td>
+</tr>
+<tr>
+<td>IT-16</td>
+<td>CLI-16 graceful stop</td>
+<td>通过</td>
+</tr>
+<tr>
+<td>IT-17</td>
+<td>CLI-17 invalid type filter</td>
+<td>通过</td>
+</tr>
+<tr>
+<td>IT-18</td>
+<td>CLI-18 missing password env</td>
+<td>通过</td>
+</tr>
+<tr>
+<td>IT-19</td>
+<td>CLI-19 do not overwrite dangling symlink</td>
+<td>通过</td>
+</tr>
+<tr>
+<td>SEC-01</td>
+<td>SEC-01 parent traversal</td>
+<td>通过</td>
+</tr>
+<tr>
+<td>SEC-02</td>
+<td>SEC-02 absolute path</td>
+<td>通过</td>
+</tr>
+<tr>
+<td>SEC-03</td>
+<td>SEC-03 repeated separators</td>
+<td>通过</td>
+</tr>
+<tr>
+<td>SEC-04</td>
+<td>SEC-04 dot component</td>
+<td>通过</td>
+</tr>
+<tr>
+<td>SEC-05</td>
+<td>SEC-05 duplicate path</td>
+<td>通过</td>
+</tr>
+<tr>
+<td>SEC-06</td>
+<td>SEC-06 symlink parent escape</td>
+<td>通过</td>
+</tr>
+<tr>
+<td>SEC-07</td>
+<td>SEC-07 hardlink external</td>
+<td>通过</td>
+</tr>
+<tr>
+<td>SEC-08</td>
+<td>SEC-08 unknown file type</td>
+<td>通过</td>
+</tr>
+<tr>
+<td>SEC-09</td>
+<td>SEC-09 oversized entry count</td>
+<td>通过</td>
+</tr>
+<tr>
+<td>SEC-10</td>
+<td>SEC-10 missing root</td>
+<td>通过</td>
+</tr>
+<tr>
+<td>SEC-11</td>
+<td>SEC-11 size overflow</td>
+<td>通过</td>
+</tr>
+<tr>
+<td>SEC-12</td>
+<td>SEC-12 invalid mode</td>
+<td>通过</td>
+</tr>
+<tr>
+<td>SEC-13</td>
+<td>SEC-13 trailing tree data</td>
+<td>通过</td>
+</tr>
+<tr>
+<td>SEC-14</td>
+<td>SEC-14 NUL filename</td>
+<td>通过</td>
+</tr>
+<tr>
+<td>SEC-15</td>
+<td>SEC-15 missing parent directory</td>
+<td>通过</td>
+</tr>
+<tr>
+<td>SEC-16</td>
+<td>SEC-16 bad Huffman block</td>
+<td>通过</td>
+</tr>
+<tr>
+<td>SEC-17</td>
+<td>SEC-17 short raw block</td>
+<td>通过</td>
+</tr>
+<tr>
+<td>SEC-18</td>
+<td>SEC-18 concurrent publication</td>
+<td>通过</td>
+</tr>
+</tbody>
+</table>
+<h3>2.2 关键用例详细说明</h3>
+<p>以下全部用例程序版本为 0.1.0，级别为重要，执行日期见本报告生成时间，执行方式为自动化。预置条件为本机编译成功且测试临时目录可写，测试人员待学生复核填写。每一项实际结果以对应 XML／JSON 为证据。</p>
+<h4>TC-01 目录树往返</h4>
+<p>模块与证据：BackupTest.Roundtrip。</p>
+<p>预置与输入：源树含中文文件、空文件、空目录和跨块大文件。</p>
+<p>操作步骤：backup 后 restore 到新目录。</p>
+<p>预期结果：恢复内容逐字节一致，层级与空目录存在。</p>
+<p>实际结果：对应自动测试通过，符合该项断言；完整输出见 test-results。</p>
+<h4>TC-02 原始块模式</h4>
+<p>模块与证据：BackupTest.RawRoundtrip。</p>
+<p>预置与输入：关闭压缩。</p>
+<p>操作步骤：备份还原后比较大文件。</p>
+<p>预期结果：不经过 Huffman 仍正确恢复。</p>
+<p>实际结果：对应自动测试通过，符合该项断言；完整输出见 test-results。</p>
+<h4>TC-03 密码加密</h4>
+<p>模块与证据：BackupTest.EncryptedRoundtrip。</p>
+<p>预置与输入：设置至少 8 字节测试密码。</p>
+<p>操作步骤：先无密码检查，再用正确密码恢复。</p>
+<p>预期结果：无密码拒绝，正确密码还原成功。</p>
+<p>实际结果：对应自动测试通过，符合该项断言；完整输出见 test-results。</p>
+<h4>TC-04 错误密码</h4>
+<p>模块与证据：BackupTest.WrongPasswordLeavesNoOutput。</p>
+<p>预置与输入：已生成加密备份。</p>
+<p>操作步骤：使用不同密码恢复。</p>
+<p>预期结果：认证失败且新目标不存在。</p>
+<p>实际结果：对应自动测试通过，符合该项断言；完整输出见 test-results。</p>
+<h4>TC-05 备份损坏</h4>
+<p>模块与证据：BackupTest.TamperDetection。</p>
+<p>预置与输入：已生成完整备份。</p>
+<p>操作步骤：更改备份中间字节后恢复。</p>
+<p>预期结果：摘要不匹配，失败且无发布目标。</p>
+<p>实际结果：对应自动测试通过，符合该项断言；完整输出见 test-results。</p>
+<h4>TC-06 备份不覆盖</h4>
+<p>模块与证据：BackupTest.NoOverwriteBackup。</p>
+<p>预置与输入：输出备份已存在。</p>
+<p>操作步骤：再次使用同一文件名备份。</p>
+<p>预期结果：拒绝操作且原备份字节不变。</p>
+<p>实际结果：对应自动测试通过，符合该项断言；完整输出见 test-results。</p>
+<h4>TC-07 恢复不覆盖</h4>
+<p>模块与证据：BackupTest.NoOverwriteRestore。</p>
+<p>预置与输入：目标目录含 keep 文件。</p>
+<p>操作步骤：尝试恢复到已有目录。</p>
+<p>预期结果：拒绝操作且 keep 内容不变。</p>
+<p>实际结果：对应自动测试通过，符合该项断言；完整输出见 test-results。</p>
+<h4>TC-08 特殊文件</h4>
+<p>模块与证据：BackupTest.SymlinkHardlinkFifo。</p>
+<p>预置与输入：源树含软链接、断链、硬链接与 FIFO。</p>
+<p>操作步骤：备份后恢复并读取类型和链接关系。</p>
+<p>预期结果：目标字符串、硬链接 inode 关系和 FIFO 类型正确。</p>
+<p>实际结果：对应自动测试通过，符合该项断言；完整输出见 test-results。</p>
+<h4>TC-09 元数据</h4>
+<p>模块与证据：BackupTest.Metadata。</p>
+<p>预置与输入：测试文件为 0640，设置固定纳秒时间与 user.squirrel xattr。</p>
+<p>操作步骤：备份恢复后读取权限、时间及 xattr。</p>
+<p>预期结果：权限和时间精度正确，属性值为 value。</p>
+<p>实际结果：对应自动测试通过，符合该项断言；完整输出见 test-results。</p>
+<h4>TC-10 排除剪枝</h4>
+<p>模块与证据：BackupTest.ExcludePrunesDirectory。</p>
+<p>预置与输入：设置排除 nested。</p>
+<p>操作步骤：备份还原后检查树。</p>
+<p>预期结果：nested 整个目录不出现。</p>
+<p>实际结果：对应自动测试通过，符合该项断言；完整输出见 test-results。</p>
+<h4>TC-11 六类筛选</h4>
+<p>模块与证据：BackupTest.NameFilter / PathFilter / SizeFilter / TimeFilter / OwnerFilter / TypeFilter。</p>
+<p>预置与输入：分别设置名字、路径、尺寸、时间、UID、类型条件。</p>
+<p>操作步骤：读取备份条目统计及还原结果。</p>
+<p>预期结果：仅选择满足条件的非目录节点，目录结构保留。</p>
+<p>实际结果：对应自动测试通过，符合该项断言；完整输出见 test-results。</p>
+<h4>TC-12 压缩边界</h4>
+<p>模块与证据：Huffman.RandomRoundtrip / Empty / SingleSymbol / AllSymbols。</p>
+<p>预置与输入：固定随机种子及多种长度，包含 1 MiB。</p>
+<p>操作步骤：encode 后 decode。</p>
+<p>预期结果：字节一致，空和单符号块不出错。</p>
+<p>实际结果：对应自动测试通过，符合该项断言；完整输出见 test-results。</p>
+<h4>TC-13 任务淘汰</h4>
+<p>模块与证据：CLI-14 schedule retention isolation。</p>
+<p>预置与输入：独立存储目录内预置 keep-me.sqbk。</p>
+<p>操作步骤：每秒运行一次，成功三次，keep=2。</p>
+<p>预期结果：本任务保留两份，预置无关文件不变。</p>
+<p>实际结果：对应自动测试通过，符合该项断言；完整输出见 test-results。</p>
+<h4>TC-14 变化检测</h4>
+<p>模块与证据：CLI-15 change detection。</p>
+<p>预置与输入：watch poll=1，限定成功四次。</p>
+<p>操作步骤：依次新建、重命名并删除测试文件。</p>
+<p>预期结果：各阶段产生新快照，恢复后对应阶段的名字与删除状态正确。</p>
+<p>实际结果：对应自动测试通过，符合该项断言；完整输出见 test-results。</p>
+<h4>TC-15 停止任务</h4>
+<p>模块与证据：CLI-16 graceful stop。</p>
+<p>预置与输入：运行周期 300 秒任务。</p>
+<p>操作步骤：首个快照后发送 SIGINT。</p>
+<p>预期结果：进程正常退出，快照保留。</p>
+<p>实际结果：对应自动测试通过，符合该项断言；完整输出见 test-results。</p>
+<h4>TC-16 路径穿越防护</h4>
+<p>模块与证据：SEC-01 至 SEC-07。</p>
+<p>预置与输入：构造摘要正确但路径恶意的归档。</p>
+<p>操作步骤：restore 到新目录。</p>
+<p>预期结果：拒绝父路径、绝对路径、软链接父节点或外部硬链接，无外部文件发布。</p>
+<p>实际结果：对应自动测试通过，符合该项断言；完整输出见 test-results。</p>
+<h4>TC-17 并发发布</h4>
+<p>模块与证据：SEC-18 concurrent publication。</p>
+<p>预置与输入：两个进程向同一路径备份。</p>
+<p>操作步骤：并发启动后 verify 唯一输出。</p>
+<p>预期结果：一个成功、一个失败，最终备份可验证。</p>
+<p>实际结果：对应自动测试通过，符合该项断言；完整输出见 test-results。</p>
+<h3>2.3 原生界面内部验证</h3>
+<p>应用启动及三个页面离屏渲染已验证，预览位于 docs/screenshots。内部业务动作测试通过 12 项断言，覆盖空输入、加密开关、忙碌与按钮状态、备份、错误密码提示、恢复、列表、验证和自动任务停止。该结果与前述 69 项自动用例分开统计，不把断言数量当成独立测试用例。文件选择器、真实点击和完整 GUI 人工验收仍待完成。见 gui-selftest.json 与 gui-validation.md。</p>
+<p>'## 3 代码测试</p>
+<p>业务源码使用编译器严格告警，已执行 clang-format 与 cpplint。cpplint 使用 100 列规范，明确关闭六个与项目约定不一致的检查：build/c++17（本项目要求 C++17）、build/header_guard（使用项目稳定命名）、build/namespaces（CLI 局部 using）、build/include_order 和 build/include_subdir（本项目包含路径约定）、runtime/references（公开 API 使用 const 引用）。其它检查保留。输出见 lint.log；零剩余告警不能说明不存在逻辑缺陷。</p>
+<p>AddressSanitizer 和 UndefinedBehaviorSanitizer 通过 make sanitize 对核心与 CLI 测试运行，结果见 sanitize.log。它们不替代多线程竞态检查、全系统泄漏审计或强制掉电测试。本机没有把 Linux 的 perf、valgrind 安装记录虚构进报告。</p>
+<h2>4 性能测试</h2>
+<p>方法为临时生成数据，使用单调高精度时钟统计 CLI 完整备份和恢复耗时，再比较恢复 SHA256。单次运行、同机本地卷、可能受文件系统缓存和负载影响，不作多次统计结论。系统 time -l 获取资源指标因 sysctl 权限受限失败，已改为无额外权限的墙钟测量，未取得可靠峰值 RSS，表中不报告该项。</p>
+<table>
+<thead>
+<tr>
+<th>数据集</th>
+<th>原始字节</th>
+<th>备份字节</th>
+<th>备份秒</th>
+<th>恢复秒</th>
+<th>哈希</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>repeated</td>
+<td>33554432</td>
+<td>33278</td>
+<td>0.0958</td>
+<td>0.0084</td>
+<td>一致</td>
+</tr>
+<tr>
+<td>random</td>
+<td>8388608</td>
+<td>8388902</td>
+<td>0.0619</td>
+<td>0.0162</td>
+<td>一致</td>
+</tr>
+</tbody>
+</table>
+<p>重复单字节数据主要验证单符号 Huffman 分支，压缩率不代表真实文档；随机数据验证自动回退原始块，输出略大于输入来自头部与记录开销。没有执行多 GiB 压力测试或整夜持续稳定性测试，不把格式上限作为实测容量。</p>
+<h2>5 健壮性与安全测试</h2>
+<p>已覆盖短密码、缺失密码变量、未知参数、无效数值、错误范围、截断、篡改、重复路径、非法类型、超大长度、路径跳转、畸形 Huffman、尾随数据和并发发布等情况。恶意归档带正确的未加密 SHA256，确保测试进入树解析器而非全部停在外层校验。</p>
+<p>没有完成：磁盘真实耗尽、掉电持久性、强制 kill 后清理、持续竞争修改源目录、超大 xattrs、多用户属主迁移、网络卷、外置文件系统兼容性，以及 GUI 文件选择器／按钮点击／窗口关闭人工验收。当前不提供后台守护、网络或增量功能，其对应测试不适用。</p>
+<h2>6 测试结果分析</h2>
+<p>已验证的核心路径形成从备份到验证、内容查看、安全恢复和自动任务的闭环。当前自动用例全部通过，初版可用于受控演示和后续迭代。GUI 已完成编译、签名、离屏渲染与内部动作验证；因自动点击操作未获准，GUI 端到端人工验收仍属于待办，不填写为通过。</p>
+<p>重现命令：make test、make sanitize、make lint、python3 tests/benchmark.py build/squirrel。测试源码与 XML／JSON／日志随源码和发布包交付。后续修改格式或核心逻辑后需重新运行并重新生成报告。</p>
+<h2>7 种子变异与随机输入测试</h2>
+<p>固定种子 20261029，运行 60.0 秒，执行 158297 次输入处理，Sanitizer 下未发现失败。该驱动混合有效 Huffman 编码、位变异和随机字节，且包含编码往返断言。系统 SDK 缺少 libFuzzer 运行库，因此采用项目自有的有界驱动；不是覆盖率引导模糊测试，不代表穷尽输入空间。</p>
+<h2>8 持续运行与反复修改测试</h2>
+<p>运行 600.3 秒，原子替换源文件 1468 次，完成 275 份快照。停止后保留 3 份，全部通过 verify，恢复固定文件 SHA256 一致。该结果是有界持续运行检查，不是整夜或长期可靠性证明。</p></main><footer>松鼠备份 0.1.0 · 请以源码和测试结果为准</footer></html>

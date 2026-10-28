@@ -1,0 +1,11 @@
+id,title,phase,status,owner,evidence
+T01,需求与模板分析,需求,完成,待填写,01_需求分析说明书.md
+T02,核心架构与格式设计,设计,初版完成,待填写,02_系统设计文档.md
+T03,打包恢复与文件类型,实现,完成并测试,待填写,src/archive.cpp
+T04,Huffman与密码封装,实现,完成并测试,待填写,src/huffman.cpp和crypto.cpp
+T05,原生GUI,实现,已编译待人工验收,待填写,src/gui.mm
+T06,自动任务与淘汰,实现,完成并测试,待填写,src/scheduler.cpp
+T07,自动测试与内存检查,测试,完成本轮,待填写,test-results
+T08,手工UML,建模,待本人绘制,待填写,04_StarUML绘图指导.md
+T09,GUI交互与演示录制,验收,待本人操作,待填写,06_演示与答辩指南.md
+T10,学习证书与人员信息,提交,待本人补齐,待填写,报告模板

@@ -87,19 +87,31 @@ with tempfile.TemporaryDirectory(prefix='squirrel-integration-') as tmp:
     case('CLI-14 schedule retention isolation',scheduled)
     def watch():
         repo = base/'watch'; repo.mkdir()
-        p = subprocess.Popen([BIN,'watch',str(src),str(repo),'--poll','1','--runs','2'],stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)
+        p = subprocess.Popen([BIN,'watch',str(src),str(repo),'--poll','1','--runs','4'],stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)
         try:
             deadline = time.monotonic()+20
             while not list(repo.glob('squirrel-job-*/*.sqbk')):
                 assert p.poll() is None and time.monotonic()<deadline
                 time.sleep(0.1)
+            def await_snapshot(number):
+                deadline = time.monotonic()+20
+                while not list(repo.glob(f'squirrel-job-*/snapshot-{number}.sqbk')):
+                    assert p.poll() is None and time.monotonic()<deadline
+                    time.sleep(0.1)
             (src/'changed.txt').write_text('new version')
+            await_snapshot(2)
+            (src/'changed.txt').rename(src/'renamed.txt')
+            await_snapshot(3)
+            (src/'renamed.txt').unlink()
             out, err = p.communicate(timeout=25)
             assert p.returncode == 0, out+err
             files = sorted(repo.glob('squirrel-job-*/*.sqbk'))
-            assert len(files) == 2
+            assert len(files) == 4
+            run('restore',files[2],base/'watch-renamed')
+            assert (base/'watch-renamed'/'renamed.txt').read_text() == 'new version'
             run('restore',files[-1],base/'watch-restored')
-            assert (base/'watch-restored'/'changed.txt').read_text() == 'new version'
+            assert not (base/'watch-restored'/'changed.txt').exists()
+            assert not (base/'watch-restored'/'renamed.txt').exists()
         finally:
             if p.poll() is None:
                 p.terminate(); p.communicate(timeout=10)

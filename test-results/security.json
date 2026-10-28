@@ -1,0 +1,91 @@
+[
+  {
+    "name": "SEC-01 parent traversal",
+    "passed": true,
+    "output": "ERROR: Unsafe archive path"
+  },
+  {
+    "name": "SEC-02 absolute path",
+    "passed": true,
+    "output": "ERROR: Invalid relative path"
+  },
+  {
+    "name": "SEC-03 repeated separators",
+    "passed": true,
+    "output": "ERROR: Empty path component"
+  },
+  {
+    "name": "SEC-04 dot component",
+    "passed": true,
+    "output": "ERROR: Unsafe archive path"
+  },
+  {
+    "name": "SEC-05 duplicate path",
+    "passed": true,
+    "output": "ERROR: Duplicate archive path"
+  },
+  {
+    "name": "SEC-06 symlink parent escape",
+    "passed": true,
+    "output": "ERROR: Parent is missing or is not a directory"
+  },
+  {
+    "name": "SEC-07 hardlink external",
+    "passed": true,
+    "output": "ERROR: Unsafe archive path"
+  },
+  {
+    "name": "SEC-08 unknown file type",
+    "passed": true,
+    "output": "ERROR: Unsupported archive entry type"
+  },
+  {
+    "name": "SEC-09 oversized entry count",
+    "passed": true,
+    "output": "ERROR: Invalid entry count"
+  },
+  {
+    "name": "SEC-10 missing root",
+    "passed": true,
+    "output": "ERROR: Missing root directory"
+  },
+  {
+    "name": "SEC-11 size overflow",
+    "passed": true,
+    "output": "ERROR: Entry exceeds 1 TiB size limit"
+  },
+  {
+    "name": "SEC-12 invalid mode",
+    "passed": true,
+    "output": "ERROR: Invalid metadata fields"
+  },
+  {
+    "name": "SEC-13 trailing tree data",
+    "passed": true,
+    "output": "ERROR: Invalid archive footer or trailing data"
+  },
+  {
+    "name": "SEC-14 NUL filename",
+    "passed": true,
+    "output": "ERROR: NUL in archive text"
+  },
+  {
+    "name": "SEC-15 missing parent directory",
+    "passed": true,
+    "output": "ERROR: Parent is missing or is not a directory"
+  },
+  {
+    "name": "SEC-16 bad Huffman block",
+    "passed": true,
+    "output": "ERROR: Invalid Huffman block length"
+  },
+  {
+    "name": "SEC-17 short raw block",
+    "passed": true,
+    "output": "ERROR: Invalid archive data block"
+  },
+  {
+    "name": "SEC-18 concurrent publication",
+    "passed": true
+  }
+]

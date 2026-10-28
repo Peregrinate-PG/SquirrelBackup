@@ -125,6 +125,7 @@ std::string stats(const Summary& s) {
     _nav[i] = button(sidebar, titles[i], NSMakeRect(16, 580 - i * 55, 168, 40), self,
                      @selector(navigate:));
     _nav[i].tag = i;
+    [_nav[i] setButtonType:NSButtonTypePushOnPushOff];
   }
   NSTextField* foot = label(sidebar, @"本机存储 · 自主掌控\nmacOS 原生课程设计\nv0.1.0 初版",
                             NSMakeRect(25, 32, 155, 66), 11);
@@ -411,6 +412,13 @@ std::string stats(const Summary& s) {
   [_logView scrollRangeToVisible:NSMakeRange(_logView.string.length, 0)];
 }
 - (void)showPage:(NSInteger)index {
+  if (_status && !_busy) {
+    NSArray* hints = @[
+      @"就绪 · 选择源目录即可开始", @"就绪 · 选择备份文件进行验证或恢复",
+      @"就绪 · 设置目录、周期和保留份数"
+    ];
+    _status.stringValue = hints[index];
+  }
   for (int i = 0; i < 3; ++i) {
     _pages[i].hidden = i != index;
     _nav[i].state = i == index ? NSControlStateValueOn : NSControlStateValueOff;

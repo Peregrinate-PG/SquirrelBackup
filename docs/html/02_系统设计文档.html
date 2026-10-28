@@ -1,0 +1,134 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>松鼠备份系统设计文档</title><style>body{max-width:900px;margin:48px auto;padding:0 32px;font:16px/1.85 -apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif;color:#202833}h1{color:#111;font-size:30px;line-height:1.5;margin-bottom:32px}h2{margin-top:36px;font-size:23px}h3{margin-top:24px;font-size:19px}table{border-collapse:collapse;width:100%;font-size:13px;line-height:1.65;margin:18px 0}th,td{border:1px solid #dde1e4;padding:8px 10px;text-align:left;vertical-align:top;overflow-wrap:anywhere}th{background:#edf0f1}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f4f5f6;padding:16px}code{font-size:.9em}a{color:#914321}nav{margin-bottom:28px;color:#777}footer{margin-top:44px;color:#777;font-size:12px}@media print{body{margin:0;padding:0;font-size:10pt}nav{display:none}h1,h2,h3,h4{break-after:avoid}tr{break-inside:avoid}thead{display:table-header-group}@page{size:A4;margin:18mm}}</style><nav><a href="index.html">文档目录</a></nav><main><h1>松鼠备份系统设计文档</h1>
+<p>版本 0.1.0。本设计对应需求 FR-01 至 FR-21，说明已实现的 C++ 类、文件协议、恢复安全边界和调度逻辑。文档中的方法名以 include/squirrel/backup.h 为准；UML 图由用户根据指导手工绘制，不在本交付物中生成。</p>
+<h2>1 开发环境和工具</h2>
+<h3>1.1 开发环境</h3>
+<p>开发平台为本机 macOS 15.7.9 arm64，Apple Clang 17 与系统 SDK，C++17、Objective-C++、GNU make 3.81、git 2.39.5 和 VS Code。通过 -Wall -Wextra -Wpedantic -Werror 编译业务源码；CommonCrypto 的系统废弃声明告警单独屏蔽，不视为算法自研。GoogleTest 执行白盒测试；Python 驱动 CLI 黑盒和性能测试；AddressSanitizer 与 UndefinedBehaviorSanitizer 用于动态检查，适配本机平台而不强行安装 Linux 的 perf 或 valgrind。</p>
+<h3>1.2 依赖库</h3>
+<p>GUI 使用 Cocoa/AppKit，密码封装使用 CommonCrypto/Security。打包、Huffman、筛选和调度由本项目编写。GoogleTest 只链接测试程序。详细来源、许可和扩展功能计分说明见 THIRD_PARTY.md。</p>
+<h2>2 总体设计</h2>
+<h3>2.1 系统结构设计</h3>
+<p>入口层由 cli.cpp 和 gui.mm 构成。CLI 解析参数、读取密码环境变量并处理退出码；GUI 收集输入，在后台队列调用业务服务，在主队列更新日志。业务层由 BackupService 统一编排，Scheduler 提供循环快照。基础模块分为 FileScanner、ArchiveWriter、ArchiveReader、HuffmanCodec 和 CryptoEnvelope。</p>
+<p>构建时核心源文件生成 libsquirrel.a，GUI 和 CLI 静态链接同一核心。当前不提供对外稳定 C ABI 或动态库；若后续需要脚本 UI 或插件，才考虑增加不传播 C++ 异常的 C 接口。组件图需要展示两个入口对同一核心库的依赖及核心库对文件系统、密码库的依赖，具体绘图步骤见指导第 4 节。</p>
+<p>备份子系统接收源目录和 BackupOptions，输出单个封装文件与 Summary。恢复子系统接收备份和新目标路径，验证后输出新树和统计。自动任务复用 BackupService，不单独复制打包逻辑。</p>
+<h2>3 静态建模</h2>
+<h3>3.1 系统对象模型</h3>
+<p>核心类关系以静态工具方法依赖为主：BackupService 依赖 FileScanner、ArchiveWriter、ArchiveReader、CryptoEnvelope；ArchiveWriter 和 ArchiveReader 依赖 HuffmanCodec；Scheduler 依赖 BackupService、BackupOptions 与 ScheduleOptions。它们不通过继承形成多态层次，不应在类图中臆造父类。</p>
+<p>值对象组合关系：BackupOptions 拥有 1 个 Filter、压缩开关和密码；Entry 拥有路径、链接、类型、权限、属主、时间、尺寸和 0..<em> 个 xattr 键值；Summary 拥有统计和 0..</em> 个 Entry（仅收集模式返回列表）。Filter 拥有 0..* 条排除规则。服务类本身不长期保存 UI 状态。GUI 控制器负责窗口及任务停止标志，异步操作期间保持控制器存活。</p>
+<h3>3.2 类及方法描述</h3>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>关键属性</th>
+<th>方法与约束</th>
+<th>验证依据</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Filter</td>
+<td>excludes、path/name_pattern、types、min/max_size、since/until、owner</td>
+<td>excluded(path) 剪枝；accepts(path,stat) 对非目录 AND 筛选</td>
+<td>六类筛选测试</td>
+</tr>
+<tr>
+<td>Entry</td>
+<td>path、type、link、mode、uid/gid、时间、size、xattrs</td>
+<td>文件树快照记录，path 相对根目录；根记录为空路径</td>
+<td>元数据与类型测试</td>
+</tr>
+<tr>
+<td>BackupOptions</td>
+<td>filter、compress、password</td>
+<td>默认压缩；空密码表示未加密</td>
+<td>原始／压缩／加密组合</td>
+</tr>
+<tr>
+<td>Summary</td>
+<td>entries、files、bytes、archive_bytes、items</td>
+<td>files 包含普通和硬链接，bytes 按逻辑文件尺寸累计</td>
+<td>CLI 统计与 roundtrip</td>
+</tr>
+<tr>
+<td>FileScanner</td>
+<td>无持久状态</td>
+<td>scan(root,filter,log) 返回 vector<Entry>，失败抛异常</td>
+<td>扫描和排除测试</td>
+</tr>
+<tr>
+<td>HuffmanCodec</td>
+<td>无持久状态</td>
+<td>encode(Bytes)、decode(Bytes,expected)，最大输入块 1 MiB</td>
+<td>空、单符号、全符号、随机与畸形数据</td>
+</tr>
+<tr>
+<td>ArchiveWriter</td>
+<td>无持久状态</td>
+<td>write(source,entries,output,compress,log)，安全打开文件并按块写</td>
+<td>跨块大文件</td>
+</tr>
+<tr>
+<td>ArchiveReader</td>
+<td>无持久状态</td>
+<td>read(plain,destination,log,collect)，destination 为空时仅检查</td>
+<td>恢复与恶意归档测试</td>
+</tr>
+<tr>
+<td>CryptoEnvelope</td>
+<td>无持久状态</td>
+<td>seal(plain,output,password)、open(archive,plain,password)</td>
+<td>错误密码、损坏、加密往返</td>
+</tr>
+<tr>
+<td>BackupService</td>
+<td>无持久状态</td>
+<td>backup、inspect、restore，输出路径须不存在</td>
+<td>不覆盖与路径限制测试</td>
+</tr>
+<tr>
+<td>ScheduleOptions</td>
+<td>interval_seconds、keep、poll_seconds、watch、max_runs</td>
+<td>时间和保留份数必须为正；max_runs=0 无限运行</td>
+<td>调度测试</td>
+</tr>
+<tr>
+<td>Scheduler</td>
+<td>局部基线、候选指纹、快照队列</td>
+<td>run(source,repo,options,schedule,stop,log)，串行快照</td>
+<td>淘汰、监测、停止测试</td>
+</tr>
+</tbody>
+</table>
+<p>方法返回值包括完整统计；错误统一以 squirrel::Error 或标准文件系统异常传递。CLI 捕获后返回 1；GUI 捕获后显示日志并解除忙碌状态。Log 回调只用于记录进展，调用方负责线程切换。</p>
+<p>内部 RAII 对象 Fd 在作用域结束关闭文件描述符；TempDir 创建 0700 临时目录，正常异常退出时尝试 remove_all 清理；Cipher 释放 CCCryptorRef。这些是资源管理辅助类，不对外暴露。</p>
+<h3>3.3 扫描与文件类型</h3>
+<p>扫描对目录子项排序，保证相同目录状态下顺序稳定。lstat 避免把符号链接当目标文件展开，readlink 记录链接字符串。普通文件通过 device/inode 对识别硬链接：被选中的第一次出现保存数据，后续记录引用该路径。FIFO 只记录类型和元数据，不打开读取。遇到 socket 或设备节点直接报错。</p>
+<p>路径与名字通配符通过 fnmatch 实现，不是正则表达式。规则不跟随符号链接。全量 Entry 列表在内存保存，因此内存复杂度为 O(条目及扩展属性总量)，文件内容处理额外为 O(1 MiB)。</p>
+<h2>4 动态建模</h2>
+<h3>4.1 场景一 创建备份</h3>
+<p>顺序为：入口收集参数，BackupService 校验根目录和输出位置，FileScanner 生成条目，ArchiveWriter 编写树记录并调用 HuffmanCodec，CryptoEnvelope 封装完整性或加密，fsync 备份文件，link 独占发布输出，返回 Summary。压缩发生在加密之前。</p>
+<p>普通文件由 openSource 逐级 openat 并启用 O_NOFOLLOW 打开，避免父路径被替换为符号链接后跟随读取。打开前后比对 size、device/inode、mtime；变化则失败，不把变化中的文件作为成功备份。该策略不能保证多文件事务一致，也无法检测攻击者精确恢复元数据的内容变化。</p>
+<h3>4.2 场景二 验证与恢复</h3>
+<p>CryptoEnvelope 用一个 O_NOFOLLOW 文件描述符读取备份，先验证完整 payload 的摘要或 HMAC，再解密／复制至私有临时文件。第二遍读取再次计算摘要，检测两遍之间的内容变化。ArchiveReader 随后校验树并恢复至私有暂存目录。目录临时权限为 0700，普通文件以 O_EXCL/O_NOFOLLOW 和 0600 创建；链接父节点必须是已知目录，硬链接只能指向先前普通文件。</p>
+<p>每个非目录条目创建后应用元数据，目录在全部内容处理后按逆序应用权限和时间，避免创建子项破坏最终时间。读取完整结束标志并确认无尾随数据后，用 macOS renamex_np(RENAME_EXCL) 将暂存目录发布到新目标。失败不覆盖既有文件。</p>
+<h3>4.3 场景三 自动任务</h3>
+<p>Scheduler 创建本次专属 squirrel-job- 随机目录，生成 snapshot-1.sqbk 等完整快照。成功快照登记到 owned 队列，超过 keep 才删除最旧文件。失败日志不触发淘汰。定时模式以单调时钟判断距上次完成的间隔；不补跑睡眠期间错过的周期。</p>
+<p>实时模式每 poll_seconds 扫描一次，根据路径、类型、大小、inode、mtime、权限、UID/GID、链接目标和 xattrs 构造状态字符串，不包含 atime，避免备份读取触发自身循环。状态与基线不同且与上次候选相同才备份，即等待两个连续稳定观察。使用轮询并非 FSEvents 内核通知，实现简单但大目录扫描开销较高。</p>
+<h3>4.4 状态与线程</h3>
+<p>界面状态为就绪、执行中、完成、失败；自动任务增加等待与停止请求。执行中禁止新的业务操作，停止标志仅用于自动任务循环，不会中断正在写入的备份。因此停止响应时间包含当前快照耗时。窗口关闭或退出时若忙碌，提出停止并要求等待操作结束，避免主动截断写入。</p>
+<p>状态图和两个顺序图的逐条消息清单见 StarUML 指导；尚未绘制的图不作为已完成建模成果申报。</p>
+<h2>5 数据持久化与文件格式</h2>
+<h3>5.1 持久化选择</h3>
+<p>初版无数据库。备份自身存储元数据；任务运行时状态在内存，任务生成的备份留在独立目录。GUI 参数和密码不写配置文件，应用重启后需重新设置。跨进程恢复历史调度计划尚未实现。</p>
+<h3>5.2 外层 SQBK 版本 1</h3>
+<p>所有多字节整数均小端，文本和二进制长度显式指定，禁止直接写入 C++ struct 的平台内存布局。外层头固定 44 字节：8 字节 ASCII SQBK0001，1 字节加密标志（0/1），3 字节保留零，16 字节 salt，16 字节 IV；其后为 payload，最后 32 字节为 tag。未加密时 salt/IV 为零，tag 是 header+payload 的 SHA256。加密时 tag 是 header+ciphertext 的 HMAC-SHA256。</p>
+<p>PBKDF2-HMAC-SHA256 固定 200000 轮，派生 64 字节，前 32 字节为 AES-256 密钥，后 32 字节为 HMAC 密钥。salt 和 IV 分别由安全随机数生成，AES 使用 CBC 与 PKCS7 补齐。认证标签逐字节异或累计后判断，先验证后解密，不把密码摘要直接保存成可用于解密的密钥。密码最低 8 UTF-8 字节，并不代表强度保证；不存在找回机制。</p>
+<h3>5.3 内层 SQTREE 版本 1</h3>
+<p>开头为 8 字节 SQTREE01 和 8 字节条目数。每个条目依次为 type(u8)、path(长度 u32+字节)、mode/uid/gid(各 u32)、mtime 秒(i64)+纳秒(u32)、atime 秒(i64)+纳秒(u32)、size(u64)、link(长度文本)、xattr 数量(u32)，随后是各属性的名称和二进制值（均带长度）。根目录是第一条，path 为空。</p>
+<p>Regular 条目后跟内容块，直到原始 size 被满足。每块包含编码标志(u8)、原始长度(u32)、存储长度(u32)、数据。编码 0 为原始块，1 为 Huffman。块原始长度 1..1048576；空文件没有内容块。Hardlink 保存首次 Regular 的路径和逻辑 size，没有重复数据。结束为 8 字节 SQEND001，之后不得有数据。</p>
+<p>Huffman 块先记录 256 项 u32 频数表，再记录从高位起排列的比特。以优先队列按频数、节点索引确定合并顺序；相同频数可重建同一棵树。单符号块无需位流。编码长度不小于原始块时，写原始块，避免不可压缩数据膨胀。解码检查频数和、频数分布、位流长度及零填充，不允许尾随有效数据。</p>
+<h3>5.4 输入校验与资源约束</h3>
+<p>拒绝路径中的 NUL、绝对路径、空分量、点或父目录分量、重复条目、缺失父目录、非目录父节点、未知类型、非法权限和时间纳秒值。读取长度前设置文本、条目数、xattr 和块的上限。相对或绝对软链接目标可原样保留，但不能作为恢复其他记录的父路径；用户恢复后手动跟随链接可能访问源树外位置，应按普通文件系统链接理解。</p>
+<h2>6 风险与迭代</h2>
+<p>UID/GID 记录和异属主恢复分开处理，无权限只警告。xattrs 设置失败警告；ACL、出生时间、flags 不支持。原始块和加密中间数据会暂存磁盘，使用权限隔离而非安全擦除。强制中止可能留下 .squirrel- 前缀私有目录；不可自动删除不属于本次运行的路径。</p>
+<p>备份发布前刷写单文件，但未实现所有恢复文件及父目录的 fsync 链，因此不承诺断电事务持久性。跨卷、跨平台和超大容量仍需实测。优先迭代应包括 GUI 点击验收、任务取消、扫描竞态强化、可恢复的任务配置与更完整元数据支持。</p></main><footer>松鼠备份 0.1.0 · 请以源码和测试结果为准</footer></html>
