@@ -1,0 +1,63 @@
+// Copyright 2026 Squirrel Backup course project.
+#include <cstdio>
+#include <string>
+
+#include "internal.h"
+namespace squirrel {
+Summary BackupService::backup(const fs::path& source, const fs::path& archive,
+                              const BackupOptions& options, const Log& log) const {
+  fs::path root = fs::canonical(source), output = outputPath(archive);
+  require(fs::is_directory(root), "Source must be a directory");
+  require(!beneath(output, root), "Backup output must be outside the source tree");
+  require(!existsNoFollow(output), "Backup output already exists; choose a new filename");
+  require(options.password.empty() || options.password.size() >= 8,
+          "Use a password of at least 8 UTF-8 bytes");
+  auto entries = FileScanner::scan(root, options.filter, log);
+  TempDir temp(output.parent_path());
+  auto packed = temp.path / "tree", sealed = temp.path / "sealed";
+  ArchiveWriter::write(root, entries, packed, options.compress, log);
+  CryptoEnvelope::seal(packed, sealed, options.password);
+  syncFile(sealed);
+  // link(2) publishes a fully written file without overwriting any concurrent target.
+  syscheck(::link(sealed.c_str(), output.c_str()) == 0,
+           "Cannot publish backup without overwriting");
+  Summary summary;
+  for (const auto& e : entries) {
+    ++summary.entries;
+    if (e.type == FileType::Regular || e.type == FileType::Hardlink) {
+      ++summary.files;
+      summary.bytes += e.size;
+    }
+  }
+  summary.archive_bytes = fs::file_size(output);
+  emit(log, "Backup complete: " + output.string());
+  return summary;
+}
+Summary BackupService::inspect(const fs::path& archive, const std::string& password, const Log& log,
+                               bool collect) const {
+  TempDir temp;
+  auto plain = temp.path / "tree";
+  CryptoEnvelope::open(archive, plain, password);
+  auto result = ArchiveReader::read(plain, nullptr, log, collect);
+  result.archive_bytes = fs::file_size(archive);
+  emit(log, "Verification passed: " + std::to_string(result.entries) + " entries");
+  return result;
+}
+Summary BackupService::restore(const fs::path& archive, const fs::path& destination,
+                               const std::string& password, const Log& log) const {
+  auto output = outputPath(destination);
+  require(!existsNoFollow(output),
+          "Restore destination must not already exist; choose a new folder name");
+  TempDir temp(output.parent_path());
+  auto plain = temp.path / "tree", stage = temp.path / "restored";
+  CryptoEnvelope::open(archive, plain, password);
+  syscheck(::mkdir(stage.c_str(), 0700) == 0, "Cannot create staging directory");
+  auto summary = ArchiveReader::read(plain, &stage, log, false);
+  // macOS exclusive directory rename prevents clobbering a concurrently created destination.
+  syscheck(::renamex_np(stage.c_str(), output.c_str(), RENAME_EXCL) == 0,
+           "Cannot publish restored directory without overwriting");
+  summary.archive_bytes = fs::file_size(archive);
+  emit(log, "Restore complete: " + output.string());
+  return summary;
+}
+}  // namespace squirrel

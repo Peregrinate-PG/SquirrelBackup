@@ -1,0 +1,7 @@
+.tools/
+.preflight/
+build/
+dist/
+.DS_Store
+*.partial
+__pycache__/
