@@ -41,6 +41,6 @@ CLI：在终端执行 ./squirrel --help。
 人员信息、UML 手工绘图、演示视频和 AI 学习证书须本人补齐。
 NOTE
 (cd "$RELEASE" && find . -type f ! -name SHA256SUMS -print0 | sort -z | xargs -0 shasum -a 256 > SHA256SUMS)
-/usr/bin/ditto -c -k --keepParent "$RELEASE" "$RELEASE.zip"
+python3 scripts/zip_release.py "$RELEASE"
 shasum -a 256 "$RELEASE.zip" > "$RELEASE.zip.sha256"
 printf 'Release ready: %s\n' "$RELEASE.zip"
