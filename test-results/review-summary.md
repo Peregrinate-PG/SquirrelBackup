@@ -7,3 +7,5 @@
 新增建议三人分工文档，每人 30 个计划工作量点；同步需求、设计、测试和综合报告。新增八页可编辑 PPTX、逐页讲者备注、讲稿和 PDF。
 
 托管 Artifact Tool 运行库在本机不可用，PowerPoint 自动操作未获准；已采用无外部制稿库的标准 OOXML 生成方式。PPTX 通过包结构与八页几何／字体／原生表格检查，Mac Quick Look 可以完整解析。逐页渲染后已检查文字、表格和截图；未宣称在 PowerPoint 中人工验收。没有生成 UML 图。
+
+交付包重新解压后，使用包内 GoogleTest 源码离线执行 make -j4 all test 成功，33 + 21 + 18 = 72 项全部通过。ZIP 的 CRC、校验清单和演示文件／分工 PDF 的字节一致性检查通过。见 review-offline-rebuild.log 与 review-offline-rebuild.json。

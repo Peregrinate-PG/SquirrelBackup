@@ -1,0 +1,11 @@
+{
+  "source_revision": "f4afb96",
+  "fresh_extraction": true,
+  "offline_build_exit_code": 0,
+  "unit": 33,
+  "integration": 21,
+  "security": 18,
+  "passed": 72,
+  "log": "review-offline-rebuild.log",
+  "note": "Subsequent commits add validation evidence only; runtime source unchanged."
+}
