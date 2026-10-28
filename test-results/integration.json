@@ -2,96 +2,106 @@
   {
     "name": "CLI-01 help",
     "passed": true,
-    "seconds": 0.004966999999999999
+    "seconds": 0.43496875
   },
   {
     "name": "CLI-02 backup",
     "passed": true,
-    "seconds": 0.017403042
+    "seconds": 0.07543545799999996
   },
   {
     "name": "CLI-03 verify",
     "passed": true,
-    "seconds": 0.004743207999999999
+    "seconds": 0.03212258400000001
   },
   {
     "name": "CLI-04 list",
     "passed": true,
-    "seconds": 0.004612125000000002
+    "seconds": 0.03251154100000009
   },
   {
     "name": "CLI-05 content hashes",
     "passed": true,
-    "seconds": 0.006211709000000003
+    "seconds": 0.03381820899999999
   },
   {
     "name": "CLI-06 restore no-clobber",
     "passed": true,
-    "seconds": 0.002454291999999997
+    "seconds": 0.024399458999999957
   },
   {
     "name": "CLI-07 backup no-clobber",
     "passed": true,
-    "seconds": 0.002166417000000004
+    "seconds": 0.024074375000000092
   },
   {
     "name": "CLI-08 reject self-backup",
     "passed": true,
-    "seconds": 0.002101624999999996
+    "seconds": 0.024367790999999972
   },
   {
     "name": "CLI-09 unknown option",
     "passed": true,
-    "seconds": 0.0020562499999999956
+    "seconds": 0.024496458
   },
   {
     "name": "CLI-10 missing value",
     "passed": true,
-    "seconds": 0.0020273329999999923
+    "seconds": 0.023923792000000055
   },
   {
     "name": "CLI-11 invalid numeric option",
     "passed": true,
-    "seconds": 0.0020166660000000003
+    "seconds": 0.024351915999999973
   },
   {
     "name": "CLI-12 combined filters",
     "passed": true,
-    "seconds": 0.005822542
+    "seconds": 0.06136379199999997
   },
   {
     "name": "CLI-13 encrypted CLI",
     "passed": true,
-    "seconds": 0.13048058299999998
+    "seconds": 0.272023417
   },
   {
     "name": "CLI-14 schedule retention isolation",
     "passed": true,
-    "seconds": 2.264574416
+    "seconds": 2.447906125
   },
   {
     "name": "CLI-15 change detection",
     "passed": true,
-    "seconds": 6.612169917
+    "seconds": 6.77633875
   },
   {
     "name": "CLI-16 graceful stop",
     "passed": true,
-    "seconds": 0.12182912499999965
+    "seconds": 0.1817735419999984
   },
   {
     "name": "CLI-17 invalid type filter",
     "passed": true,
-    "seconds": 0.00855304100000076
+    "seconds": 0.03242141700000012
   },
   {
     "name": "CLI-18 missing password env",
     "passed": true,
-    "seconds": 0.005080249999998898
+    "seconds": 0.025088750000000104
   },
   {
     "name": "CLI-19 do not overwrite dangling symlink",
     "passed": true,
-    "seconds": 0.004970832999999786
+    "seconds": 0.02576229100000127
+  },
+  {
+    "name": "CLI-20 schedule rejects short password before starting",
+    "passed": true,
+    "seconds": 0.024859665999999336
+  },
+  {
+    "name": "CLI-21 schedule rejects invalid filters before starting",
+    "passed": true,
+    "seconds": 0.04908325000000069
   }
 ]

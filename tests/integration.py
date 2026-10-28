@@ -136,6 +136,19 @@ with tempfile.TemporaryDirectory(prefix='squirrel-integration-') as tmp:
         run('backup',src,target,ok=False)
         assert target.is_symlink()
     case('CLI-19 do not overwrite dangling symlink',symlink_output)
+    def invalid_job_password():
+        repo = base/'invalid-password-job'; repo.mkdir()
+        env = dict(os.environ, SQUIRREL_TEST_SHORT_PASSWORD='short')
+        run('schedule',src,repo,'--runs','1','--password-env','SQUIRREL_TEST_SHORT_PASSWORD',env=env,ok=False,timeout=5)
+        assert not list(repo.iterdir())
+    case('CLI-20 schedule rejects short password before starting',invalid_job_password)
+    def invalid_job_filter():
+        repo = base/'invalid-filter-job'; repo.mkdir()
+        run('watch',src,repo,'--min-size','20','--max-size','10',ok=False,timeout=5)
+        run('watch',src,repo,'--type','z',ok=False,timeout=5)
+        assert not list(repo.iterdir())
+    case('CLI-21 schedule rejects invalid filters before starting',invalid_job_filter)
+
 
 output = Path('test-results'); output.mkdir(exist_ok=True)
 (output/'integration.json').write_text(json.dumps(RESULTS,ensure_ascii=False,indent=2))

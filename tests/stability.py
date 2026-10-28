@@ -41,5 +41,5 @@ with tempfile.TemporaryDirectory(prefix='squirrel-stability-') as tmp:
     assert sha256((src/'constant.bin').read_bytes()).digest()==sha256((base/'restored'/'constant.bin').read_bytes()).digest()
     lines=(base/'job.log').read_text()
     result=dict(passed=True,duration_seconds=time.monotonic()-start,edits=edits,completed_snapshots=lines.count('Backup complete:'),retained=len(files),all_retained_verified=True,latest_content=text,constant_file_hash_equal=True)
-    Path('test-results/stability.json').write_text(json.dumps(result,indent=2))
+    Path(sys.argv[3] if len(sys.argv)>3 else 'test-results/stability.json').write_text(json.dumps(result,indent=2))
     print(json.dumps(result,indent=2))

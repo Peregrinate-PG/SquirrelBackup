@@ -1,39 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites tests="32" failures="0" disabled="0" errors="0" time="0.965" timestamp="2026-10-29T00:33:25.341" name="AllTests">
-  <testsuite name="Huffman" tests="9" failures="0" disabled="0" skipped="0" errors="0" time="0.1" timestamp="2026-10-29T00:33:25.341">
-    <testcase name="Empty" file="tests/core_test.cpp" line="13" status="run" result="completed" time="0." timestamp="2026-10-29T00:33:25.341" classname="Huffman" />
-    <testcase name="SingleSymbol" file="tests/core_test.cpp" line="14" status="run" result="completed" time="0." timestamp="2026-10-29T00:33:25.341" classname="Huffman" />
-    <testcase name="AllSymbols" file="tests/core_test.cpp" line="18" status="run" result="completed" time="0." timestamp="2026-10-29T00:33:25.341" classname="Huffman" />
-    <testcase name="RandomRoundtrip" file="tests/core_test.cpp" line="25" status="run" result="completed" time="0.097" timestamp="2026-10-29T00:33:25.341" classname="Huffman" />
-    <testcase name="Compression" file="tests/core_test.cpp" line="35" status="run" result="completed" time="0." timestamp="2026-10-29T00:33:25.439" classname="Huffman" />
-    <testcase name="RejectTruncation" file="tests/core_test.cpp" line="39" status="run" result="completed" time="0." timestamp="2026-10-29T00:33:25.440" classname="Huffman" />
-    <testcase name="RejectFrequency" file="tests/core_test.cpp" line="40" status="run" result="completed" time="0." timestamp="2026-10-29T00:33:25.440" classname="Huffman" />
-    <testcase name="RejectOversize" file="tests/core_test.cpp" line="44" status="run" result="completed" time="0.001" timestamp="2026-10-29T00:33:25.440" classname="Huffman" />
-    <testcase name="RejectTrailing" file="tests/core_test.cpp" line="45" status="run" result="completed" time="0." timestamp="2026-10-29T00:33:25.441" classname="Huffman" />
+<testsuites tests="33" failures="0" disabled="0" errors="0" time="2.126" timestamp="2026-10-29T01:04:13.682" name="AllTests">
+  <testsuite name="Huffman" tests="9" failures="0" disabled="0" skipped="0" errors="0" time="0.102" timestamp="2026-10-29T01:04:13.682">
+    <testcase name="Empty" file="tests/core_test.cpp" line="13" status="run" result="completed" time="0." timestamp="2026-10-29T01:04:13.682" classname="Huffman" />
+    <testcase name="SingleSymbol" file="tests/core_test.cpp" line="14" status="run" result="completed" time="0." timestamp="2026-10-29T01:04:13.682" classname="Huffman" />
+    <testcase name="AllSymbols" file="tests/core_test.cpp" line="18" status="run" result="completed" time="0." timestamp="2026-10-29T01:04:13.682" classname="Huffman" />
+    <testcase name="RandomRoundtrip" file="tests/core_test.cpp" line="25" status="run" result="completed" time="0.099" timestamp="2026-10-29T01:04:13.682" classname="Huffman" />
+    <testcase name="Compression" file="tests/core_test.cpp" line="35" status="run" result="completed" time="0." timestamp="2026-10-29T01:04:13.782" classname="Huffman" />
+    <testcase name="RejectTruncation" file="tests/core_test.cpp" line="39" status="run" result="completed" time="0." timestamp="2026-10-29T01:04:13.783" classname="Huffman" />
+    <testcase name="RejectFrequency" file="tests/core_test.cpp" line="40" status="run" result="completed" time="0." timestamp="2026-10-29T01:04:13.783" classname="Huffman" />
+    <testcase name="RejectOversize" file="tests/core_test.cpp" line="44" status="run" result="completed" time="0.001" timestamp="2026-10-29T01:04:13.783" classname="Huffman" />
+    <testcase name="RejectTrailing" file="tests/core_test.cpp" line="45" status="run" result="completed" time="0." timestamp="2026-10-29T01:04:13.784" classname="Huffman" />
   </testsuite>
-  <testsuite name="BackupTest" tests="23" failures="0" disabled="0" skipped="0" errors="0" time="0.864" timestamp="2026-10-29T00:33:25.441">
-    <testcase name="Roundtrip" file="tests/core_test.cpp" line="69" status="run" result="completed" time="0.072" timestamp="2026-10-29T00:33:25.441" classname="BackupTest" />
-    <testcase name="RawRoundtrip" file="tests/core_test.cpp" line="77" status="run" result="completed" time="0.074" timestamp="2026-10-29T00:33:25.514" classname="BackupTest" />
-    <testcase name="EncryptedRoundtrip" file="tests/core_test.cpp" line="84" status="run" result="completed" time="0.159" timestamp="2026-10-29T00:33:25.589" classname="BackupTest" />
-    <testcase name="WrongPasswordLeavesNoOutput" file="tests/core_test.cpp" line="92" status="run" result="completed" time="0.155" timestamp="2026-10-29T00:33:25.748" classname="BackupTest" />
-    <testcase name="RejectShortPassword" file="tests/core_test.cpp" line="99" status="run" result="completed" time="0.002" timestamp="2026-10-29T00:33:25.903" classname="BackupTest" />
-    <testcase name="TamperDetection" file="tests/core_test.cpp" line="105" status="run" result="completed" time="0.015" timestamp="2026-10-29T00:33:25.906" classname="BackupTest" />
-    <testcase name="RejectTruncated" file="tests/core_test.cpp" line="114" status="run" result="completed" time="0.012" timestamp="2026-10-29T00:33:25.921" classname="BackupTest" />
-    <testcase name="NoOverwriteBackup" file="tests/core_test.cpp" line="119" status="run" result="completed" time="0.012" timestamp="2026-10-29T00:33:25.934" classname="BackupTest" />
-    <testcase name="NoOverwriteRestore" file="tests/core_test.cpp" line="125" status="run" result="completed" time="0.012" timestamp="2026-10-29T00:33:25.946" classname="BackupTest" />
-    <testcase name="RejectOutputInSource" file="tests/core_test.cpp" line="132" status="run" result="completed" time="0.002" timestamp="2026-10-29T00:33:25.959" classname="BackupTest" />
-    <testcase name="MissingSource" file="tests/core_test.cpp" line="135" status="run" result="completed" time="0.002" timestamp="2026-10-29T00:33:25.961" classname="BackupTest" />
-    <testcase name="SymlinkHardlinkFifo" file="tests/core_test.cpp" line="138" status="run" result="completed" time="0.02" timestamp="2026-10-29T00:33:25.964" classname="BackupTest" />
-    <testcase name="Metadata" file="tests/core_test.cpp" line="152" status="run" result="completed" time="0.02" timestamp="2026-10-29T00:33:25.984" classname="BackupTest" />
-    <testcase name="ExcludePrunesDirectory" file="tests/core_test.cpp" line="170" status="run" result="completed" time="0.009" timestamp="2026-10-29T00:33:26.004" classname="BackupTest" />
-    <testcase name="NameFilter" file="tests/core_test.cpp" line="177" status="run" result="completed" time="0.005" timestamp="2026-10-29T00:33:26.014" classname="BackupTest" />
-    <testcase name="PathFilter" file="tests/core_test.cpp" line="183" status="run" result="completed" time="0.012" timestamp="2026-10-29T00:33:26.020" classname="BackupTest" />
-    <testcase name="SizeFilter" file="tests/core_test.cpp" line="188" status="run" result="completed" time="0.005" timestamp="2026-10-29T00:33:26.033" classname="BackupTest" />
-    <testcase name="TimeFilter" file="tests/core_test.cpp" line="194" status="run" result="completed" time="0.009" timestamp="2026-10-29T00:33:26.038" classname="BackupTest" />
-    <testcase name="OwnerFilter" file="tests/core_test.cpp" line="199" status="run" result="completed" time="0.012" timestamp="2026-10-29T00:33:26.048" classname="BackupTest" />
-    <testcase name="TypeFilter" file="tests/core_test.cpp" line="204" status="run" result="completed" time="0.009" timestamp="2026-10-29T00:33:26.060" classname="BackupTest" />
-    <testcase name="InvalidFilter" file="tests/core_test.cpp" line="213" status="run" result="completed" time="0.002" timestamp="2026-10-29T00:33:26.069" classname="BackupTest" />
-    <testcase name="EmptyTree" file="tests/core_test.cpp" line="219" status="run" result="completed" time="0.008" timestamp="2026-10-29T00:33:26.072" classname="BackupTest" />
-    <testcase name="UncompressedEncrypted" file="tests/core_test.cpp" line="226" status="run" result="completed" time="0.225" timestamp="2026-10-29T00:33:26.081" classname="BackupTest" />
+  <testsuite name="BackupTest" tests="24" failures="0" disabled="0" skipped="0" errors="0" time="2.023" timestamp="2026-10-29T01:04:13.784">
+    <testcase name="Roundtrip" file="tests/core_test.cpp" line="69" status="run" result="completed" time="0.075" timestamp="2026-10-29T01:04:13.784" classname="BackupTest" />
+    <testcase name="RawRoundtrip" file="tests/core_test.cpp" line="77" status="run" result="completed" time="0.078" timestamp="2026-10-29T01:04:13.860" classname="BackupTest" />
+    <testcase name="EncryptedRoundtrip" file="tests/core_test.cpp" line="84" status="run" result="completed" time="0.164" timestamp="2026-10-29T01:04:13.939" classname="BackupTest" />
+    <testcase name="WrongPasswordLeavesNoOutput" file="tests/core_test.cpp" line="92" status="run" result="completed" time="0.161" timestamp="2026-10-29T01:04:14.104" classname="BackupTest" />
+    <testcase name="RejectShortPassword" file="tests/core_test.cpp" line="99" status="run" result="completed" time="0.003" timestamp="2026-10-29T01:04:14.265" classname="BackupTest" />
+    <testcase name="TamperDetection" file="tests/core_test.cpp" line="105" status="run" result="completed" time="0.015" timestamp="2026-10-29T01:04:14.269" classname="BackupTest" />
+    <testcase name="RejectTruncated" file="tests/core_test.cpp" line="114" status="run" result="completed" time="0.012" timestamp="2026-10-29T01:04:14.285" classname="BackupTest" />
+    <testcase name="NoOverwriteBackup" file="tests/core_test.cpp" line="119" status="run" result="completed" time="0.013" timestamp="2026-10-29T01:04:14.297" classname="BackupTest" />
+    <testcase name="NoOverwriteRestore" file="tests/core_test.cpp" line="125" status="run" result="completed" time="0.012" timestamp="2026-10-29T01:04:14.310" classname="BackupTest" />
+    <testcase name="RejectOutputInSource" file="tests/core_test.cpp" line="132" status="run" result="completed" time="0.002" timestamp="2026-10-29T01:04:14.323" classname="BackupTest" />
+    <testcase name="MissingSource" file="tests/core_test.cpp" line="135" status="run" result="completed" time="0.002" timestamp="2026-10-29T01:04:14.326" classname="BackupTest" />
+    <testcase name="SymlinkHardlinkFifo" file="tests/core_test.cpp" line="138" status="run" result="completed" time="0.021" timestamp="2026-10-29T01:04:14.328" classname="BackupTest" />
+    <testcase name="Metadata" file="tests/core_test.cpp" line="152" status="run" result="completed" time="0.02" timestamp="2026-10-29T01:04:14.349" classname="BackupTest" />
+    <testcase name="ExcludePrunesDirectory" file="tests/core_test.cpp" line="170" status="run" result="completed" time="0.01" timestamp="2026-10-29T01:04:14.370" classname="BackupTest" />
+    <testcase name="NameFilter" file="tests/core_test.cpp" line="177" status="run" result="completed" time="0.006" timestamp="2026-10-29T01:04:14.380" classname="BackupTest" />
+    <testcase name="PathFilter" file="tests/core_test.cpp" line="183" status="run" result="completed" time="0.013" timestamp="2026-10-29T01:04:14.386" classname="BackupTest" />
+    <testcase name="SizeFilter" file="tests/core_test.cpp" line="188" status="run" result="completed" time="0.006" timestamp="2026-10-29T01:04:14.399" classname="BackupTest" />
+    <testcase name="TimeFilter" file="tests/core_test.cpp" line="194" status="run" result="completed" time="0.006" timestamp="2026-10-29T01:04:14.406" classname="BackupTest" />
+    <testcase name="OwnerFilter" file="tests/core_test.cpp" line="199" status="run" result="completed" time="0.013" timestamp="2026-10-29T01:04:14.412" classname="BackupTest" />
+    <testcase name="TypeFilter" file="tests/core_test.cpp" line="204" status="run" result="completed" time="0.009" timestamp="2026-10-29T01:04:14.426" classname="BackupTest" />
+    <testcase name="InvalidFilter" file="tests/core_test.cpp" line="213" status="run" result="completed" time="0.002" timestamp="2026-10-29T01:04:14.436" classname="BackupTest" />
+    <testcase name="EmptyTree" file="tests/core_test.cpp" line="219" status="run" result="completed" time="0.009" timestamp="2026-10-29T01:04:14.438" classname="BackupTest" />
+    <testcase name="UncompressedEncrypted" file="tests/core_test.cpp" line="226" status="run" result="completed" time="0.235" timestamp="2026-10-29T01:04:14.448" classname="BackupTest" />
+    <testcase name="RetentionFailureDoesNotRepeatSnapshot" file="tests/core_test.cpp" line="234" status="run" result="completed" time="1.124" timestamp="2026-10-29T01:04:14.684" classname="BackupTest" />
   </testsuite>
 </testsuites>

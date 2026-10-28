@@ -231,5 +231,42 @@ TEST_F(BackupTest, UncompressedEncrypted) {
   service.restore(archive, restored, o.password);
   EXPECT_EQ(contents(source / "nested" / "large"), contents(restored / "nested" / "large"));
 }
+TEST_F(BackupTest, RetentionFailureDoesNotRepeatSnapshot) {
+  auto repo = temp.path / "repository";
+  fs::create_directory(repo);
+  ScheduleOptions schedule;
+  schedule.interval_seconds = 1;
+  schedule.keep = 1;
+  schedule.max_runs = 2;
+  std::atomic<bool> stop{false};
+  int published = 0;
+  bool warned = false;
+  fs::path job;
+  Log log = [&](const std::string& line) {
+    if (line.find("Job repository: ") == 0) {
+      job = line.substr(16);
+    }
+    if (line.find("Backup complete: ") == 0) {
+      ++published;
+      if (published == 2) {
+        auto old = job / "snapshot-1.sqbk";
+        fs::remove(old);
+        fs::create_directory(old);
+        std::ofstream(old / "cannot-remove-as-file") << "retention failure fixture";
+      }
+      if (published >= 3) {
+        stop.store(true);  // Bounds the regression even for broken code.
+      }
+    }
+    if (line.find("WARNING: retention cleanup failed") == 0) {
+      warned = true;
+    }
+  };
+  Scheduler::run(source, repo, {}, schedule, stop, log);
+  EXPECT_EQ(published, 2);
+  EXPECT_TRUE(warned);
+  EXPECT_TRUE(fs::is_regular_file(job / "snapshot-2.sqbk"));
+  EXPECT_EQ(service.inspect(job / "snapshot-2.sqbk").files, 3ULL);
+}
 }  // namespace
 }  // namespace squirrel

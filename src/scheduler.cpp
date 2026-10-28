@@ -30,6 +30,14 @@ void Scheduler::run(const fs::path& source, const fs::path& repository,
                     const std::atomic<bool>& stop, const Log& log) {
   require(schedule.interval_seconds >= 1 && schedule.poll_seconds >= 1 && schedule.keep >= 1,
           "Interval, poll seconds and retention must be positive");
+  require(options.password.empty() || options.password.size() >= 8,
+          "Use a password of at least 8 UTF-8 bytes");
+  require(options.filter.min_size <= options.filter.max_size &&
+              options.filter.since <= options.filter.until,
+          "Invalid filter range");
+  for (char c : options.filter.types) {
+    require(c == 'f' || c == 'l' || c == 'p', "Types must contain only f, l, p");
+  }
   auto root = fs::canonical(source), repo = fs::canonical(repository);
   require(fs::is_directory(repo) && !beneath(repo, root),
           "Repository must be an existing directory outside the source");
@@ -61,19 +69,27 @@ void Scheduler::run(const fs::path& source, const fs::path& repository,
         BackupService{}.backup(root, file, options, log);
         owned.push_back(file);
         ++runs;
-        while (owned.size() > schedule.keep) {
-          fs::remove(owned.front());
-          emit(log, "Retention removed: " + owned.front().filename().string());
-          owned.pop_front();
-        }
+        // Commit snapshot state before best-effort retention. Cleanup failure must not
+        // cause an extra backup, invalidate the watch baseline, or bypass max_runs.
         first = false;
         last = Clock::now();
         if (schedule.watch) {
           baseline = current;
         }
-        if (schedule.max_runs && runs >= schedule.max_runs) {
+      }
+      while (owned.size() > schedule.keep) {
+        std::error_code error;
+        fs::remove(owned.front(), error);
+        if (error) {
+          emit(log, "WARNING: retention cleanup failed; will retry without duplicating backup: " +
+                        owned.front().filename().string() + ": " + error.message());
           break;
         }
+        emit(log, "Retention removed: " + owned.front().filename().string());
+        owned.pop_front();
+      }
+      if (schedule.max_runs && runs >= schedule.max_runs) {
+        break;
       }
     } catch (const std::exception& error) {
       emit(log, "WARNING: scheduled backup failed; will retry: " + std::string(error.what()));

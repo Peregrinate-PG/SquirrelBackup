@@ -1,0 +1,9 @@
+# 演示稿使用说明
+
+松鼠备份_三分钟演示.pptx 为八页 16:9 可编辑演示稿，包含原生文字、表格、嵌入的应用预览和逐页讲者备注。演示讲稿.md 提供独立讲稿；PDF 用于快速阅读和打印。
+
+建议在本机 PowerPoint 中打开 PPTX，按三人方案把 A/B/C 换成姓名，检查本机字体和放映效果，再排练约三分钟。页面中的 30 点是计划工作量，不是已发生贡献或成绩。不要把角色分工直接当成代码作者记录。
+
+本机未提供可用的托管 Artifact Tool 依赖，且 PowerPoint 自动操作未获准，所以本稿通过 JavaScript 编写标准 OOXML 文件生成，未安装替代制稿库。已使用结构检查、字体和几何检查，以及 macOS Quick Look 对实际 PPTX 的逐页渲染检查；没有宣称在 PowerPoint 中完成真实操作验收。主题字体为本机已有 Arial Unicode MS，其他电脑可能替换字体。
+
+讲稿对应功能、模块、算法依赖、72 项测试、三人分工、现场演示和初版边界。源码与生成入口为 scripts/build_presentation.mjs；scripts/render_ppt_preview.mm 仅负责离屏渲染 Quick Look 的预览 HTML，不参与业务备份功能。没有生成 UML 图。

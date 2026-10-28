@@ -117,5 +117,5 @@ for src in sorted(DOCS.glob('0*.md')):
         sheet.save(QA/(name+f'-sheet-{start//4+1:02d}.jpg'),quality=90)
     print(name,len(pages),'pages','bounds warnings',len(bounds))
 links=''.join('<li><a href="'+escape(x['name'])+'.html">'+escape(x['name'])+'</a> · <a href="../pdf/'+escape(x['name'])+'.pdf">PDF</a></li>' for x in manifest)
-(HTML/'index.html').write_text('<!doctype html><meta charset="utf-8"><title>松鼠备份文档</title><style>'+css+'</style><h1>松鼠备份课程文档</h1><p>0.1.0 初版。可编辑源文件在上一级目录。</p><ul>'+links+'</ul>')
+(HTML/'index.html').write_text('<!doctype html><meta charset="utf-8"><title>松鼠备份文档</title><style>'+css+'</style><h1>松鼠备份课程文档</h1><p><a href="../../presentations/松鼠备份_三分钟演示.pptx">下载演示 PPT</a> · <a href="../../presentations/松鼠备份_三分钟演示.pdf">演示 PDF</a></p><p>0.1.0 初版。可编辑源文件在上一级目录。</p><ul>'+links+'</ul>')
 (QA/'manifest.json').write_text(json.dumps(manifest,ensure_ascii=False,indent=2))

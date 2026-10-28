@@ -1,0 +1,273 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>松鼠备份三人分工与协作方案</title><style>body{max-width:900px;margin:48px auto;padding:0 32px;font:16px/1.85 -apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif;color:#202833}h1{color:#111;font-size:30px;line-height:1.5;margin-bottom:32px}h2{margin-top:36px;font-size:23px}h3{margin-top:24px;font-size:19px}table{border-collapse:collapse;width:100%;font-size:13px;line-height:1.65;margin:18px 0}th,td{border:1px solid #dde1e4;padding:8px 10px;text-align:left;vertical-align:top;overflow-wrap:anywhere}th{background:#edf0f1}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f4f5f6;padding:16px}code{font-size:.9em}a{color:#914321}nav{margin-bottom:28px;color:#777}footer{margin-top:44px;color:#777;font-size:12px}@media print{body{margin:0;padding:0;font-size:10pt}nav{display:none}h1,h2,h3,h4{break-after:avoid}tr{break-inside:avoid}thead{display:table-header-group}@page{size:A4;margin:18mm}}</style><nav><a href="index.html">文档目录</a></nav><main><h1>松鼠备份三人分工与协作方案</h1>
+<p>本方案按当前初版的实际模块安排三名成员接手、复核和完善项目。成员 A、B、C 是角色代号，提交前替换成姓名、学号；表中为建议承担的职责，不代表三人已经分别完成了现有代码。总体按每人 30 个相对工作量点、共 90 点分配，约各占三分之一。工作量点用于比较任务复杂度和验收责任，不等同于工时或成绩比例。</p>
+<h2>1 分工总览</h2>
+<table>
+<thead>
+<tr>
+<th>成员</th>
+<th>主责方向</th>
+<th>主要模块</th>
+<th>工作量</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A 文件与安全恢复</td>
+<td>扫描筛选、特殊文件与元数据、业务编排和 CLI</td>
+<td>scanner.cpp、service.cpp、cli.cpp，协作维护恢复文件操作</td>
+<td>30 点</td>
+</tr>
+<tr>
+<td>B 文件格式与算法</td>
+<td>打包解包格式、Huffman、加密与完整性验证</td>
+<td>archive.cpp 的格式编解码、huffman.cpp、crypto.cpp</td>
+<td>30 点</td>
+</tr>
+<tr>
+<td>C 界面与自动任务</td>
+<td>Cocoa GUI、定时与实时备份、保留策略、集成发布</td>
+<td>gui.mm、scheduler.cpp、Makefile、发布脚本</td>
+<td>30 点</td>
+</tr>
+</tbody>
+</table>
+<p>平衡原则是每个人都承担代码、测试、文档、建模和演示，不能让某一人只写报告或做 PPT。C 的界面代码行数较多，但大量是控件装配；A 的文件系统权限和 B 的协议、密码边界更复杂，因此不按代码行数简单均分。组长可由 A 担任协调人，协调职责包含在 A 的工作量内，不能额外把所有公共任务都压给组长。</p>
+<h2>2 成员 A 文件与安全恢复</h2>
+<table>
+<thead>
+<tr>
+<th>任务</th>
+<th>点数</th>
+<th>交付与完成标准</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>目录扫描与六类筛选</td>
+<td>5</td>
+<td>说明排除剪枝、AND 条件和目录保留；验证中文、空目录、各筛选边界</td>
+</tr>
+<tr>
+<td>特殊文件、元数据与安全恢复</td>
+<td>6</td>
+<td>核对软硬链接、FIFO、权限和时间；解释恢复不覆盖与路径安全；与 B 协作检查 ArchiveReader</td>
+</tr>
+<tr>
+<td>业务编排与 CLI</td>
+<td>3</td>
+<td>解释 BackupService 的暂存和发布流程；验证参数、密码环境变量及错误退出码</td>
+</tr>
+<tr>
+<td>对应测试</td>
+<td>5</td>
+<td>负责往返、元数据、筛选、路径和不覆盖测试；给出真实输出</td>
+</tr>
+<tr>
+<td>需求文档和用例建模</td>
+<td>5</td>
+<td>维护需求编号与用例描述，按指导手工绘制用例图；填入需求报告和自己的模块设计</td>
+</tr>
+<tr>
+<td>交叉复核、协调及演示</td>
+<td>6</td>
+<td>复核 B 的解包异常路径，检查文档追踪；承担基础备份还原及异常保护的讲解</td>
+</tr>
+<tr>
+<td>合计</td>
+<td>30</td>
+<td>具备独立解释和复现自己模块的能力</td>
+</tr>
+</tbody>
+</table>
+<p>A 不是只负责编写需求。需要能定位 FileScanner、Filter、BackupService 和 CLI 的关键代码，理解硬链接去重如何与筛选共同工作，并实际操作备份、恢复和错误输入。</p>
+<h2>3 成员 B 文件格式与算法</h2>
+<table>
+<thead>
+<tr>
+<th>任务</th>
+<th>点数</th>
+<th>交付与完成标准</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>自定义归档协议与编解码</td>
+<td>5</td>
+<td>说明 SQBK/SQTREE 的头、条目、块、尾标志；验证版本、长度和父节点限制</td>
+</tr>
+<tr>
+<td>Huffman 算法</td>
+<td>5</td>
+<td>解释频数表、确定性建树、单符号、补齐和原始块回退；验证随机与边界输入</td>
+</tr>
+<tr>
+<td>加密、摘要和认证封装</td>
+<td>4</td>
+<td>解释盐、IV、PBKDF2、AES-CBC、HMAC 的作用和认证顺序，明确系统库依赖</td>
+</tr>
+<tr>
+<td>对应测试</td>
+<td>5</td>
+<td>维护算法白盒、畸形归档与种子变异测试；复核密码错误和篡改检查</td>
+</tr>
+<tr>
+<td>系统设计文档和类图</td>
+<td>5</td>
+<td>维护数据格式和算法设计，按实际头文件手工绘制核心类图；补充自己的测试说明</td>
+</tr>
+<tr>
+<td>交叉复核及演示</td>
+<td>6</td>
+<td>复核 C 的自动任务对完整快照的调用和保留边界；承担压缩、加密、格式及算法答辩</td>
+</tr>
+<tr>
+<td>合计</td>
+<td>30</td>
+<td>不只会调用 API，需要能解释数据结构与边界检查</td>
+</tr>
+</tbody>
+</table>
+<p>archive.cpp 同时包含协议解析和恢复文件操作，由 B 作为主维护人。A 提交涉及恢复的修改时，由 B 合并并由 A 复核，避免两人同时大幅改写同一个文件。后续若改动频繁，可再拆为 writer、reader 和二进制字段工具文件；当前无需为分工而做高风险重构。</p>
+<h2>4 成员 C 界面与自动任务</h2>
+<table>
+<thead>
+<tr>
+<th>任务</th>
+<th>点数</th>
+<th>交付与完成标准</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>原生 GUI 和交互验收</td>
+<td>6</td>
+<td>核对三个页面、密码框、忙碌状态、日志及文件选择器；完成真实点击检查</td>
+</tr>
+<tr>
+<td>定时、实时和保留策略</td>
+<td>5</td>
+<td>解释周期、稳定变化检测、失败重试、停止边界和保留隔离；复现淘汰失败回归</td>
+</tr>
+<tr>
+<td>构建、集成与发布</td>
+<td>3</td>
+<td>make、离线依赖、签名、UTF-8 ZIP 和校验清单可复现，不依赖个人绝对路径运行程序</td>
+</tr>
+<tr>
+<td>对应测试</td>
+<td>5</td>
+<td>负责 GUI 内部测试、任务集成、持续运行、发布程序重建和验收记录</td>
+</tr>
+<tr>
+<td>测试报告和动态建模</td>
+<td>5</td>
+<td>汇总三人的测试证据，维护测试报告；手工绘制顺序图、构件图与任务状态图</td>
+</tr>
+<tr>
+<td>交叉复核与演示组织</td>
+<td>6</td>
+<td>复核 A 的 CLI 错误和恢复路径；合并 PPT 初稿并组织演示数据、录屏与发布检查</td>
+</tr>
+<tr>
+<td>合计</td>
+<td>30</td>
+<td>汇总不等于代做其他人的测试与文档</td>
+</tr>
+</tbody>
+</table>
+<p>PPT 的排版和汇总由 C 牵头，但 A、B 各提供自己模块的一页内容、测试证据和讲稿，并一起排练。录屏由 C 操作，A、B 检查展示内容与事实；每个人自行完成个人学习证书，不能转给某一人统一代办。</p>
+<h2>5 工作量核对与轮换</h2>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>A</th>
+<th>B</th>
+<th>C</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>代码和接口实现</td>
+<td>14</td>
+<td>14</td>
+<td>14</td>
+</tr>
+<tr>
+<td>模块与异常测试</td>
+<td>5</td>
+<td>5</td>
+<td>5</td>
+</tr>
+<tr>
+<td>文档和建模</td>
+<td>5</td>
+<td>5</td>
+<td>5</td>
+</tr>
+<tr>
+<td>交叉复核、集成与演示</td>
+<td>6</td>
+<td>6</td>
+<td>6</td>
+</tr>
+<tr>
+<td>总计</td>
+<td>30</td>
+<td>30</td>
+<td>30</td>
+</tr>
+</tbody>
+</table>
+<p>每完成一轮验证，比较剩余任务，而不是只比较最初计划。若某人遇到权限或平台阻碍超过半天，另一人可接手可独立推进的测试或文档；转交时同时调整任务点，避免名义均分、实际集中。现有代码中发现的新缺陷由主维护人修复，另一人复核，第三人运行集成测试。</p>
+<h2>6 公共接口与协作边界</h2>
+<p>公开接口以 include/squirrel/backup.h 为准。Filter、Entry、Summary 和选项结构的修改必须告知另外两人；归档格式版本变更由 B 提议，A 评估恢复兼容性，C 检查 GUI/CLI 和发布包。密码不得写入共享聊天、截图或代码配置。</p>
+<p>建议使用 main 加 feat/files、feat/archive、feat/ui-schedule 三条功能分支。合入 main 前执行相应模块测试，涉及公共头或格式时执行完整 make test。A 复核 B，B 复核 C，C 复核 A，涉及数据安全时增加另一人的复核。当前仓库只有本地历史；在线仓库由本人账号创建并配置，不把建议工作流当成已经发生的远程协作记录。</p>
+<p>现有 tests/core_test.cpp 由 B 统一维护合并；后续新增测试可按模块分到独立文件，再更新 Makefile，以减少冲突。GUI 和 Scheduler 的日志回调、停止标志及错误语义由 C 维护，A/B 不直接在工作线程操作 AppKit 控件。</p>
+<h2>7 共同里程碑与验收</h2>
+<table>
+<thead>
+<tr>
+<th>阶段</th>
+<th>A</th>
+<th>B</th>
+<th>C</th>
+<th>共同验收</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>M1 接手与复现</td>
+<td>运行基础与筛选用例</td>
+<td>跑算法及畸形归档</td>
+<td>构建应用并跑任务</td>
+<td>三人都能独立构建和解释目录结构</td>
+</tr>
+<tr>
+<td>M2 模块完善</td>
+<td>文件与恢复问题修复</td>
+<td>协议和算法问题修复</td>
+<td>GUI 实际点击和任务修复</td>
+<td>各模块测试通过，无不必要覆盖</td>
+</tr>
+<tr>
+<td>M3 文档与建模</td>
+<td>需求、用例与个人设计</td>
+<td>格式、算法与类图</td>
+<td>测试汇总、顺序与构件图</td>
+<td>代码、文档、手工 UML 名字一致</td>
+</tr>
+<tr>
+<td>M4 发布与答辩</td>
+<td>基础还原与保护演示</td>
+<td>压缩和加密演示</td>
+<td>自动任务、测试与发布演示</td>
+<td>新目录离线重建、完整演示、报告信息齐全</td>
+</tr>
+</tbody>
+</table>
+<p>这些是后续计划里程碑，不是伪造的已完成日期。建议把任务录入实际使用的看板，完成后再填写日期、提交号、测试日志与复核人。</p>
+<h2>8 答辩与现场演示分配</h2>
+<p>三分钟介绍可安排：A 约 60 秒讲平台、目标和基础备份恢复；B 约 60 秒讲格式、压缩、加密及库依赖；C 约 60 秒讲 GUI、自动任务、测试和版本管理。若教师要求一人主讲，可由一人汇总，但另外两人必须准备各自模块的问题。</p>
+<p>七分钟现场演示建议 A 负责前两分钟基础备份还原和不覆盖检查，B 负责两分钟压缩、加密和内容验证，C 负责后三分钟自动任务、保留策略与测试证据。三人都应能替补基础流程，避免某一个人缺席就无法演示。</p>
+<p>最终提交前共同确认：真实姓名学号、分工与实际贡献一致；手工 UML、PPT 和程序版本一致；录屏不含个人密码；未实现的网盘、增量、后台服务和完整元数据不宣称完成。</p></main><footer>松鼠备份 0.1.0 · 请以源码和测试结果为准</footer></html>

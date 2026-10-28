@@ -14,6 +14,9 @@ cp -R include src tests scripts resources .vscode "$RELEASE/source/"
 cp Makefile .gitignore .clang-format README.md LICENSE THIRD_PARTY.md CHANGELOG.md "$RELEASE/source/"
 cp -R docs/. "$RELEASE/documents/"
 cp -R docs "$RELEASE/source/"
+cp -R presentations "$RELEASE/source/"
+mkdir -p "$RELEASE/presentations"
+cp -R presentations/. "$RELEASE/presentations/"
 cp -R test-results/. "$RELEASE/test-results/"
 mkdir -p "$RELEASE/source/vendor/googletest"
 if [ -d vendor/googletest ]; then
@@ -32,8 +35,10 @@ cat > "$RELEASE/打开说明.txt" <<'NOTE'
 本机 macOS Apple Silicon 可直接双击 SquirrelBackup.app。
 CLI：在终端执行 ./squirrel --help。
 文档：documents 目录包含 PDF、HTML 与可编辑 Markdown。
+分工：documents/pdf/07_三人分工与协作方案.pdf，每人 30 个计划工作量点。
+演示：presentations 目录包含可编辑 PPTX、PDF 和逐页讲稿。
 源码：source 目录；执行 make all，make test 可离线构建与测试。
-演示：在 source 执行 bash scripts/demo.sh。
+程序演示：在 source 执行 bash scripts/demo.sh。
 
 软件仅做本地临时签名，未公证；未验收其他电脑上的 Gatekeeper 行为。
 恢复目标必须是尚不存在的新路径。首次使用请先备份演示数据。

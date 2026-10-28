@@ -58,6 +58,8 @@ cases=[
 ('TC-15','停止任务','CLI-16 graceful stop','运行周期 300 秒任务','首个快照后发送 SIGINT','进程正常退出，快照保留'),
 ('TC-16','路径穿越防护','SEC-01 至 SEC-07','构造摘要正确但路径恶意的归档','restore 到新目录','拒绝父路径、绝对路径、软链接父节点或外部硬链接，无外部文件发布'),
 ('TC-17','并发发布','SEC-18 concurrent publication','两个进程向同一路径备份','并发启动后 verify 唯一输出','一个成功、一个失败，最终备份可验证'),
+('TC-18','淘汰失败不重复备份','BackupTest.RetentionFailureDoesNotRepeatSnapshot','keep=1，max_runs=2，在第二份快照完成时将第一份路径替换成非空目录','模拟旧快照无法删除的错误','记录警告并在两份成功快照后退出，不额外生成第三份'),
+('TC-19','任务参数前置校验','CLI-20 / CLI-21','短密码、反向尺寸范围和无效类型','启动 schedule 或 watch','立即失败，未创建任务目录，不进入无限重试'),
 ]
 for ident,title,evidence,condition,steps,expected in cases:
     text+=f'#### {ident} {title}\n\n模块与证据：{evidence}。\n\n预置与输入：{condition}。\n\n操作步骤：{steps}。\n\n预期结果：{expected}。\n\n实际结果：对应自动测试通过，符合该项断言；完整输出见 test-results。\n\n'
@@ -104,5 +106,9 @@ for filename,heading in [('fuzz.json','7 种子变异与随机输入测试'),('s
             text+=f"固定种子 {data['seed']}，运行 {data['seconds']:.1f} 秒，执行 {data['iterations']} 次输入处理，Sanitizer 下未发现失败。该驱动混合有效 Huffman 编码、位变异和随机字节，且包含编码往返断言。系统 SDK 缺少 libFuzzer 运行库，因此采用项目自有的有界驱动；不是覆盖率引导模糊测试，不代表穷尽输入空间。\n"
         else:
             text+=f"运行 {data['duration_seconds']:.1f} 秒，原子替换源文件 {data['edits']} 次，完成 {data['completed_snapshots']} 份快照。停止后保留 {data['retained']} 份，全部通过 verify，恢复固定文件 SHA256 一致。该结果是有界持续运行检查，不是整夜或长期可靠性证明。\n"
+review_path=root/'test-results/review-stability.json'
+if review_path.exists():
+    data=json.loads(review_path.read_text())
+    text+=f"\n## 9 本轮复核与修正\n\n本轮新增淘汰失败与启动参数回归检查。成功快照先提交计时和监测状态，再尽力执行淘汰；淘汰失败不会重复生成备份，也不会绕过 max_runs。短密码、非法范围或类型在创建任务前拒绝。更新后的程序另连续运行 {data['duration_seconds']:.1f} 秒，生成 {data['completed_snapshots']} 份快照，保留 {data['retained']} 份且全部验证通过。第 8 节十分钟记录来自初版正常路径，作为历史测试保留，不等同于本轮重新运行十分钟。\n"
 (root/'docs/03_软件测试报告.md').write_text(text)
 (root/'test-results/summary.json').write_text(json.dumps(dict(generated_at=now,unit=len(unit),integration=len(integration),security=len(security),total=len(alltests),passed=sum(x['passed'] for x in alltests)),ensure_ascii=False,indent=2))

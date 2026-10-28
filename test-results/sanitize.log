@@ -1,12 +1,12 @@
 /Library/Developer/CommandLineTools/usr/bin/make BUILD=build/sanitize CXXFLAGS='-std=c++17 -O1 -g -Wall -Wextra -Werror -Wno-deprecated-declarations -fsanitize=address,undefined -fno-omit-frame-pointer' test
-clang++ -Iinclude -Isrc -std=c++17 -O1 -g -Wall -Wextra -Werror -Wno-deprecated-declarations -fsanitize=address,undefined -fno-omit-frame-pointer -MMD -MP -c src/scanner.cpp -o build/sanitize/scanner.o
+clang++ -Iinclude -Isrc -std=c++17 -O1 -g -Wall -Wextra -Werror -Wno-deprecated-declarations -fsanitize=address,undefined -fno-omit-frame-pointer -MMD -MP -c src/scheduler.cpp -o build/sanitize/scheduler.o
 ar rcs build/sanitize/libsquirrel.a build/sanitize/huffman.o build/sanitize/scanner.o build/sanitize/crypto.o build/sanitize/archive.o build/sanitize/service.o build/sanitize/scheduler.o
 clang++ -Iinclude -Isrc -std=c++17 -O1 -g -Wall -Wextra -Werror -Wno-deprecated-declarations -fsanitize=address,undefined -fno-omit-frame-pointer -isystem .tools/src/googletest/googletest/include tests/core_test.cpp build/sanitize/libsquirrel.a build/sanitize/gtest-all.o .tools/src/googletest/googletest/src/gtest_main.cc -framework Security -o build/sanitize/tests
 clang++ -std=c++17 -O1 -g -Wall -Wextra -Werror -Wno-deprecated-declarations -fsanitize=address,undefined -fno-omit-frame-pointer build/sanitize/cli.o build/sanitize/libsquirrel.a -framework Security -o build/sanitize/squirrel
 mkdir -p test-results
 build/sanitize/tests --gtest_output=xml:test-results/unit.xml
 Running main() from .tools/src/googletest/googletest/src/gtest_main.cc
-[==========] Running 32 tests from 2 test suites.
+[==========] Running 33 tests from 2 test suites.
 [----------] Global test environment set-up.
 [----------] 9 tests from Huffman
 [ RUN      ] Huffman.Empty
@@ -16,7 +16,7 @@ Running main() from .tools/src/googletest/googletest/src/gtest_main.cc
 [ RUN      ] Huffman.AllSymbols
 [       OK ] Huffman.AllSymbols (0 ms)
 [ RUN      ] Huffman.RandomRoundtrip
-[       OK ] Huffman.RandomRoundtrip (97 ms)
+[       OK ] Huffman.RandomRoundtrip (99 ms)
 [ RUN      ] Huffman.Compression
 [       OK ] Huffman.Compression (0 ms)
 [ RUN      ] Huffman.RejectTruncation
@@ -27,25 +27,25 @@ Running main() from .tools/src/googletest/googletest/src/gtest_main.cc
 [       OK ] Huffman.RejectOversize (1 ms)
 [ RUN      ] Huffman.RejectTrailing
 [       OK ] Huffman.RejectTrailing (0 ms)
-[----------] 9 tests from Huffman (100 ms total)
+[----------] 9 tests from Huffman (102 ms total)
 
-[----------] 23 tests from BackupTest
+[----------] 24 tests from BackupTest
 [ RUN      ] BackupTest.Roundtrip
-[       OK ] BackupTest.Roundtrip (72 ms)
+[       OK ] BackupTest.Roundtrip (75 ms)
 [ RUN      ] BackupTest.RawRoundtrip
-[       OK ] BackupTest.RawRoundtrip (74 ms)
+[       OK ] BackupTest.RawRoundtrip (78 ms)
 [ RUN      ] BackupTest.EncryptedRoundtrip
-[       OK ] BackupTest.EncryptedRoundtrip (159 ms)
+[       OK ] BackupTest.EncryptedRoundtrip (164 ms)
 [ RUN      ] BackupTest.WrongPasswordLeavesNoOutput
-[       OK ] BackupTest.WrongPasswordLeavesNoOutput (155 ms)
+[       OK ] BackupTest.WrongPasswordLeavesNoOutput (161 ms)
 [ RUN      ] BackupTest.RejectShortPassword
-[       OK ] BackupTest.RejectShortPassword (2 ms)
+[       OK ] BackupTest.RejectShortPassword (3 ms)
 [ RUN      ] BackupTest.TamperDetection
 [       OK ] BackupTest.TamperDetection (15 ms)
 [ RUN      ] BackupTest.RejectTruncated
 [       OK ] BackupTest.RejectTruncated (12 ms)
 [ RUN      ] BackupTest.NoOverwriteBackup
-[       OK ] BackupTest.NoOverwriteBackup (12 ms)
+[       OK ] BackupTest.NoOverwriteBackup (13 ms)
 [ RUN      ] BackupTest.NoOverwriteRestore
 [       OK ] BackupTest.NoOverwriteRestore (12 ms)
 [ RUN      ] BackupTest.RejectOutputInSource
@@ -53,34 +53,36 @@ Running main() from .tools/src/googletest/googletest/src/gtest_main.cc
 [ RUN      ] BackupTest.MissingSource
 [       OK ] BackupTest.MissingSource (2 ms)
 [ RUN      ] BackupTest.SymlinkHardlinkFifo
-[       OK ] BackupTest.SymlinkHardlinkFifo (20 ms)
+[       OK ] BackupTest.SymlinkHardlinkFifo (21 ms)
 [ RUN      ] BackupTest.Metadata
 [       OK ] BackupTest.Metadata (20 ms)
 [ RUN      ] BackupTest.ExcludePrunesDirectory
-[       OK ] BackupTest.ExcludePrunesDirectory (9 ms)
+[       OK ] BackupTest.ExcludePrunesDirectory (10 ms)
 [ RUN      ] BackupTest.NameFilter
-[       OK ] BackupTest.NameFilter (5 ms)
+[       OK ] BackupTest.NameFilter (6 ms)
 [ RUN      ] BackupTest.PathFilter
-[       OK ] BackupTest.PathFilter (12 ms)
+[       OK ] BackupTest.PathFilter (13 ms)
 [ RUN      ] BackupTest.SizeFilter
-[       OK ] BackupTest.SizeFilter (5 ms)
+[       OK ] BackupTest.SizeFilter (6 ms)
 [ RUN      ] BackupTest.TimeFilter
-[       OK ] BackupTest.TimeFilter (9 ms)
+[       OK ] BackupTest.TimeFilter (6 ms)
 [ RUN      ] BackupTest.OwnerFilter
-[       OK ] BackupTest.OwnerFilter (12 ms)
+[       OK ] BackupTest.OwnerFilter (13 ms)
 [ RUN      ] BackupTest.TypeFilter
 [       OK ] BackupTest.TypeFilter (9 ms)
 [ RUN      ] BackupTest.InvalidFilter
 [       OK ] BackupTest.InvalidFilter (2 ms)
 [ RUN      ] BackupTest.EmptyTree
-[       OK ] BackupTest.EmptyTree (8 ms)
+[       OK ] BackupTest.EmptyTree (9 ms)
 [ RUN      ] BackupTest.UncompressedEncrypted
-[       OK ] BackupTest.UncompressedEncrypted (225 ms)
-[----------] 23 tests from BackupTest (864 ms total)
+[       OK ] BackupTest.UncompressedEncrypted (235 ms)
+[ RUN      ] BackupTest.RetentionFailureDoesNotRepeatSnapshot
+[       OK ] BackupTest.RetentionFailureDoesNotRepeatSnapshot (1124 ms)
+[----------] 24 tests from BackupTest (2023 ms total)
 
 [----------] Global test environment tear-down
-[==========] 32 tests from 2 test suites ran. (965 ms total)
-[  PASSED  ] 32 tests.
+[==========] 33 tests from 2 test suites ran. (2126 ms total)
+[  PASSED  ] 33 tests.
 python3 tests/integration.py build/sanitize/squirrel
 PASS CLI-01 help
 PASS CLI-02 backup
@@ -101,7 +103,9 @@ PASS CLI-16 graceful stop
 PASS CLI-17 invalid type filter
 PASS CLI-18 missing password env
 PASS CLI-19 do not overwrite dangling symlink
-19/19 integration tests passed
+PASS CLI-20 schedule rejects short password before starting
+PASS CLI-21 schedule rejects invalid filters before starting
+21/21 integration tests passed
 python3 tests/adversarial.py build/sanitize/squirrel
 PASS SEC-01 parent traversal
 PASS SEC-02 absolute path
