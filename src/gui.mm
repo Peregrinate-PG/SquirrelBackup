@@ -1,10 +1,14 @@
 // Copyright 2026 Squirrel Backup course project.
 #import <Cocoa/Cocoa.h>
 #include <chrono>
+#include <fstream>
 #include <sstream>
 #include "squirrel/backup.h"
 using namespace squirrel;
 namespace {
+std::string previewDirectory;
+std::string selfTestDirectory;
+int previewPage = 0;
 NSColor* accent() { return [NSColor colorWithSRGBRed:0.84 green:0.36 blue:0.16 alpha:1]; }
 NSString* ns(const std::string& s) {
   NSString* value = [[NSString alloc] initWithBytes:s.data()
@@ -53,6 +57,22 @@ std::string stats(const Summary& s) {
   return out.str();
 }
 }  // namespace
+@interface SquirrelBackgroundView : NSView
+@property(nonatomic, strong) NSColor* fillColor;
+@end
+@implementation SquirrelBackgroundView
+- (void)drawRect:(NSRect)dirtyRect {
+  [NSGraphicsContext saveGraphicsState];
+  NSRectClip(self.bounds);
+  [self.fillColor setFill];
+  NSRectFill(NSIntersectionRect(dirtyRect, self.bounds));
+  [NSGraphicsContext restoreGraphicsState];
+}
+- (BOOL)isOpaque {
+  return YES;
+}
+@end
+
 @interface SquirrelController : NSObject <NSApplicationDelegate, NSWindowDelegate> {
   NSWindow* _window;
   NSView* _pages[3];
@@ -67,6 +87,10 @@ std::string stats(const Summary& s) {
   NSMutableArray<NSButton*>* _actions;
   BOOL _busy;
   std::atomic<bool> _stop;
+  int _testPhase;
+  int _testAssertions;
+  fs::path _testRoot;
+  NSDate* _testStarted;
 }
 @end
 @implementation SquirrelController
@@ -83,11 +107,14 @@ std::string stats(const Summary& s) {
   _window.title = @"松鼠备份  ·  Squirrel Backup";
   _window.delegate = self;
   _window.backgroundColor = [NSColor colorWithSRGBRed:0.97 green:0.965 blue:0.95 alpha:1];
-  NSView* root = _window.contentView;
-  NSView* sidebar = [[NSView alloc] initWithFrame:NSMakeRect(0, 0, 200, 790)];
-  sidebar.wantsLayer = YES;
-  sidebar.layer.backgroundColor =
-      [NSColor colorWithSRGBRed:0.14 green:0.18 blue:0.20 alpha:1].CGColor;
+  _window.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+  SquirrelBackgroundView* root =
+      [[SquirrelBackgroundView alloc] initWithFrame:NSMakeRect(0, 0, 1080, 790)];
+  root.fillColor = _window.backgroundColor;
+  _window.contentView = root;
+  SquirrelBackgroundView* sidebar =
+      [[SquirrelBackgroundView alloc] initWithFrame:NSMakeRect(0, 0, 200, 790)];
+  sidebar.fillColor = [NSColor colorWithSRGBRed:0.14 green:0.18 blue:0.20 alpha:1];
   [root addSubview:sidebar];
   NSTextField* brand = label(sidebar, @"松鼠备份", NSMakeRect(25, 710, 155, 36), 26, YES);
   brand.textColor = NSColor.whiteColor;
@@ -129,11 +156,150 @@ std::string stats(const Summary& s) {
   scroll.documentView = _logView;
   [root addSubview:scroll];
   [self showPage:0];
+  if (!previewDirectory.empty()) {
+    fs::create_directories(previewDirectory);
+    for (int page = previewPage; page <= previewPage; ++page) {
+      [self showPage:page];
+      NSData* data = [root dataWithPDFInsideRect:root.bounds];
+      NSString* output =
+          ns((fs::path(previewDirectory) / ("page-" + std::to_string(page) + ".pdf")).string());
+      if (![data writeToFile:output atomically:YES]) {
+        std::exit(2);
+      }
+    }
+    [NSApp terminate:nil];
+    return;
+  }
+  if (!selfTestDirectory.empty()) {
+    _testRoot = fs::absolute(selfTestDirectory);
+    fs::create_directories(_testRoot / "source");
+    fs::create_directories(_testRoot / "repository");
+    std::ofstream(_testRoot / "source" / "中文.txt") << "GUI handler roundtrip";
+    _testPhase = 0;
+    _testAssertions = 0;
+    _testStarted = NSDate.date;
+    [NSTimer scheduledTimerWithTimeInterval:0.1
+                                     target:self
+                                   selector:@selector(selfTestTick:)
+                                   userInfo:nil
+                                    repeats:YES];
+    return;
+  }
   [_window center];
   [_window makeKeyAndOrderFront:nil];
   [NSApp activateIgnoringOtherApps:YES];
   [self appendLog:@"欢迎使用松鼠备份。恢复时请输入一个尚不存在的新文件夹路径，原文件不会被覆盖。"];
 }
+- (void)testCheck:(BOOL)condition message:(const char*)message {
+  if (!condition) {
+    throw Error(message);
+  }
+  ++_testAssertions;
+}
+- (void)selfTestTick:(NSTimer*)timer {
+  try {
+    if ([NSDate.date timeIntervalSinceDate:_testStarted] > 30) {
+      throw Error("GUI internal test timed out");
+    }
+    if (_busy && _testPhase != 6) {
+      return;
+    }
+    switch (_testPhase) {
+      case 0:
+        [self backup:nil];
+        [self testCheck:!_busy message:"Empty GUI inputs should not start a task"];
+        _source.stringValue = ns((_testRoot / "source").string());
+        _archive.stringValue = ns((_testRoot / "backup.sqbk").string());
+        _encrypt.state = NSControlStateValueOn;
+        [self encryptionChanged:nil];
+        [self testCheck:_password.enabled message:"Encryption switch should enable password field"];
+        _password.stringValue = @"gui-test-password";
+        [self backup:nil];
+        [self testCheck:_busy message:"Backup should set busy state"];
+        [self testCheck:!_actions.firstObject.enabled
+                message:"Busy state should disable backup action"];
+        _testPhase = 1;
+        break;
+      case 1:
+        [self testCheck:fs::exists(_testRoot / "backup.sqbk")
+                message:"GUI backup did not publish a file"];
+        _readArchive.stringValue = _archive.stringValue;
+        _destination.stringValue = ns((_testRoot / "restored").string());
+        _readPassword.stringValue = @"wrong-password";
+        [self restore:nil];
+        _testPhase = 2;
+        break;
+      case 2:
+        [self testCheck:!fs::exists(_testRoot / "restored")
+                message:"Wrong password published output"];
+        [self testCheck:[_status.stringValue containsString:@"未完成"]
+                message:"Error was not reported in status"];
+        _readPassword.stringValue = @"gui-test-password";
+        [self restore:nil];
+        _testPhase = 3;
+        break;
+      case 3: {
+        std::ifstream in(_testRoot / "restored" / "中文.txt");
+        std::string content{std::istreambuf_iterator<char>(in), {}};
+        [self testCheck:content == "GUI handler roundtrip" message:"GUI restore content mismatch"];
+        [self list:nil];
+        _testPhase = 4;
+        break;
+      }
+      case 4:
+        [self testCheck:[_logView.string containsString:@"中文.txt"]
+                message:"GUI listing missing content"];
+        [self verify:nil];
+        _testPhase = 5;
+        break;
+      case 5:
+        [self testCheck:[_status.stringValue isEqualToString:@"已完成"]
+                message:"GUI verify did not succeed"];
+        _jobSource.stringValue = _source.stringValue;
+        _repository.stringValue = ns((_testRoot / "repository").string());
+        _interval.stringValue = @"1";
+        _retention.stringValue = @"2";
+        [self startJob:nil];
+        _testPhase = 6;
+        break;
+      case 6: {
+        int files = 0;
+        bool third = false;
+        for (const auto& entry : fs::recursive_directory_iterator(_testRoot / "repository")) {
+          if (entry.path().extension() == ".sqbk") {
+            ++files;
+          }
+          if (entry.path().filename() == "snapshot-3.sqbk") {
+            third = true;
+          }
+        }
+        if (!third) {
+          return;
+        }
+        // Publication precedes retention by a few instructions; allow the worker to settle.
+        if (files != 2) {
+          return;
+        }
+        [self stopJob:nil];
+        _testPhase = 7;
+        break;
+      }
+      case 7:
+        [self testCheck:_actions.firstObject.enabled message:"Actions not re-enabled after stop"];
+        [self testCheck:[_logView.string containsString:@"自动任务已停止"]
+                message:"Stop completion missing"];
+        std::ofstream(_testRoot / "gui-selftest.json")
+            << "{\"passed\":true,\"assertions\":" << _testAssertions << "}";
+        [timer invalidate];
+        [NSApp terminate:nil];
+        break;
+    }
+  } catch (const std::exception& e) {
+    std::ofstream(_testRoot / "gui-selftest-error.txt") << e.what();
+    std::exit(1);
+  }
+}
+
 - (void)buildBackup {
   NSView* p = _pages[0];
   label(p, @"创建一个新的备份", NSMakeRect(0, 340, 700, 30), 19, YES);
@@ -474,8 +640,18 @@ std::string stats(const Summary& s) {
 }
 @end
 int main(int argc, const char* argv[]) {
-  (void)argc;
-  (void)argv;
+  if (argc >= 3 && std::string(argv[1]) == "--render-preview") {
+    previewDirectory = argv[2];
+    if (argc == 4) {
+      previewPage = std::stoi(argv[3]);
+    }
+    if (previewPage < 0 || previewPage > 2) {
+      return 1;
+    }
+  }
+  if (argc == 3 && std::string(argv[1]) == "--self-test") {
+    selfTestDirectory = argv[2];
+  }
   @autoreleasepool {
     NSApplication* app = [NSApplication sharedApplication];
     [app setActivationPolicy:NSApplicationActivationPolicyRegular];
@@ -485,6 +661,14 @@ int main(int argc, const char* argv[]) {
     NSMenu* menu = [[NSMenu alloc] initWithTitle:@"松鼠备份"];
     [menu addItemWithTitle:@"退出松鼠备份" action:@selector(terminate:) keyEquivalent:@"q"];
     item.submenu = menu;
+    NSMenuItem* editItem = [[NSMenuItem alloc] init];
+    [bar addItem:editItem];
+    NSMenu* edit = [[NSMenu alloc] initWithTitle:@"编辑"];
+    [edit addItemWithTitle:@"剪切" action:@selector(cut:) keyEquivalent:@"x"];
+    [edit addItemWithTitle:@"复制" action:@selector(copy:) keyEquivalent:@"c"];
+    [edit addItemWithTitle:@"粘贴" action:@selector(paste:) keyEquivalent:@"v"];
+    [edit addItemWithTitle:@"全选" action:@selector(selectAll:) keyEquivalent:@"a"];
+    editItem.submenu = edit;
     app.mainMenu = bar;
     SquirrelController* delegate = [[SquirrelController alloc] init];
     app.delegate = delegate;

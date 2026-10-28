@@ -5,8 +5,8 @@ CXXFLAGS := -std=c++17 -O2 -g -Wall -Wextra -Wpedantic -Werror -Wno-deprecated-d
 LDLIBS := -framework Security
 CORE := huffman scanner crypto archive service scheduler
 OBJECTS := $(addprefix $(BUILD)/,$(addsuffix .o,$(CORE)))
-GTEST := .tools/src/googletest/googletest
-.PHONY: all cli app test sanitize lint clean package
+GTEST := $(if $(wildcard vendor/googletest/googletest),vendor/googletest/googletest,.tools/src/googletest/googletest)
+.PHONY: all cli app test sanitize lint clean package fuzz
 all: cli app
 cli: $(BUILD)/squirrel
 $(BUILD):
@@ -34,8 +34,13 @@ test: $(BUILD)/tests $(BUILD)/squirrel
 	python3 tests/adversarial.py $(BUILD)/squirrel
 sanitize:
 	$(MAKE) BUILD=build/sanitize CXXFLAGS='-std=c++17 -O1 -g -Wall -Wextra -Werror -Wno-deprecated-declarations -fsanitize=address,undefined -fno-omit-frame-pointer' test
+$(BUILD)/huffman_fuzz: tests/huffman_fuzz.cpp tests/fuzz_driver.cpp src/huffman.cpp include/squirrel/backup.h | $(BUILD)
+	$(CXX) -std=c++17 -O1 -g -Iinclude -fsanitize=address,undefined tests/huffman_fuzz.cpp tests/fuzz_driver.cpp src/huffman.cpp -o $@
+fuzz: $(BUILD)/huffman_fuzz
+	mkdir -p test-results
+	$(BUILD)/huffman_fuzz test-results/fuzz.json 60 > test-results/fuzz.log 2>&1
 lint:
-	.tools/venv/bin/cpplint --linelength=100 --root=include --filter=-build/c++17,-build/header_guard,-build/namespaces,-build/include_order,-build/include_subdir,-runtime/references include/squirrel/backup.h src/*.cpp src/internal.h tests/core_test.cpp
+	.tools/venv/bin/cpplint --linelength=100 --root=include --filter=-build/c++17,-build/header_guard,-build/namespaces,-build/include_order,-build/include_subdir,-runtime/references include/squirrel/backup.h src/*.cpp src/internal.h tests/*.cpp
 package: all
 	bash scripts/package.sh
 clean:

@@ -1,0 +1,1 @@
+{"version":"0.2.0","configurations":[{"name":"Debug CLI (LLDB via VS Code)","type":"lldb","request":"launch","program":"${workspaceFolder}/build/squirrel","args":["--help"],"cwd":"${workspaceFolder}"}]}

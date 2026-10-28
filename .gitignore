@@ -5,3 +5,7 @@ dist/
 .DS_Store
 *.partial
 __pycache__/
+
+demo-*/
+软件开发综合实验/
+软件开发综合实验.zip

@@ -136,6 +136,7 @@ std::vector<Entry> FileScanner::scan(const fs::path& root, const Filter& filter,
     }
     if (e.type == FileType::Regular) {
       e.size = st.st_size;
+      require(e.size <= (uint64_t{1} << 40), "Source file exceeds the 1 TiB format limit: " + rel);
       auto key = std::make_pair(e.device, e.inode);
       auto it = hardlinks.find(key);
       if (it != hardlinks.end()) {
