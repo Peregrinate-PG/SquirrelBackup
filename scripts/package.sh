@@ -8,6 +8,7 @@ if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
 fi
 APP_VERSION=$(/usr/libexec/PlistBuddy -c 'Print CFBundleShortVersionString' build/SquirrelBackup.app/Contents/Info.plist)
 [ "$VERSION" = "$APP_VERSION" ] || { echo 'CLI and GUI versions differ.' >&2; exit 2; }
+python3 scripts/check_report_artifacts.py .
 RELEASE="dist/SquirrelBackup-${VERSION}-macOS-arm64"
 # The path is constrained to the project's generated dist directory.
 rm -rf "$RELEASE"
@@ -61,14 +62,19 @@ cat > "$RELEASE/打开说明.txt" <<NOTE
 实验室、本人贡献确认、AI使用截图、在线仓库和学习证书需成员完成。
 打包不等于已经提交课程平台，证书每人单独提交。
 NOTE
-python3 - "$RELEASE" <<'PY'
+python3 - "$RELEASE" "$VERSION" <<'PY'
 from pathlib import Path
 import hashlib,json,sys
 root=Path(sys.argv[1]);summary=json.loads((root/'test-results/summary.json').read_text())
-manifest={'version':summary['version'],'built_cli_sha256':summary['binary_sha256'],
+assert sys.argv[2]==summary['version'], 'Test summary version differs from the build'
+report=json.loads((root/'test-results/report-visual-qa.json').read_text())
+manifest={'version':sys.argv[2],
+          'built_cli_sha256':hashlib.sha256(Path('build/squirrel').read_bytes()).hexdigest(),
+          'test_summary_cli_sha256':summary['binary_sha256'],
           'packaged_cli_sha256':hashlib.sha256((root/'squirrel').read_bytes()).hexdigest(),
           'packaged_gui_sha256':hashlib.sha256((root/'SquirrelBackup.app/Contents/MacOS/SquirrelBackup').read_bytes()).hexdigest(),
-          'note':'Packaged binaries have debug symbols stripped and are ad-hoc signed.'}
+          'report_docx_sha256':report['docx_sha256'],'report_pdf_sha256':report['pdf_sha256'],
+          'note':'Packaged binaries have debug symbols stripped and are ad-hoc signed. The test summary identifies its own tested binary; an independent build may have different debug/link metadata.'}
 (root/'release-manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')
 with (root/'SHA256SUMS').open('w') as out:
     for path in sorted(root.rglob('*')):

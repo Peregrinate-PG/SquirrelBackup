@@ -1,0 +1,81 @@
+{
+  "version": "0.2.0",
+  "checked_at": "2026-10-29T12:48:21+08:00",
+  "passed": true,
+  "checks": [
+    {
+      "name": "cli-version",
+      "passed": true,
+      "exit_code": 0
+    },
+    {
+      "name": "cli-signature",
+      "passed": true,
+      "exit_code": 0
+    },
+    {
+      "name": "app-signature",
+      "passed": true,
+      "exit_code": 0
+    },
+    {
+      "name": "cli-signature-details",
+      "passed": true,
+      "exit_code": 0
+    },
+    {
+      "name": "app-signature-details",
+      "passed": true,
+      "exit_code": 0
+    }
+  ],
+  "network_used": false,
+  "fixture_data": "Generated isolated test fixtures only; no user work data.",
+  "bundle_version": "0.2.0",
+  "minimum_macos": "13.0",
+  "rebuilt_cli_sha256": "88399fa2f951e2ba039beedc0260f5f2ee74f37c415aa204941ee5b01d320a9b",
+  "named_tests": {
+    "unit": 52,
+    "integration": 21,
+    "security": 18,
+    "workflow": 6
+  },
+  "named_test_total": 97,
+  "smoke_cases": [
+    {
+      "name": "plain-compressed",
+      "passed": true,
+      "source_sha256": "6bfd2a81e17adfb2a54766a8d42e6074b7f09e647c32b34602958091fe2f3d45",
+      "checks": [
+        "byte hashes",
+        "Chinese/spaces paths",
+        "empty directory",
+        "hardlink inode",
+        "symlink target",
+        "FIFO type",
+        "file mode0640",
+        "directory mode0555",
+        "mtime nanoseconds"
+      ]
+    },
+    {
+      "name": "encrypted-raw",
+      "passed": true,
+      "source_sha256": "6bfd2a81e17adfb2a54766a8d42e6074b7f09e647c32b34602958091fe2f3d45",
+      "checks": [
+        "byte hashes",
+        "Chinese/spaces paths",
+        "empty directory",
+        "hardlink inode",
+        "symlink target",
+        "FIFO type",
+        "file mode0640",
+        "directory mode0555",
+        "mtime nanoseconds"
+      ]
+    }
+  ],
+  "source_code_changed_in_main_since_snapshot": [],
+  "long_test_binary_untouched_sha256": "4aa1b588e1844975117bbbbfe4c261d81e095cb863d1d5eb72ce972baf5d447d",
+  "finished_at": "2026-10-29T12:48:21+08:00"
+}

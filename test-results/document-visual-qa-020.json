@@ -1,0 +1,258 @@
+{
+  "checked_at": "2026-10-29T05:09:56.704Z",
+  "status": "passed",
+  "scope": "Read-only visual review of build_docs PDFs, UML diagrams and generated HTML; only document 10 regenerated using existing prefix selector.",
+  "pdf_review": {
+    "initial_review": {
+      "document_count": 10,
+      "total_pages": 53,
+      "all_page_pngs_individually_viewed": true,
+      "page_counts_before_doc10_update": {
+        "10": 1,
+        "01": 6,
+        "02": 9,
+        "03": 4,
+        "04": 2,
+        "05": 21,
+        "06": 2,
+        "07": 4,
+        "08": 2,
+        "09": 2
+      },
+      "note": "Initial document 10 had obsolete certificate status; its superseded one-page version was reviewed but is not the final delivered PDF."
+    },
+    "doc10_followup": {
+      "command": "python scripts/build_docs.py 10_",
+      "new_pages": 2,
+      "pages_individually_viewed": [
+        1,
+        2
+      ],
+      "other_html_pdf_and_index_hashes_unchanged": 19
+    },
+    "current_total_pages": 54,
+    "current_pdf_files": [
+      {
+        "path": "docs/pdf/01_需求分析说明书.pdf",
+        "pages": 6,
+        "sha256": "aa5f640c0291ad37149fbb6a4d6a54c14c7961f172f0aa8c90d136298251aaa0"
+      },
+      {
+        "path": "docs/pdf/02_系统设计文档.pdf",
+        "pages": 9,
+        "sha256": "d0cb37dbd1792d4d471fc003ba8839690124a016b80a7c25118c36faf90bcbb6"
+      },
+      {
+        "path": "docs/pdf/03_软件测试报告.pdf",
+        "pages": 4,
+        "sha256": "70a9ecdaae3c533dc6b645499e7da8bc77c332076bc8e76ac5c498e712e8ae58"
+      },
+      {
+        "path": "docs/pdf/04_StarUML绘图指导.pdf",
+        "pages": 2,
+        "sha256": "7613c46fabb154bc3a307a8c807d581fe6b868db343c3aad8435ca387f5ca193"
+      },
+      {
+        "path": "docs/pdf/05_实验报告.pdf",
+        "pages": 21,
+        "sha256": "0f200778cac38b3092123857f76e18c40c1c1265a7ac9964af444c79b4da244d"
+      },
+      {
+        "path": "docs/pdf/06_演示与答辩指南.pdf",
+        "pages": 2,
+        "sha256": "4a6abb7616565d1b384ac0e279c9940daeab43ba7f816bcad7bec489e4722f80"
+      },
+      {
+        "path": "docs/pdf/07_三人分工与协作方案.pdf",
+        "pages": 4,
+        "sha256": "5e843104e1bb41a6cbb169326329dede13bf6616d04b026099ee6997b9659978"
+      },
+      {
+        "path": "docs/pdf/08_提交前验收清单.pdf",
+        "pages": 2,
+        "sha256": "0ebe6e5dae4d64fdd4466299ccd9b00ab8177d036f6361af45fc58f89204b2f5"
+      },
+      {
+        "path": "docs/pdf/09_复核结论与后续安排.pdf",
+        "pages": 2,
+        "sha256": "9b231ee0111d9b08e5167a5ee29322e60f22833676f2bf87d62f75088724fccf"
+      },
+      {
+        "path": "docs/pdf/10_学习证书办理说明.pdf",
+        "pages": 2,
+        "sha256": "85f4c5039050e897a4b143c339f64872adecb891ba7b696ad01900076709dda4"
+      }
+    ],
+    "visual_findings": {
+      "clipping": false,
+      "overlap": false,
+      "orphan_headings": false,
+      "missing_glyphs": false,
+      "blocking_readability_issue": false
+    },
+    "bounds_warnings": []
+  },
+  "uml_review": {
+    "diagrams_reviewed": [
+      {
+        "path": "docs/uml/png/05_创建备份顺序图.png",
+        "sha256": "28c89f1de522b0e289e48f47ffd3e545344486c6a7ec3a8d8648f2c551bf3cdc",
+        "native_trial_export": false
+      },
+      {
+        "path": "docs/uml/png/06_验证恢复顺序图.png",
+        "sha256": "4a58e2f390343e858b3d076bdbcc8a7abbbffd0e7ff406ca31a25e28d75cc358",
+        "native_trial_export": false
+      },
+      {
+        "path": "docs/uml/png/07_自动任务状态图.png",
+        "sha256": "3e24719e36fe6b3dcba7140b9b55488d7de0dcdf7431715b0aed28c5194decdb",
+        "native_trial_export": false
+      },
+      {
+        "path": "docs/uml/staruml-export/05_创建备份顺序图.png",
+        "sha256": "60a5e3c36f9eabe63185a806586db4448ba1a12f03aa83a9a1b3da41ec369372",
+        "native_trial_export": true
+      },
+      {
+        "path": "docs/uml/staruml-export/06_验证恢复顺序图.png",
+        "sha256": "56758f93727a2060c78dec4e3453f1ce4e9ff32bedf37cd49a1a8e38f5564223",
+        "native_trial_export": true
+      },
+      {
+        "path": "docs/uml/staruml-export/07_自动任务状态图.png",
+        "sha256": "a559a02db4f8ec74c067c734e37b6209ba8dc63651f46a1416070d0a0967d79a",
+        "native_trial_export": true
+      }
+    ],
+    "visible_trial_watermarks_preserved": true,
+    "native_exports_not_modified": true,
+    "independent_pngs_readable": true,
+    "semantic_checks": [
+      {
+        "diagram": "05",
+        "result": "passed",
+        "checked_against": [
+          "src/service.cpp",
+          "src/archive.cpp",
+          "src/crypto.cpp"
+        ],
+        "flow": "Scan before private staging; pack/compress, seal, source rescan, fsync, final cancellation checkpoint, exclusive link publication."
+      },
+      {
+        "diagram": "06",
+        "result": "passed",
+        "checked_against": [
+          "src/service.cpp",
+          "src/archive.cpp",
+          "src/crypto.cpp"
+        ],
+        "flow": "Authenticate complete envelope before decrypting; restore into staging; validate footer then reverse directory metadata; final cancellation checkpoint before RENAME_EXCL publication."
+      },
+      {
+        "diagram": "07",
+        "result": "passed",
+        "checked_against": [
+          "src/scheduler.cpp"
+        ],
+        "flow": "Successful snapshot committed before retention and max_runs check; errors retry after wait; cancellation retains completed snapshots."
+      }
+    ]
+  },
+  "html_review": {
+    "image_count": 18,
+    "all_image_targets_exist": true,
+    "all_image_paths_correctly_relative": true,
+    "responsive_image_rule_present_where_needed": true,
+    "files": [
+      {
+        "path": "docs/html/01_需求分析说明书.html",
+        "sha256": "f9d48454fd2a5f86b62d28bc033f4840c216b9b9ae44a5e205a3d786ce624ab3",
+        "images": 2,
+        "all_image_paths_exist": true,
+        "image_paths_relative": true,
+        "has_image_max_width_rule": true
+      },
+      {
+        "path": "docs/html/02_系统设计文档.html",
+        "sha256": "f604b950803bfa71a3c3e3a966140d957ac4ce4e9f7e447a9290628ebd3c1266",
+        "images": 6,
+        "all_image_paths_exist": true,
+        "image_paths_relative": true,
+        "has_image_max_width_rule": true
+      },
+      {
+        "path": "docs/html/03_软件测试报告.html",
+        "sha256": "eb98c11566495c335360e022a69b4a4694ca9a0ed8c89ac01d07fc47e8772089",
+        "images": 1,
+        "all_image_paths_exist": true,
+        "image_paths_relative": true,
+        "has_image_max_width_rule": true
+      },
+      {
+        "path": "docs/html/04_StarUML绘图指导.html",
+        "sha256": "8c6429f053326915deb3745737f50d203796268b5eae3da64a2810a7c2349411",
+        "images": 0,
+        "all_image_paths_exist": true,
+        "image_paths_relative": true,
+        "has_image_max_width_rule": true
+      },
+      {
+        "path": "docs/html/05_实验报告.html",
+        "sha256": "362b6006c73daac82d136c7977d10bfaea996ce94713b3d8c788cea988b7809e",
+        "images": 9,
+        "all_image_paths_exist": true,
+        "image_paths_relative": true,
+        "has_image_max_width_rule": true
+      },
+      {
+        "path": "docs/html/06_演示与答辩指南.html",
+        "sha256": "fb41afc8b605bfec31da6c930248e66384f3cecd8425985464a01e4cab0b0154",
+        "images": 0,
+        "all_image_paths_exist": true,
+        "image_paths_relative": true,
+        "has_image_max_width_rule": true
+      },
+      {
+        "path": "docs/html/07_三人分工与协作方案.html",
+        "sha256": "e80d8da5517d6a2415565b4ccd8903bbb3f27ca2db040e1fc5a695b663e483d9",
+        "images": 0,
+        "all_image_paths_exist": true,
+        "image_paths_relative": true,
+        "has_image_max_width_rule": true
+      },
+      {
+        "path": "docs/html/08_提交前验收清单.html",
+        "sha256": "928ed66a1c568671bb932da974aba40c927e56bbc53d6a840f60f98456aba6e0",
+        "images": 0,
+        "all_image_paths_exist": true,
+        "image_paths_relative": true,
+        "has_image_max_width_rule": true
+      },
+      {
+        "path": "docs/html/09_复核结论与后续安排.html",
+        "sha256": "b4fbd0d33013da999988c551ace1a19cc5344bd1f6acb4c45b40f799dfeb2c13",
+        "images": 0,
+        "all_image_paths_exist": true,
+        "image_paths_relative": true,
+        "has_image_max_width_rule": true
+      },
+      {
+        "path": "docs/html/10_学习证书办理说明.html",
+        "sha256": "f29aa463f3ea8e767b1018e5e6d63f9d4f50a6b38acfe6a3dbd93f380f535bb5",
+        "images": 0,
+        "all_image_paths_exist": true,
+        "image_paths_relative": true,
+        "has_image_max_width_rule": true
+      }
+    ],
+    "note": "max-width rule is injected into generated main content even though it is not inside the main css string; inspected actual generated HTML."
+  },
+  "excluded": [
+    "Word and PPT visual QA handled separately by another agent",
+    "future regenerated versions or later test-result refreshes",
+    "system file-picker or manual GUI acceptance",
+    "ongoing soak-test completion"
+  ],
+  "current_state_note": "Document 10 reflects real submitted training work and released ECS while certificate holder-name confirmation/issuance remains pending. No certificate completion inferred."
+}

@@ -49,6 +49,8 @@ def para(text,kind='body'):
  # Reserve breathing room at these section openings. LibreOffice ignores
  # pageBreakBefore/keepNext inside the template's long outer table row.
  if text in ('5 项目规划','3 原生界面验证'):child(pr,'spacing',before=960)
+ if text in ('4 编译检查与动态内存检查','李想 界面与自动任务'):child(pr,'spacing',before=480)
+ if text.startswith('工具生成的内容不能直接代替验证。'):child(pr,'keepLines')
  child(pr,'widowControl',val=1)
  r=E.SubElement(p,q('r'));r.append(rp);t=E.SubElement(r,q('t'));t.set('{http://www.w3.org/XML/1998/namespace}space','preserve');t.text=clean_text(text)
  return p
@@ -162,7 +164,9 @@ if tail is not None and tail.tag==q('p') and not tail.xpath('.//w:t/text()',name
 # Keep the template's explicit line spacing instead of snapping substituted CJK
 # font metrics to multiples of its 15.6 pt document grid during PDF rendering.
 for p in xml.findall('.//w:p',NS):child(child(p,'pPr'),'snapToGrid',val=0)
-child(child(rows[17],'trPr'),'cantSplit')
+# Keep the short final recommendations together, followed by the intact blank
+# grading/signature row, rather than leaving one final sentence on a tail page.
+for index in (13,16,17):child(child(rows[index],'trPr'),'cantSplit')
 assert E.tostring(body.find('w:sectPr',NS))==original_sect
 parts['word/document.xml']=E.tostring(xml,encoding='UTF-8',xml_declaration=True,standalone=True)
 parts['word/_rels/document.xml.rels']=E.tostring(rel,encoding='UTF-8',xml_declaration=True,standalone=True)

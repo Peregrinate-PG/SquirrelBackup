@@ -1,0 +1,33 @@
+{
+  "checked_at": "2026-10-29T05:07:57.581Z",
+  "scope": "Only document 10 rebuilt; existing documents 01-09 and HTML index preserved",
+  "command": "python scripts/build_docs.py 10_",
+  "pdf_pages": 2,
+  "bounds_warnings": 0,
+  "visual_qa": {
+    "pages_reviewed": [
+      1,
+      2
+    ],
+    "clipping": false,
+    "overlap": false,
+    "orphan_heading": false,
+    "missing_chinese_glyphs": false,
+    "outcome": "pass"
+  },
+  "content_qa": {
+    "pages": 2,
+    "source_hashes": {
+      "docs/10_学习证书办理说明.md": "903977c910b44b49ee51cc008360cb499533981255068ff63d0e37412b824469",
+      "docs/html/10_学习证书办理说明.html": "f29aa463f3ea8e767b1018e5e6d63f9d4f50a6b38acfe6a3dbd93f380f535bb5",
+      "docs/pdf/10_学习证书办理说明.pdf": "85f4c5039050e897a4b143c339f64872adecb891ba7b696ad01900076709dda4"
+    },
+    "pending_certificate_text_present": true,
+    "practical_complete_text_present": true
+  },
+  "other_html_pdf_files_unchanged": 19,
+  "preview_files": [
+    ".preflight/doc-qa/10_学习证书办理说明-01.png",
+    ".preflight/doc-qa/10_学习证书办理说明-02.png"
+  ]
+}

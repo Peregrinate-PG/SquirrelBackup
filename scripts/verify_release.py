@@ -5,6 +5,7 @@ import hashlib
 import json
 import os
 import subprocess
+import sys
 import time
 from pathlib import Path
 from zipfile import ZipFile
@@ -55,6 +56,13 @@ try:
     result['version']=(output/'version.log').read_text().strip()
     manifest=json.loads((release/'release-manifest.json').read_text())
     assert result['version']==manifest['version']
+    run('report-artifacts',[sys.executable,source/'scripts/check_report_artifacts.py',source])
+    report=json.loads((output/'report-artifacts.log').read_text())
+    for kind in ('docx','pdf'):
+        digest=report[kind+'_sha256']
+        assert digest==manifest['report_'+kind+'_sha256']
+        assert hashlib.sha256((release/'documents'/('第3组_松鼠备份_实验报告.'+kind)).read_bytes()).hexdigest()==digest
+    result['report_pages']=report['pages']
     run('offline-build-test',['make','-j4','all','test'],cwd=source)
     run('demo-cli',['bash','scripts/demo.sh'],cwd=source)
     fixture=output/'published-smoke';fixture.mkdir();(fixture/'source').mkdir()
