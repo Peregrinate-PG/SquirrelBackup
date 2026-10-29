@@ -114,14 +114,8 @@ def main():
             copy.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy2(original, copy)
             assert digest(copy) == digest(clone / name), name
-        dependency = ROOT / 'vendor/googletest'
-        offline = stage / 'offline-dependencies/googletest'
-        if dependency.exists():
-            shutil.copytree(dependency, offline)
-        else:
-            dependency = ROOT / '.tools/src/googletest'
-            shutil.copytree(dependency / 'googletest', offline / 'googletest')
-            shutil.copy2(dependency / 'LICENSE', offline / 'LICENSE')
+        dependency = 'vendor/googletest/googletest/src/gtest-all.cc'
+        assert dependency in files and (clone / dependency).is_file(), 'Offline test dependency missing'
         plan = {
             'prepared_at': datetime.now(timezone.utc).isoformat(),
             'owner': 'Peregrinate-PG', 'suggested_name': 'SquirrelBackup',
@@ -130,6 +124,7 @@ def main():
             'default_branch': branch, 'head': head, 'refs': refs,
             'bundle_sha256': digest(bundle), 'tracked_files_verified': len(files),
             'local_clone_and_fsck_passed': True,
+            'offline_test_dependency_in_history': True,
             'remote_repository_created': False, 'remote_write_performed': False,
             'personal_certificates_included': False,
             'scope': 'Current local preparation snapshot; regenerate after final document review.',
@@ -144,7 +139,7 @@ def main():
 
 ## 包内材料
 
-source是当前提交的全部跟踪文件；source-history.bundle保存真实Git历史；offline-dependencies附带GoogleTest离线构建依赖。JSON文件记录基线、文件数量和检查范围。个人证书不在包内，课程文档中保留小组姓名和学号，建议先建私有仓库，再按课程要求给老师访问权限。
+source是当前提交的全部跟踪文件；source-history.bundle保存真实Git历史，包括vendor/googletest下的离线测试依赖。JSON文件记录基线、文件数量和检查范围。个人证书不在包内，课程文档中保留小组姓名和学号，建议先建私有仓库，再按课程要求给老师访问权限。
 
 历史作者和提交时间保持原样。不要把Codex提交改成成员姓名，也不要补造过去的协作记录。后续三人分别用自己的账号提交实际修改、测试或复核内容。
 
@@ -154,14 +149,12 @@ source是当前提交的全部跟踪文件；source-history.bundle保存真实Gi
 
 ```sh
 git clone source-history.bundle SquirrelBackup
-mkdir -p SquirrelBackup/vendor
-cp -R offline-dependencies/googletest SquirrelBackup/vendor/googletest
 cd SquirrelBackup
 make -j4 all
 make test
 ```
 
-构建平台为macOS 13及以上的Apple Silicon，需要Command Line Tools。离线依赖由准备包单独附带，复制后显示为本地未跟踪文件属于正常现象；原Git历史没有改写。
+构建平台为macOS 13及以上的Apple Silicon，需要Command Line Tools。测试依赖已纳入历史，克隆后可直接离线构建，无需再复制依赖或下载软件包。
 
 ## 批准发布后的操作
 
