@@ -1,0 +1,20 @@
+{
+  "checked_at": "2026-10-29T08:05:49.400697+00:00",
+  "passed": true,
+  "files": [
+    {
+      "file": "resources/submission-guide/00_阅读说明.pdf",
+      "sha256": "6988314f0610e63ebe44d04711ccdf388e1c2d92e5e91acf8b144d500c464cf4",
+      "pages": 1,
+      "all_pages_visually_reviewed": true,
+      "bounds_warnings": 0
+    },
+    {
+      "file": "resources/submission-guide/使用说明.pdf",
+      "sha256": "d260545800d0e8c39e799e75b9090e841e362a65dabdbda19fb1a05a800d1c15",
+      "pages": 2,
+      "all_pages_visually_reviewed": true,
+      "bounds_warnings": 0
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "version": "0.2.0",
+  "online_group_confirmed": true,
+  "online_group_basis": "User confirmed the group information is already filled in during the 2026-10-29 conversation.",
+  "online_repository_verified": false,
+  "repository_account": "Peregrinate-PG",
+  "repository_status": "User requested local preparation; no repository exists yet.",
+  "report_complete": false,
+  "ai_evidence_included": false,
+  "materials_consistent": false,
+  "final_visual_review_passed": false,
+  "remaining": [
+    "final_report_and_evidence",
+    "online_repository",
+    "final_visual_and_package_review",
+    "defense_computer_acceptance",
+    "other_two_certificates"
+  ]
+}
