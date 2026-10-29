@@ -31,6 +31,9 @@ body_p=copy.deepcopy(cell(6).findall('w:p',NS)[1]);h1_p=copy.deepcopy(cell(10).f
 inner=copy.deepcopy(cell(10).find('w:tbl',NS))
 image_p=copy.deepcopy(xml.xpath('//w:p[w:r/w:drawing]',namespaces=NS)[0])
 rel=E.fromstring(parts['word/_rels/document.xml.rels']);ct=E.fromstring(parts['[Content_Types].xml']);additions={};image_id=5000
+input_names={'scripts/build_template_report.py','resources/实验报告模板.docx',
+             'resources/report-sections.json','docs/01_需求分析说明书.md',
+             'docs/02_系统设计文档.md','docs/03_软件测试报告.md'}
 
 def clean_text(s):
  s=re.sub(r'\[([^]]+)\]\([^)]+\)',r'\1',s)
@@ -50,6 +53,7 @@ def para(text,kind='body'):
  # pageBreakBefore/keepNext inside the template's long outer table row.
  if text in ('5 项目规划','3 原生界面验证'):child(pr,'spacing',before=960)
  if text in ('4 编译检查与动态内存检查','李想 界面与自动任务'):child(pr,'spacing',before=480)
+ if text=='5 性能与兼容性':child(pr,'spacing',before=400)
  if text.startswith('工具生成的内容不能直接代替验证。'):child(pr,'keepLines')
  child(pr,'widowControl',val=1)
  r=E.SubElement(p,q('r'));r.append(rp);t=E.SubElement(r,q('t'));t.set('{http://www.w3.org/XML/1998/namespace}space','preserve');t.text=clean_text(text)
@@ -97,6 +101,7 @@ def table(data):
 def figure(path,caption):
  global image_id
  path=ROOT/'docs'/path;assert path.exists(),path
+ input_names.add(path.relative_to(ROOT).as_posix())
  image_id+=1;rid=f'rIdSquirrel{image_id}';name=f'word/media/squirrel-{image_id}.png';additions[name]=path.read_bytes()
  E.SubElement(rel,'{http://schemas.openxmlformats.org/package/2006/relationships}Relationship',Id=rid,Type=R+'/image',Target='media/'+Path(name).name)
  if not ct.xpath('//*[local-name()="Default"][@Extension="png"]'):
@@ -165,9 +170,9 @@ if tail is not None and tail.tag==q('p') and not tail.xpath('.//w:t/text()',name
 # Keep the template's explicit line spacing instead of snapping substituted CJK
 # font metrics to multiples of its 15.6 pt document grid during PDF rendering.
 for p in xml.findall('.//w:p',NS):child(child(p,'pPr'),'snapToGrid',val=0)
-# Keep the short final recommendations together, followed by the intact blank
-# grading/signature row, rather than leaving one final sentence on a tail page.
-for index in (13,16,17):child(child(rows[index],'trPr'),'cantSplit')
+# Keep the final short sections and the three module reflections together,
+# followed by the intact blank grading/signature row.
+for index in (13,15,16,17):child(child(rows[index],'trPr'),'cantSplit')
 assert E.tostring(body.find('w:sectPr',NS))==original_sect
 parts['word/document.xml']=E.tostring(xml,encoding='UTF-8',xml_declaration=True,standalone=True)
 parts['word/_rels/document.xml.rels']=E.tostring(rel,encoding='UTF-8',xml_declaration=True,standalone=True)
@@ -182,4 +187,8 @@ with ZipFile(args.output) as out:
 qa={'template_sha256':hashlib.sha256(template.read_bytes()).hexdigest(),'preserved_parts':len(unchanged),
     'edited_parts':sorted(allowed),'new_media':len(additions),'sections_unchanged':True}
 args.output.with_suffix('.preservation.json').write_text(json.dumps(qa,ensure_ascii=False,indent=2))
+inputs={'schema':1,'docx_sha256':hashlib.sha256(args.output.read_bytes()).hexdigest(),
+        'input_files':{name:hashlib.sha256((ROOT/name).read_bytes()).hexdigest() for name in sorted(input_names)},
+        'profile_fields':{'laboratory':profile['laboratory']}}
+args.output.with_suffix('.inputs.json').write_text(json.dumps(inputs,ensure_ascii=False,indent=2)+'\n')
 print(args.output);print(json.dumps(qa,ensure_ascii=False))

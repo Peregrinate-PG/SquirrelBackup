@@ -1,9 +1,13 @@
 #!/usr/bin/env python3
 """Assemble the reading copy from the same sections used in the DOCX template."""
+import argparse
 import json
 import re
 from pathlib import Path
 root=Path(__file__).resolve().parents[1]
+parser=argparse.ArgumentParser(description=__doc__)
+parser.add_argument('--check',action='store_true',help='Reject a stale reading copy without changing it')
+args=parser.parse_args()
 docs=root/'docs'
 start="""# 软件开发综合实验小组报告
 
@@ -49,4 +53,10 @@ for row,title in zip(range(13,17),titles):
     parts.append('## '+title+'\n')
     for kind,text in sections[str(row)]:parts.append(('### ' if kind=='h2' else '')+text+'\n')
 parts.append('报告评分、指导教师签字：由教师填写。\n')
-(docs/'05_实验报告.md').write_text('\n'.join(parts))
+expected='\n'.join(parts)
+target=docs/'05_实验报告.md'
+if args.check:
+    if not target.exists() or target.read_text()!=expected:
+        raise SystemExit('Reading report is stale; regenerate from the current sections')
+else:
+    target.write_text(expected)

@@ -1,8 +1,8 @@
 <!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>松鼠备份软件测试报告</title><style>body{max-width:900px;margin:48px auto;padding:0 32px;font:16px/1.85 -apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif;color:#202833}h1{color:#111;font-size:30px;line-height:1.5;margin-bottom:32px}h2{margin-top:36px;font-size:23px}h3{margin-top:24px;font-size:19px}table{border-collapse:collapse;width:100%;font-size:13px;line-height:1.65;margin:18px 0}th,td{border:1px solid #dde1e4;padding:8px 10px;text-align:left;vertical-align:top;overflow-wrap:anywhere}th{background:#edf0f1}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f4f5f6;padding:16px}code{font-size:.9em}a{color:#914321}nav{margin-bottom:28px;color:#777}footer{margin-top:44px;color:#777;font-size:12px}@media print{body{margin:0;padding:0;font-size:10pt}nav{display:none}h1,h2,h3,h4{break-after:avoid}tr{break-inside:avoid}thead{display:table-header-group}@page{size:A4;margin:18mm}}</style><nav><a href="index.html">文档目录</a></nav><main><style>img{max-width:100%;height:auto}</style><h1>松鼠备份软件测试报告</h1>
-<p>版本 0.2.0。整理时间 2026年10月29日 12:46（北京时间）。本轮命名测试 97 项，通过 97 项。结果来自可复现的测试程序及其 XML、JSON 和日志。GUI 内部断言与核心用例分开统计；未完成的长期测试不写成通过。</p>
+<p>版本 0.2.0。整理时间 2026年10月29日 16:52（北京时间）。本轮命名测试 97 项，通过 97 项。结果来自可复现的测试程序及其 XML、JSON 和日志。GUI 内部断言与核心用例分开统计；未完成的长期测试不写成通过。</p>
 <h2>1 测试环境与方法</h2>
 <p>测试宿主为 macOS 13.0 arm64，编译器为 Apple clang version 14.0.3 (clang-1403.0.22.14.1)。业务代码使用C++17；测试工具包括GoogleTest、Python、AddressSanitizer和UndefinedBehaviorSanitizer。</p>
-<p>所有源目录、备份与恢复目标都在测试临时目录内。普通文件用完整字节或SHA256比较；链接用目标字符串和inode关系检查；FIFO只检查类型；元数据按权限、时间和扩展属性逐项比对。报告中的执行结果由本次编程会话自动取得，学生复核签名另行填写。</p>
+<p>所有源目录、备份与恢复目标都在测试临时目录内。普通文件用完整字节或SHA256比较；链接用目标字符串和inode关系检查；FIFO只检查类型；元数据按权限、时间和扩展属性逐项比对。测试由随包脚本执行，用例名称和原始输出一并保留。</p>
 <table>
 <thead>
 <tr>
@@ -195,6 +195,7 @@
 <p>操作系统信号补充测试通过20/20种组合：向正在读写的明文／加密backup、restore、verify、list进程发送SIGINT或SIGTERM，单次操作均返回130且清理暂存；定时与watch任务在下一份备份进行中停止，返回0并保留前一份可验证快照。源文件和原归档哈希未变。证据为signals-020.json，独立于核心命名用例统计。</p>
 <p>cpplint 2.0.2检查结果：通过。范围为Makefile列出的C++头文件、业务源码与测试，未包含Objective-C++；原始日志见lint-020.log。</p>
 <p>Huffman随机输入测试运行60.0秒、32353次，结果通过，固定种子20261029。它是随机输入驱动，并非覆盖率引导的libFuzzer；使用ASan/UBSan，次数不计入命名用例总数。证据为fuzz.json及fuzz.log。</p>
+<p>归档解析器使用LLVM libFuzzer 14.0.6进行覆盖率引导测试，运行602.286秒、119,844次，通过。进程正常退出，没有崩溃工件或ASan/UBSan错误标记。归档与Huffman相关源码哈希与本次源码一致。测试使用空恢复目标，范围为SQTREE解析与Huffman解码，不含文件写入、加密封装和GUI。执行次数不并入97项用例，也不代表覆盖百分比。复现方法见test-results/archive-fuzz-020.md，原始JSON和日志同名保存。</p>
 <h2>5 性能与兼容性</h2>
 <p>单次本地测量如下。备份和恢复时间包含CLI进程开销，测量期间存在其它后台任务，文件系统缓存也可能影响结果；不据此给出稳定吞吐率承诺。</p>
 <table>
@@ -229,12 +230,13 @@
 </table>
 <p>重复单字节数据主要覆盖Huffman单符号分支；随机数据主要验证压缩无收益时回退原始块。这里没有测峰值RSS，格式中的1TiB单文件上限也不等于已完成该容量实测。</p>
 <p>0.1.0与0.2.0之间的双向恢复已检查明文和加密共4种组合，均通过内容与链接关系比对。测试时间2026年10月29日 11:36（北京时间），见compatibility-020.json。这些兼容性场景单独列出，不并入核心命名用例总数。</p>
+<p>写入故障与强制终止另行补测24种场景，通过24种。明文和加密分别检查打包、封装、解码、恢复写入返回ENOSPC，刷写或发布失败，权限恢复失败，以及EINTR和短写入。失败场景没有发布目标，已保存备份保持不变，同名目标重试成功。4种实际SIGKILL场景在观察到至少4MiB写入后强制结束，私有暂存根目录以0700权限遗留，正常重试不删除旧暂存。详细范围、源码和原始记录见test-results/fault-injection-020.md及对应JSON；没有实际占满磁盘或断电，不并入97项核心用例。</p>
 <h2>6 持续运行测试</h2>
-<p>计划连续运行20小时，同时执行定时任务和加密watch任务，每5分钟检查保留份数、verify、恢复哈希、软硬链接、FIFO及只读目录。记录开始时间为2026年10月29日 10:54（北京时间）；报告读取时已运行1.84小时，完成22次检查。当前状态为running。</p>
+<p>第一次持续运行在52次正常检查后中断，最后记录时长为4.34小时。核对时原进程已不存在，退出原因尚未确定。该次不认定20小时通过，也不与后续运行时长相加；观察记录见soak-interrupted-20261029.json。</p>
+<p>计划连续运行20小时，同时执行定时任务和加密watch任务，每5分钟检查保留份数、verify、恢复哈希、软硬链接、FIFO及只读目录。记录开始时间为2026年10月29日 15:22（北京时间）；报告读取时已运行1.42小时，完成17次检查。当前状态为running。</p>
 <p>尚未达到结束条件，当前不能写为“20小时通过”。最终报告应在进程结束后重新生成。</p>
-<p>长期测试冻结的CLI与本报告构建的CLI哈希不同，结论只适用于各自记录的二进制。完整SHA256分别保存在长期测试记录和test-results/summary.json中。</p>
-<p>长测启动后的源码整理仅为头文件包含、等价类型转换和长字符串换行。重建前后Mach-O文件映射节逐字节一致，见lint-rebuild-comparison.json；完整文件仍有调试或链接信息差异，因此保留两份哈希与适用范围。</p>
+<p>长测结论对应冻结CLI，完整哈希与报告构建不同；两份文件的Mach-O映射节逐字节一致。等价源码整理、调试与链接差异及两份哈希见lint-rebuild-comparison.json。</p>
 <h2>7 结论和验收边界</h2>
 <p>已覆盖的备份、验证、恢复、取消和自动任务路径均满足对应断言。发布前复查能发现已测的源树变化，但不能提供多文件事务一致性；应用不支持网络备份、增量备份、系统守护和重启后自动续跑。</p>
-<p>仍需真实环境检查的项目包括系统文件选择器、跨机器运行、外置卷和网络卷、磁盘耗尽、强制终止、掉电持久性、异属主恢复、ACL与文件flags。未实现的功能不作为本轮通过项。</p>
-<p>复现方式：make test；make sanitize；python3 tests/benchmark.py build/squirrel；应用可执行文件加--self-test与一个新的测试目录路径。长期测试使用tests/soak.py，运行目录必须为新目录；不要将工作用文件夹作为压力测试数据。</p></main><footer>松鼠备份 0.2.0 · 请以源码和测试结果为准</footer></html>
+<p>仍需真实环境检查的项目包括系统文件选择器、跨机器运行、外置卷和网络卷、真实磁盘耗尽、掉电持久性、异属主恢复、ACL与文件flags。强制终止只验证了补测中列出的时机和输入；未实现的功能不作为本轮通过项。</p>
+<p>复现命令见README：make test、make sanitize及tests/benchmark.py。GUI自测使用--self-test，长测脚本为tests/soak.py；两者均使用新的测试目录，不使用工作数据。</p></main><footer>松鼠备份 0.2.0 · 请以源码和测试结果为准</footer></html>

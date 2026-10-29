@@ -1,0 +1,40 @@
+{
+  "passed": true,
+  "scope": "Submission document input guard; independent of the 97 product tests",
+  "bound_input_files": 15,
+  "actual_generated_document_accepted": true,
+  "stale_input_cases": [
+    {
+      "case": "docs/03_软件测试报告.md",
+      "stale_material_rejected": true,
+      "error_type": "AssertionError"
+    },
+    {
+      "case": "docs/planning/gantt.png",
+      "stale_material_rejected": true,
+      "error_type": "AssertionError"
+    },
+    {
+      "case": "docs/第3组_松鼠备份_实验报告.docx",
+      "stale_material_rejected": true,
+      "error_type": "AssertionError"
+    },
+    {
+      "case": "docs/05_实验报告.md",
+      "stale_material_rejected": true,
+      "error_type": "CalledProcessError"
+    },
+    {
+      "case": "resources/submission-readiness.json",
+      "stale_material_rejected": true,
+      "error_type": "AssertionError"
+    }
+  ],
+  "unrelated_profile_metadata_does_not_invalidate_report": true,
+  "all_fixture_mutations_restored": true,
+  "source_sha256": {
+    "scripts/check_report_artifacts.py": "5f866419fd7875b2ff4414c36f25ae5016caf45a1f2cc953516583f2bdff05e9",
+    "scripts/build_template_report.py": "3ad9e404549ef4b4128f6534ab80e96ae167fce75c81e8b7a965e94f65c97abb",
+    "scripts/write_report.py": "1b65b6334907dcfa153cb2604c65d62f4c03fa5fb391744c904a697801df1768"
+  }
+}

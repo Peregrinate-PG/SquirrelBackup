@@ -1,10 +1,10 @@
 {
-  "checked_at": "2026-10-29T08:05:49.400697+00:00",
+  "checked_at": "2026-10-29T09:06:50.565676+00:00",
   "passed": true,
   "files": [
     {
       "file": "resources/submission-guide/00_阅读说明.pdf",
-      "sha256": "6988314f0610e63ebe44d04711ccdf388e1c2d92e5e91acf8b144d500c464cf4",
+      "sha256": "88e5ce2d7a76ff0c0e0d2b69e9b36f52cf4f4e50d4ec67ffd863e91344adcfc5",
       "pages": 1,
       "all_pages_visually_reviewed": true,
       "bounds_warnings": 0
@@ -31,5 +31,10 @@
         "all_pages_identical_to_reviewed": true
       }
     ]
+  },
+  "review_basis": "Updated reading guide page1 inspected individually; the two usage-guide pages regenerated pixel-identically to the previously reviewed canonical PDF.",
+  "source_inputs": {
+    "resources/submission-guide/00_阅读说明.md": "a932baef82790d594246529b62bc6268fc0265a84d8f56559758d453de8187b5",
+    "resources/submission-guide/01_使用说明.md": "cf1619c301350b1ed37b797bfe56d9811da0b22c62ac2b0aeea7026d3ad4bd28"
   }
 }

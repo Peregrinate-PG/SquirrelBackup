@@ -49,16 +49,24 @@ def main():
         for row in (release / 'SHA256SUMS').read_text().splitlines():
             expected, name = row.split('  ', 1)
             assert sha(release / name) == expected, name
-        subprocess.run([sys.executable, str(source / 'scripts/check_report_artifacts.py'),
-                        str(source)], check=True, stdout=subprocess.DEVNULL)
+        check = [sys.executable, str(source / 'scripts/check_report_artifacts.py'), str(source)]
+        if not args.layout_check:
+            check.append('--require-current-inputs')
+        subprocess.run(check, check=True, stdout=subprocess.DEVNULL)
         presentation = json.loads((release / 'test-results/presentation-validation.json').read_text())
         assert sha(release / 'presentations/第3组_松鼠备份_答辩.pptx') == presentation['finalSha256']
         if not args.layout_check:
             readiness = json.loads((source / 'resources/submission-readiness.json').read_text())
             required = ['report_complete', 'online_group_confirmed', 'online_repository_verified',
-                        'ai_evidence_included', 'materials_consistent', 'final_visual_review_passed']
+                        'ai_evidence_included', 'materials_consistent', 'final_visual_review_passed',
+                        'local_acceptance_verified']
             assert all(readiness.get(key) is True for key in required), 'Submission checks incomplete'
-            assert readiness['remaining'] == ['defense_computer_acceptance', 'other_two_certificates']
+            assert readiness['remaining'] == ['other_two_certificates']
+            guides = json.loads((source / 'test-results/submission-guides-qa.json').read_text())
+            assert guides['passed'] and len(guides['files']) == 2
+            for guide in guides['files']:
+                assert guide['all_pages_visually_reviewed'] and guide['pages'] > 0
+                assert sha(source / guide['file']) == guide['sha256'], 'Guide changed after review'
         target.mkdir()
 
         def copy_file(relative, destination):
@@ -105,7 +113,7 @@ def main():
             raise RuntimeError('Reviewed application usage guide missing')
         kit_script = source / 'scripts/package_acceptance.py'
         if kit_script.exists():
-            kit = attachments / '答辩电脑验收'
+            kit = attachments / '本机验收工具'
             subprocess.run([sys.executable, str(kit_script), str(kit)], check=True,
                            stdout=subprocess.DEVNULL)
             kit.with_name(kit.name + '.zip').unlink()

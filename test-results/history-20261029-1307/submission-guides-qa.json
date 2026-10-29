@@ -1,0 +1,35 @@
+{
+  "checked_at": "2026-10-29T08:05:49.400697+00:00",
+  "passed": true,
+  "files": [
+    {
+      "file": "resources/submission-guide/00_阅读说明.pdf",
+      "sha256": "6988314f0610e63ebe44d04711ccdf388e1c2d92e5e91acf8b144d500c464cf4",
+      "pages": 1,
+      "all_pages_visually_reviewed": true,
+      "bounds_warnings": 0
+    },
+    {
+      "file": "resources/submission-guide/使用说明.pdf",
+      "sha256": "d260545800d0e8c39e799e75b9090e841e362a65dabdbda19fb1a05a800d1c15",
+      "pages": 2,
+      "all_pages_visually_reviewed": true,
+      "bounds_warnings": 0
+    }
+  ],
+  "generator_reproduction": {
+    "source_sha256": "44e109ad7f477a3c25e82587b566e62b28f534d2d0f7376f4c253ed24f40a314",
+    "results": [
+      {
+        "file": "00_阅读说明.pdf",
+        "pages": 1,
+        "all_pages_identical_to_reviewed": true
+      },
+      {
+        "file": "使用说明.pdf",
+        "pages": 2,
+        "all_pages_identical_to_reviewed": true
+      }
+    ]
+  }
+}

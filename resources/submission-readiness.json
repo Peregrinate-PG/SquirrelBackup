@@ -4,7 +4,7 @@
   "online_group_basis": "User confirmed the group information is already filled in during the 2026-10-29 conversation.",
   "online_repository_verified": false,
   "repository_account": "Peregrinate-PG",
-  "repository_status": "User requested local preparation; no repository exists yet.",
+  "repository_status": "User is creating the GitHub repository; URL and remote contents have not yet been verified.",
   "report_complete": false,
   "ai_evidence_included": false,
   "materials_consistent": false,
@@ -13,9 +13,12 @@
     "final_report_and_evidence",
     "online_repository",
     "final_visual_and_package_review",
-    "defense_computer_acceptance",
+    "local_acceptance",
     "other_two_certificates"
   ],
   "laboratory": "自主实验环境（macOS个人计算机）",
-  "laboratory_basis": "Describes the actual local Mac used for this project; no institutional room number is asserted."
+  "laboratory_basis": "Describes the actual local Mac used for this project; no institutional room number is asserted.",
+  "local_acceptance_verified": false,
+  "acceptance_computer": "李想的Mac",
+  "acceptance_scope_basis": "User requested all software, screenshot, presentation and model validation on the current Mac; no separate defense-computer check is required."
 }

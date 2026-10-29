@@ -1,14 +1,36 @@
 #!/usr/bin/env python3
 """Check the filled report and the exact files covered by its visual review."""
+import argparse
 import hashlib
 import json
+import subprocess
 import sys
 import xml.etree.ElementTree as E
 from pathlib import Path
 from zipfile import ZipFile
 
 
-def check(root):
+def check_inputs(root):
+    root = Path(root).resolve()
+    receipt = json.loads((root / 'test-results/report-build-inputs.json').read_text())
+    docx = root / 'docs/第3组_松鼠备份_实验报告.docx'
+    assert receipt['schema'] == 1
+    assert hashlib.sha256(docx.read_bytes()).hexdigest() == receipt['docx_sha256'], 'Report build receipt belongs to another DOCX'
+    required = {'scripts/build_template_report.py', 'resources/实验报告模板.docx',
+                'resources/report-sections.json', 'docs/01_需求分析说明书.md',
+                'docs/02_系统设计文档.md', 'docs/03_软件测试报告.md'}
+    assert required <= receipt['input_files'].keys(), 'Incomplete report input receipt'
+    for name, expected in receipt['input_files'].items():
+        path = root / name
+        assert path.resolve().is_relative_to(root), 'Report input path is outside the project'
+        assert hashlib.sha256(path.read_bytes()).hexdigest() == expected, 'Report input changed after generation: ' + name
+    profile = json.loads((root / 'resources/submission-readiness.json').read_text())
+    assert receipt['profile_fields'] == {'laboratory': profile['laboratory']}, 'Report profile changed after generation'
+    subprocess.run([sys.executable, str(root / 'scripts/write_report.py'), '--check'], check=True)
+    return len(receipt['input_files'])
+
+
+def check(root, require_current_inputs=False):
     root = Path(root)
     stem = '第3组_松鼠备份_实验报告'
     docx = root / 'docs' / (stem + '.docx')
@@ -32,8 +54,15 @@ def check(root):
         def sections(z):
             return [E.tostring(x) for x in E.fromstring(z.read('word/document.xml')).findall('.//w:sectPr', ns)]
         assert sections(original) == sections(report), 'Template page/section setup changed'
-    return {'docx_sha256': qa['docx_sha256'], 'pdf_sha256': qa['pdf_sha256'], 'pages': qa['pages']}
+    result = {'docx_sha256': qa['docx_sha256'], 'pdf_sha256': qa['pdf_sha256'], 'pages': qa['pages']}
+    if require_current_inputs:
+        result['current_inputs_verified'] = check_inputs(root)
+    return result
 
 
 if __name__ == '__main__':
-    print(json.dumps(check(sys.argv[1] if len(sys.argv) > 1 else '.'), ensure_ascii=False))
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('root', nargs='?', default='.')
+    parser.add_argument('--require-current-inputs', action='store_true')
+    args = parser.parse_args()
+    print(json.dumps(check(args.root, args.require_current_inputs), ensure_ascii=False))

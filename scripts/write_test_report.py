@@ -40,7 +40,7 @@ text=f'''# 松鼠备份软件测试报告
 
 测试宿主为 macOS {platform.mac_ver()[0]} {platform.machine()}，编译器为 {subprocess.check_output(['clang++','--version'],text=True).splitlines()[0]}。业务代码使用C++17；测试工具包括GoogleTest、Python、AddressSanitizer和UndefinedBehaviorSanitizer。
 
-所有源目录、备份与恢复目标都在测试临时目录内。普通文件用完整字节或SHA256比较；链接用目标字符串和inode关系检查；FIFO只检查类型；元数据按权限、时间和扩展属性逐项比对。报告中的执行结果由本次编程会话自动取得，学生复核签名另行填写。
+所有源目录、备份与恢复目标都在测试临时目录内。普通文件用完整字节或SHA256比较；链接用目标字符串和inode关系检查；FIFO只检查类型；元数据按权限、时间和扩展属性逐项比对。测试由随包脚本执行，用例名称和原始输出一并保留。
 
 | 类型 | 用例数量 | 通过数量 | 原始证据 |
 | --- | --- | --- | --- |
@@ -133,14 +133,14 @@ if (results/'archive-fuzz-020.json').exists():
            and parser_fuzz.get('last_done') and not parser_fuzz.get('artifacts')
            and parser_fuzz.get('sanitizer_error_markers') is False)
     runs=parser_fuzz.get('stats',{}).get('number_of_executed_units',0)
-    extra+=f"归档解析器另用LLVM libFuzzer 14.0.6进行覆盖率引导测试，运行{parser_fuzz['elapsed_seconds']:.3f}秒、{runs:,}次输入，记录{'满足本轮通过条件' if valid else '未满足本轮通过条件'}。"
+    extra+=f"归档解析器使用LLVM libFuzzer 14.0.6进行覆盖率引导测试，运行{parser_fuzz['elapsed_seconds']:.3f}秒、{runs:,}次，{'通过' if valid else '未通过'}。"
     if valid:
         extra+='进程正常退出，没有崩溃工件或ASan/UBSan错误标记。'
     matches=all((root/name).is_file() and hashlib.sha256((root/name).read_bytes()).hexdigest()==digest
                 for name,digest in parser_fuzz['source_sha256'].items())
     extra+=('归档与Huffman相关源码哈希与本次源码一致。' if matches else
             '补测记录中的源码哈希与当前源码不完全一致，结论只适用于记录版本。')
-    extra+='测试使用空恢复目标，仅覆盖内部SQTREE解析及Huffman解码，不包括恢复文件写入、加密封装和GUI。执行次数和覆盖计数不等于独立功能用例数或覆盖百分比，不并入97项。复现与边界见test-results/archive-fuzz-020.md，原始JSON和日志同名保存。\n\n'
+    extra+='测试使用空恢复目标，范围为SQTREE解析与Huffman解码，不含文件写入、加密封装和GUI。执行次数不并入97项用例，也不代表覆盖百分比。复现方法见test-results/archive-fuzz-020.md，原始JSON和日志同名保存。\n\n'
 text=text.replace('## 5 性能与兼容性',extra+'## 5 性能与兼容性')
 
 for b in json.loads((results/'benchmark.json').read_text()):
@@ -180,12 +180,18 @@ if soak_path.exists():
               and elapsed>=72000 and not soak.get('errors') and cp and cp[-1].get('final'))
     if finished:text+='本次持续运行测试已结束并通过，完成时间和原始检查记录随test-results/soak-20h.json交付。\n\n'
     else:text+='尚未达到结束条件，当前不能写为“20小时通过”。最终报告应在进程结束后重新生成。\n\n'
-    text+=f"长期测试冻结的CLI与本报告构建的CLI哈希{'相同' if sha==soak['binary_sha256'] else '不同，结论只适用于各自记录的二进制'}。完整SHA256分别保存在长期测试记录和test-results/summary.json中。\n\n"
     comparison=results/'lint-rebuild-comparison.json'
+    same_sections=False
     if sha!=soak['binary_sha256'] and comparison.exists():
         diff=json.loads(comparison.read_text())
-        if diff['after_sha256']==sha and diff['before_sha256']==soak['binary_sha256'] and diff['identical_sections']:
-            text+='长测启动后的源码整理仅为头文件包含、等价类型转换和长字符串换行。重建前后Mach-O文件映射节逐字节一致，见lint-rebuild-comparison.json；完整文件仍有调试或链接信息差异，因此保留两份哈希与适用范围。\n\n'
+        same_sections=(diff['after_sha256']==sha and diff['before_sha256']==soak['binary_sha256']
+                       and diff['identical_sections'])
+    if sha==soak['binary_sha256']:
+        text+='长期测试与本报告构建使用相同CLI，完整SHA256保存在长期测试记录和test-results/summary.json中。\n\n'
+    elif same_sections:
+        text+='长测结论对应冻结CLI，完整哈希与报告构建不同；两份文件的Mach-O映射节逐字节一致。等价源码整理、调试与链接差异及两份哈希见lint-rebuild-comparison.json。\n\n'
+    else:
+        text+='长期测试冻结CLI与本报告构建的哈希不同，结论只适用于各自记录的二进制；完整SHA256分别见长期测试记录和test-results/summary.json。\n\n'
 
 else:text+='未找到长期运行结果，不能据此声称长期测试通过。\n\n'
 text+='''## 7 结论和验收边界
@@ -194,7 +200,7 @@ text+='''## 7 结论和验收边界
 
 仍需真实环境检查的项目包括系统文件选择器、跨机器运行、外置卷和网络卷、真实磁盘耗尽、掉电持久性、异属主恢复、ACL与文件flags。强制终止只验证了补测中列出的时机和输入；未实现的功能不作为本轮通过项。
 
-复现方式：make test；make sanitize；python3 tests/benchmark.py build/squirrel；应用可执行文件加--self-test与一个新的测试目录路径。长期测试使用tests/soak.py，运行目录必须为新目录；不要将工作用文件夹作为压力测试数据。
+复现命令见README：make test、make sanitize及tests/benchmark.py。GUI自测使用--self-test，长测脚本为tests/soak.py；两者均使用新的测试目录，不使用工作数据。
 '''
 (docs/'03_软件测试报告.md').write_text(text)
 print(json.dumps(summary,ensure_ascii=False))

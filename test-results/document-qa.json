@@ -1,5 +1,6 @@
 {
   "version": "0.2.0",
+  "checked_at": "2026-10-29T09:06:50.565676+00:00",
   "documents": [
     {
       "name": "01_需求分析说明书",
@@ -17,7 +18,7 @@
       "name": "03_软件测试报告",
       "pages": 4,
       "bounds_warnings": [],
-      "pdf_sha256": "70a9ecdaae3c533dc6b645499e7da8bc77c332076bc8e76ac5c498e712e8ae58"
+      "pdf_sha256": "d29c7960522729bc004c27c6246085d70a6cd47c7537577d3aa22320533d7c80"
     },
     {
       "name": "04_StarUML绘图指导",
@@ -29,13 +30,13 @@
       "name": "05_实验报告",
       "pages": 21,
       "bounds_warnings": [],
-      "pdf_sha256": "0f200778cac38b3092123857f76e18c40c1c1265a7ac9964af444c79b4da244d"
+      "pdf_sha256": "12f70b75976c84d9407a537dbffb7cd0699235075dd093e0a31e6dbf79d05e9b"
     },
     {
       "name": "06_演示与答辩指南",
       "pages": 2,
       "bounds_warnings": [],
-      "pdf_sha256": "4a6abb7616565d1b384ac0e279c9940daeab43ba7f816bcad7bec489e4722f80"
+      "pdf_sha256": "12981b9dca64a5beba05e63deea6ef18f2d388920567b619e67894e760504e5b"
     },
     {
       "name": "07_三人分工与协作方案",
@@ -47,22 +48,22 @@
       "name": "08_提交前验收清单",
       "pages": 2,
       "bounds_warnings": [],
-      "pdf_sha256": "0ebe6e5dae4d64fdd4466299ccd9b00ab8177d036f6361af45fc58f89204b2f5"
+      "pdf_sha256": "7c4daf8592291d3257215173f415b74f2976726a00e8ed1e5f870cc4be398df1"
     },
     {
       "name": "09_复核结论与后续安排",
       "pages": 2,
       "bounds_warnings": [],
-      "pdf_sha256": "9b231ee0111d9b08e5167a5ee29322e60f22833676f2bf87d62f75088724fccf"
+      "pdf_sha256": "52e6b954728e2206df50e7e779f13159280dd776a1ac313dc8968046b490b75d"
     },
     {
       "name": "10_学习证书办理说明",
-      "pages": 1,
+      "pages": 2,
       "bounds_warnings": [],
-      "pdf_sha256": "837e14762de0cda63d1d4268adeed499d4877e9848bab219efa6a5d7d5837663"
+      "pdf_sha256": "f061e8abe8b5da92d0dc2f4455dbe93b4c1633eeb7d57df6c51fd87120581afd"
     }
   ],
-  "pages": 53,
-  "visual_review": "All pages checked in contact sheets; no clipping, missing figures or isolated headings observed.",
+  "pages": 54,
+  "visual_review": "Unchanged pages matched the previously reviewed canonical PDFs. All changed pages were inspected; seven retained changed pages matched render-v8 pixel-for-pixel at 1.8 scale. Latest guide pages 06:1,2; 08:1,2; 09:2 and report reading page05:21 were inspected individually. No clipping or orphan headings observed.",
   "report_docx_qa": "report-visual-qa.json"
 }

@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "docx_sha256": "315806428c8ad876bc1617d822f69e4af8201ec8c9278e55340ef211a6248204",
+  "input_files": {
+    "docs/01_需求分析说明书.md": "44b97bb0f2c890d7f75b0922f5b7fb25a034713c5c0668d222e9358efe9d30b0",
+    "docs/02_系统设计文档.md": "01ba1a5f7ca171427c8c07e485042464fb186773ffd3a7fe8947e711836ad514",
+    "docs/03_软件测试报告.md": "767c7c254d76b564eb151f8d3052459ab0698bc630ef5cf1ac0a73556487a955",
+    "docs/planning/gantt.png": "641e031636dee782093082c13926cc7d33bd041e0b174004e871ca06a6be9b84",
+    "docs/screenshots/03-restored.png": "db103cff40553544faf44a6f5bf2f9d4fcb69c93204a753515cdbddfc6425dc0",
+    "docs/uml/png/01_系统用例图.png": "4ee05ce526c297373c214745fe9e1bcf0ae2394d464c9a1a55539043d3a7c404",
+    "docs/uml/png/02_核心服务类图.png": "cfc5b552bfe33740545cce0c65bc1fe0e15948bbb91be6bdbf26fd337799e7fd",
+    "docs/uml/png/03_配置与记录类图.png": "7702609a5e4797f6acbc593b2c9f935a62b742fc30e4d2480ffeb12714dde4fc",
+    "docs/uml/png/04_系统构件图.png": "ba4264be3f6c49f0c28c95825e29111bf795d16b69c834d16c8dd7e1181123c7",
+    "docs/uml/png/05_创建备份顺序图.png": "28c89f1de522b0e289e48f47ffd3e545344486c6a7ec3a8d8648f2c551bf3cdc",
+    "docs/uml/png/06_验证恢复顺序图.png": "4a58e2f390343e858b3d076bdbcc8a7abbbffd0e7ff406ca31a25e28d75cc358",
+    "docs/uml/png/07_自动任务状态图.png": "3e24719e36fe6b3dcba7140b9b55488d7de0dcdf7431715b0aed28c5194decdb",
+    "resources/report-sections.json": "0883734846fc933035d39754cff3999646de81476fdd4871ebc1b554a7e17f11",
+    "resources/实验报告模板.docx": "3323e15ccfa3445483575fd6b77a1606c8b7c64cbdc30cca69cdea858913a2e0",
+    "scripts/build_template_report.py": "3ad9e404549ef4b4128f6534ab80e96ae167fce75c81e8b7a965e94f65c97abb"
+  },
+  "profile_fields": {
+    "laboratory": "自主实验环境（macOS个人计算机）"
+  }
+}

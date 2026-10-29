@@ -28,3 +28,7 @@
 baseline-0.1.0.log用于追溯原版72项测试；history-0.1.1中的文件属于82项用例时期的旧结果，不代表0.2.0验证。revision-test.log记录0.2.0修订期间的一次执行。空的运行日志只表示该程序成功时不向控制台输出；应结合对应JSON判断。
 
 复现核心：make test、make sanitize。信号补测：python3 tests/signals.py build/squirrel /已有父目录/新的结果目录。长测、GUI及视频的命令见README和各测试源码。运行新测试会覆盖部分结果文件，保留交付证据时请使用源码副本。
+
+## 报告生成输入核对
+
+report-build-inputs.json绑定报告DOCX及生成时的正文、插图、原模板、构建脚本和实验环境字段。正式课程包使用check_report_artifacts.py的--require-current-inputs检查，拒绝正文更新后仍沿用旧报告；Markdown阅读稿同时校验。report-input-guard-020.json记录该辅助检查的实际正反例，不并入97项产品用例。视觉检查仍由report-visual-qa.json记录，输入哈希一致不代表排版已检查。

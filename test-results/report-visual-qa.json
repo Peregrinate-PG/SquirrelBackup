@@ -1,8 +1,8 @@
 {
   "version": "0.2.0",
-  "checked_at": "2026-10-29T13:07:46+08:00",
-  "docx_sha256": "35bff4edc255f9d07a349b950f9550b71174feb3fbae0ee203fb90993a5caddb",
-  "pdf_sha256": "a578161e3703a8e9b16ca4d297e771a977f4b60a30d6226572835e9b6095cae9",
+  "checked_at": "2026-10-29T09:06:50.565676+00:00",
+  "docx_sha256": "315806428c8ad876bc1617d822f69e4af8201ec8c9278e55340ef211a6248204",
+  "pdf_sha256": "8aba5f4935a9fc988bf6b3c1bb28e40b1bde8268ae9b523a2e7484dd05dc307d",
   "pages": 28,
   "reviewed_pages": [
     1,
@@ -35,13 +35,13 @@
     28
   ],
   "visual_review_passed": true,
-  "review_basis": "All 27 pages of render-8 inspected individually at original resolution. Every changed page in render-9 (8,9,21,23-28), render-qa-11 (24-28), render-qa-12 (26-28), and final render-qa-13 (27-28) inspected individually; all other pages confirmed pixel-identical by PNG SHA256. Review by Codex agents backup_audit and aliyun_requirements.",
-  "final_render": "work/docx/report-render-qa-13",
+  "review_basis": "Canonical report-render-qa-13 had all pages reviewed. Updated pages 2,21,25,26,27,28 were inspected individually in render-v9; v10 only changes page28, also inspected. The other 22 pages were confirmed pixel-identical to the canonical render. No clipped table, isolated heading or blank trailing page observed.",
+  "final_render": "work/submission-report-preview/render-v10",
   "blank_trailing_page": false,
   "isolated_headings": false,
   "page_png_sha256": {
     "1": "651f5d2eead5ca725d80bfe25df0e5bd0728b915d4ec78781b1fc904d2bcca76",
-    "2": "f2b62997b89c27ba030bb144b25894756d5286da08baeb87dcd81d4d3021bbbd",
+    "2": "475416e6a41af5a1171dcad918934cfc38627b9dce6c6e86b4eaf1350db0ee5a",
     "3": "b3e6607aa42b83b75eb887304fb33d97452adfcf2f315ab06d21717db4eefd83",
     "4": "4f75d48da42dead18253470d3df9931609adbbf10da6f9e571dece3c6b901cda",
     "5": "a54a3dc2cf069f3eea60ed9d9e54418ee50f07367683b5eb5fff3f26769647d2",
@@ -60,20 +60,19 @@
     "18": "19f97fd414ccf378e6f4fac56fe9354dc8a8777c94eb62cf404d2b393330286b",
     "19": "1ec2597da676c668bedd5ab792959b96dcc0e03ae4d6c5a8d2f866b10269da7b",
     "20": "8b02dc58295a8d78715af7c604bc410793f9d9c6c7edc9c7574998bc7d3d40ae",
-    "21": "aa2c6b2f04480413d791cc58e8a89a1cd1b14674c5094c059c38e4ab34e5a1e7",
+    "21": "b56203fbe1f029d8051bd7f3ed15c596f841820b607af45cf62687178feeb709",
     "22": "747fa7a35b3b85b0ac3ee7990a6440827433d95bbd49633dbb1d761e57907472",
     "23": "5e43a95a34269a371e8d9cc5c20d9eb8645158b1e6176675ddde0aa8d120e8b6",
     "24": "638d78f8097f3f697b214d9cce03819fab3793eebfae6b3f44195f28fb22e952",
-    "25": "9d9e6e96830eced455ca28218ad1d003e19f14314be48f56c486c4e7143c17a6",
-    "26": "6f25306b432fbe2363a6084f678a36b0f45ffbccbf22c5b66f910fdf1177d913",
-    "27": "4692ccbea59afc4ee6200bf78eee763bc31d3956b6932e2ddeaa19da9be7822d",
-    "28": "5a273fab747a3eecb1bafc4943b3f2d65b55133b16f3ebac148fb499ac0013cb"
+    "25": "c574b388e3edffff548f06b0cf3980eed8702c7f1f85a25c268f366d45eda78d",
+    "26": "97616bfe6c1b78754dcab34aa63cfb4323ee2bd24a4496624a4b053ba702e54f",
+    "27": "70337a5b468136381dc6892f0fc3899427ec0b919e4324790eed8b4885460052",
+    "28": "824ad6337c1175545dcc41f0713408eb906f65042467e982e5506108f1d96643"
   },
-  "scope": "Headless bundled LibreOffice render with local CJK font mapping; actual system file picker and manual Microsoft Word check remain pending.",
+  "scope": "Bundled LibreOffice background rendering with local CJK fonts; this verifies document layout, not native application/manual GUI acceptance.",
   "pending_content": [
-    "Experiment room to be filled by members",
-    "Personal contributions/reflections require member confirmation",
-    "AI usage screenshots to be supplied by each member",
-    "20-hour soak still running; no pass claimed"
+    "Actual project AI tool screenshot remains to be inserted",
+    "20-hour soak still running; no pass claimed",
+    "Real local GUI acceptance remains pending"
   ]
 }
