@@ -9,19 +9,24 @@
   "repository_creation_authorized": true,
   "report_complete": false,
   "ai_evidence_included": false,
-  "materials_consistent": false,
-  "final_visual_review_passed": false,
+  "materials_consistent": true,
+  "final_visual_review_passed": true,
   "remaining": [
-    "final_report_and_evidence",
-    "final_visual_and_package_review",
-    "local_acceptance",
+    "roommate_ai_screenshot",
     "other_two_certificates"
   ],
   "laboratory": "自主实验环境（macOS个人计算机）",
   "laboratory_basis": "Describes the actual local Mac used for this project; no institutional room number is asserted.",
-  "local_acceptance_verified": false,
-  "desktop_operations_status": "Paused at user request until they notify Codex; background work remains authorized.",
+  "local_acceptance_verified": true,
+  "desktop_operations_status": "GUI 12 cases, StarUML seven diagrams, and QuickTime playback to end verified on the current Mac.",
   "acceptance_computer": "李想的Mac",
   "acceptance_scope_basis": "User requested all software, screenshot, presentation and model validation on the current Mac; no separate defense-computer check is required.",
-  "repository_url": "https://github.com/Peregrinate-PG/SquirrelBackup"
+  "repository_url": "https://github.com/Peregrinate-PG/SquirrelBackup",
+  "continuous_soak_required": false,
+  "ai_screenshot_deferred_to_roommate": true,
+  "ai_screenshot_basis": "User explicitly requested reserving the real AI-tool screenshot task for a roommate; include a clearly marked insertion location and instructions.",
+  "report_body_complete": true,
+  "native_ppt_playback_required": false,
+  "presentation_review_basis": "User cancelled slideshow checking; redesigned eleven-page deck passed structural and individual exported-page review.",
+  "submission_performed": false
 }

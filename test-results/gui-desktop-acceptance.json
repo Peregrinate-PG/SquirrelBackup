@@ -1,0 +1,132 @@
+{
+  "version": "0.2.0",
+  "checked_at": "2026-10-29T13:53:48.085391+00:00",
+  "computer": "李想的Mac",
+  "operator": "Codex through macOS Accessibility and CG input events",
+  "human_manual_test": false,
+  "production_app": true,
+  "self_test_mode": false,
+  "gui_sha256": "99d5b40a2ea711e96b6b572d54aeafaa7914bf1aa84860a7f3f63bb5e5daf824",
+  "passed": true,
+  "cases": [
+    {
+      "id": "G01",
+      "check": "LaunchServices打开应用及切换三页面",
+      "passed": true
+    },
+    {
+      "id": "G02",
+      "check": "六个系统选择器分别选择和取消",
+      "passed": true
+    },
+    {
+      "id": "G03",
+      "check": "中文与空格路径创建压缩加密备份",
+      "passed": true
+    },
+    {
+      "id": "G04",
+      "check": "恢复内容及11个条目的类型、权限、时间、链接和用户属性",
+      "passed": true
+    },
+    {
+      "id": "G05",
+      "check": "拒绝覆盖已有归档及已有恢复目录",
+      "passed": true
+    },
+    {
+      "id": "G06",
+      "check": "错误密码无输出，正确密码恢复、验证和内容查看通过",
+      "passed": true
+    },
+    {
+      "id": "G07",
+      "check": "3秒定时任务保留2份，无关文件保留",
+      "passed": true
+    },
+    {
+      "id": "G08",
+      "check": "变化检测首次1份，修改后2份",
+      "passed": true
+    },
+    {
+      "id": "G09",
+      "check": "等待及备份中停止，已发布快照保留，暂存清理",
+      "passed": true
+    },
+    {
+      "id": "G10",
+      "check": "备份中关闭窗口及恢复中退出，清理后结束进程",
+      "passed": true
+    },
+    {
+      "id": "G11",
+      "check": "重启恢复白名单参数，密码不保留，任务不自动启动",
+      "passed": true
+    },
+    {
+      "id": "G12",
+      "check": "空路径、短密码、非法整数参数均被拒绝",
+      "passed": true
+    }
+  ],
+  "proof": {
+    "neutral-replay-results": {
+      "passed": true,
+      "archive_sha256": "f539644f5393fc7c39e16d1c686302b5bc4d32f9bbd5596e64424b82a83371b3",
+      "retained": 2,
+      "unrelated_file_preserved": true,
+      "invalid_inputs": 6,
+      "screenshot_paths_neutral": true
+    },
+    "neutral-watch-results": {
+      "passed": true,
+      "initial": 1,
+      "after_change": 2,
+      "job": "squirrel-job-Ppuzhg"
+    },
+    "close-reopen-results": {
+      "passed": true,
+      "closed_after_cancel": true,
+      "incomplete_output_absent": true,
+      "settings_restored": true,
+      "backup_password_not_retained": true,
+      "no_automatic_job": true
+    },
+    "quit-restore-results": {
+      "passed": true,
+      "quit_after_cancel": true,
+      "destination_absent": true,
+      "archive_unchanged": true,
+      "temporary_files_absent": true,
+      "jobs_not_started_on_relaunch": true,
+      "first_attempt": "Restore finished while screenshot was being captured, so a second fresh destination was used and quit was sent immediately while the operation was busy."
+    },
+    "invalid-input-results": {
+      "passed": true,
+      "checks": [
+        "empty backup paths",
+        "short encryption password",
+        "interval zero",
+        "interval fractional",
+        "retention zero",
+        "retention fractional"
+      ],
+      "no_output": true
+    }
+  },
+  "screenshots": {
+    "docs/screenshots/desktop/30-neutral-restarted-idle.png": "c60b2449b2f8185e7108da1f7eefa142f3b87921b1199033c8ed9953a9ec2eb3",
+    "docs/screenshots/desktop/22-neutral-wrong-password.png": "4b3c142de60d596f4297ed59a83a0c2cbc3a3b557142685fcb38da576a0b2dc1",
+    "docs/screenshots/desktop/27-neutral-close-running.png": "58e9ef63c15662d5e0250470ec9109d76a3dd76962b32baf4093c92d43a25f66",
+    "docs/screenshots/desktop/28-neutral-reopen.png": "c95ebcc73783bbc3daba7c34178e1498b6094e412366e413ef6621bf97fac6eb",
+    "docs/screenshots/desktop/23-neutral-restored.png": "99cc85efbfeebb18423c5c8793bd48763ed5786501cc2a872bed4bc242744458",
+    "docs/screenshots/desktop/26-neutral-watch.png": "9425ddb145c63466ca8384d143b8b4c858635ca2f8988c5c1e41c9f35269b44c",
+    "docs/screenshots/desktop/25-neutral-retention.png": "c46a98a03871c21e17d538c20c3ebfcf417b8eea476dbfb8bdb4e92aae47a2a9",
+    "docs/screenshots/desktop/24-neutral-verified.png": "dd33f67897ac141d54e1c5f5daac9e7c24dda13bcee506d7dc66bec289e96275",
+    "docs/screenshots/desktop/21-neutral-backup.png": "365b8d925bbdee37221c9797524d4b6ecbab9e8500a538dc746b2e52a0c6ac2e",
+    "docs/screenshots/desktop/29-neutral-quit-restoring.png": "ca0cacc9c07465e4699ca2868c465d227cffa24af15205369d2ab0ee74364a0f"
+  },
+  "original_interaction_log_sha256": "d061dc6ed2233cbafc364927c208f4a794098b9c26daaee9bf4604e52d2d1427",
+  "test_helper_note": "Restore comparator excludes macOS-managed com.apple.macl and com.apple.provenance; user attributes remain strict. Acceptance helper regression passed 13 checks."
+}

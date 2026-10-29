@@ -25,6 +25,8 @@ def main():
     parser.add_argument('output_directory', type=Path)
     parser.add_argument('--layout-check', action='store_true',
                         help='Prepare a layout preview without claiming submission readiness')
+    parser.add_argument('--allow-deferred-ai', action='store_true',
+                        help='Prepare the user-authorized handoff with the AI screenshot explicitly pending')
     args = parser.parse_args()
     archive = args.release_zip.resolve()
     validation = json.loads(args.validation_json.read_text())
@@ -57,11 +59,19 @@ def main():
         assert sha(release / 'presentations/第3组_松鼠备份_答辩.pptx') == presentation['finalSha256']
         if not args.layout_check:
             readiness = json.loads((source / 'resources/submission-readiness.json').read_text())
-            required = ['report_complete', 'online_group_confirmed', 'online_repository_verified',
-                        'ai_evidence_included', 'materials_consistent', 'final_visual_review_passed',
+            required = ['online_group_confirmed', 'online_repository_verified',
+                        'materials_consistent', 'final_visual_review_passed',
                         'local_acceptance_verified']
             assert all(readiness.get(key) is True for key in required), 'Submission checks incomplete'
-            assert readiness['remaining'] == ['other_two_certificates']
+            if args.allow_deferred_ai:
+                assert readiness.get('report_body_complete') is True
+                assert readiness.get('ai_screenshot_deferred_to_roommate') is True
+                assert readiness.get('ai_evidence_included') is False
+                assert readiness['remaining'] == ['roommate_ai_screenshot', 'other_two_certificates']
+                assert (source / 'resources/submission-guide/补齐说明.txt').is_file()
+            else:
+                assert readiness.get('report_complete') is True and readiness.get('ai_evidence_included') is True
+                assert readiness['remaining'] == ['other_two_certificates']
             guides = json.loads((source / 'test-results/submission-guides-qa.json').read_text())
             assert guides['passed'] and len(guides['files']) == 2
             for guide in guides['files']:
@@ -123,13 +133,17 @@ def main():
             kit.with_name(kit.name + '.zip.sha256').unlink()
         elif not args.layout_check:
             raise RuntimeError('Acceptance kit missing')
+        if args.allow_deferred_ai and not args.layout_check:
+            copy_file('source/resources/submission-guide/补齐说明.txt', '提交前补齐说明.txt')
         if args.layout_check:
             (target / '布局检查版.txt').write_text(
                 '本目录只检查课程提交目录与文件复制。来源为已验证的历史候选包，'
                 '没有合并后续修订，不是正式提交版。\n')
         record = dict(created_at=datetime.now(timezone.utc).isoformat(),
                       source_release_sha256=sha(archive), layout_check=args.layout_check,
-                      external_submission_performed=False)
+                      external_submission_performed=False,
+                      ai_screenshot_pending=bool(args.allow_deferred_ai),
+                      school_submission_ready=not args.layout_check and not args.allow_deferred_ai)
         (target / '交付清单.json').write_text(json.dumps(record, indent=2) + '\n')
         with (target / 'SHA256SUMS').open('w') as hashes:
             for path in sorted(target.rglob('*')):

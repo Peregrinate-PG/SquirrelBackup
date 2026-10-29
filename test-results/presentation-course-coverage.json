@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-10-29T09:56:19.845675+00:00",
+  "checked_at": "2026-10-29T14:49:09.887086+00:00",
   "basis": "第9讲第39页，work/course/text/9.知识拓展与项目完善.txt",
   "required_topics_covered": true,
   "optional_topic": "项目吐槽：讲义注明如有，未设置专页",
@@ -7,66 +7,73 @@
     {
       "requirement": "开发环境",
       "slides": [
-        3
+        5
       ],
-      "evidence": "macOS 13.0 arm64、C++17、Apple Clang 14.0.3"
+      "evidence": "C++17、macOS arm64、Apple Clang 14.0.3"
     },
     {
       "requirement": "扩展功能、算法及第三方库",
       "slides": [
-        2,
+        3,
         4,
-        5
+        6,
+        7
       ],
-      "evidence": "扩展项、SQBK/SQTREE、Huffman与系统密码库；依赖没有称为自研"
+      "evidence": "自动任务、Huffman、SQBK/SQTREE、CommonCrypto与Security"
     },
     {
       "requirement": "配置管理与编程规范",
       "slides": [
-        3
+        5
       ],
-      "evidence": "Git main及真实历史、cpplint与Google C++规范；公开仓库已上传真实历史并核验，见repository-publication.json"
+      "evidence": "Git版本管理与cpplint检查Google C++规范，补充说明在讲者备注"
     },
     {
       "requirement": "软件测试与工具",
       "slides": [
-        6
+        8
       ],
-      "evidence": "97项分层结果、ASan/UBSan、GUI内部断言及长测范围"
+      "evidence": "97项命名测试、53内部断言、12桌面场景、ASan/UBSan"
     },
     {
       "requirement": "项目进展回顾与甘特图",
       "slides": [
-        8
+        10
       ],
-      "evidence": "10/29实际Git版本进展及明确标注为后续计划的甘特图"
+      "evidence": "0.1.0至0.2.0回顾，同类Git提交首末记录区间甘特图"
     },
     {
       "requirement": "人员分工及完成情况",
       "slides": [
-        7
+        9
       ],
-      "evidence": "三人均有代码、测试与文档职责，分别说明项目已完成及待完成范围；不编造个人历史贡献"
+      "evidence": "三人模块主责与配套测试、文档工作，完成结果在相邻测试和版本页呈现"
     }
   ],
-  "pptx_sha256": "1346d2d01f0c48c331631e374b81c05266cf4f94f903a1d110c83b52d34d09e5",
-  "pdf_sha256": "8ed0f280dc2be78e701a1f83e309f1edceb95116a4b498afd9a6751a3a1d4817",
-  "changed_slides_visually_reviewed": [
-    3,
-    7,
-    8
-  ],
-  "unchanged_slides_pixel_equal": [
-    1,
-    2,
-    4,
-    5,
-    6,
-    9
-  ],
+  "pptx_sha256": "f568b42b6d0e88bcebad3c5862e4060e751b695db920e3a74a950e218ce39d3e",
+  "pdf_sha256": "a797d47d7d18490247cbb57961b00f17cdffa44aec1668ed2f46b3a18adbf6a4",
   "native_application_playback_verified": false,
   "speech_planned_seconds": 180,
   "speech_actual_recitation_verified": false,
   "online_repository_verified": true,
-  "repository_url": "https://github.com/Peregrinate-PG/SquirrelBackup"
+  "repository_url": "https://github.com/Peregrinate-PG/SquirrelBackup",
+  "all_slides_visually_reviewed": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11
+  ],
+  "native_playback_required": false,
+  "speech_seconds_per_member": {
+    "杨梦宇": 60,
+    "郭畅": 60,
+    "李想": 60
+  }
 }

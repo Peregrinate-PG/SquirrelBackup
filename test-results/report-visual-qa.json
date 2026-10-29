@@ -1,8 +1,8 @@
 {
   "version": "0.2.0",
-  "checked_at": "2026-10-29T11:30:29.537199+00:00",
-  "docx_sha256": "d6668e277525cee2b62162340270c635d17f7f0861ca1108aaac79f95ebb8cc9",
-  "pdf_sha256": "72885c2a3d6edc2cc6694eb75e3cb31be2de294c49ceb5e5e60fe49b73740684",
+  "checked_at": "2026-10-29T14:21:52.158250+00:00",
+  "docx_sha256": "e1e7a13f3eedeefb44047f591aed9718efe1a3379cb9f7e4f293b804f6e21106",
+  "pdf_sha256": "0307ba6ed4a9c2eddb54c8db71559c8cbc08be9b0509df9d076b7c371eb247b8",
   "pages": 28,
   "reviewed_pages": [
     1,
@@ -35,8 +35,8 @@
     28
   ],
   "visual_review_passed": true,
-  "review_basis": "Repository address and verified publication status updated. Pages 10 and 11 inspected individually after bundled render_docx rendering; all other 26 pages pixel-identical at 1.8 scale to the previously reviewed report. No clipping or missing glyphs observed.",
-  "final_render": "work/github-public/document-update/render",
+  "review_basis": "Changed report pages 21,24,25,26,27 inspected individually after rendering. Other pages raster-identical to the earlier reviewed 28-page report. Updated screenshot uses the real neutral-path desktop run; orphan heading on page25 moved to page26.",
+  "final_render": "work/no-long-test-update/render-v2",
   "blank_trailing_page": false,
   "isolated_headings": false,
   "page_png_sha256": {
@@ -60,19 +60,17 @@
     "18": "19f97fd414ccf378e6f4fac56fe9354dc8a8777c94eb62cf404d2b393330286b",
     "19": "1ec2597da676c668bedd5ab792959b96dcc0e03ae4d6c5a8d2f866b10269da7b",
     "20": "8b02dc58295a8d78715af7c604bc410793f9d9c6c7edc9c7574998bc7d3d40ae",
-    "21": "b56203fbe1f029d8051bd7f3ed15c596f841820b607af45cf62687178feeb709",
+    "21": "d5a1b8dd93b32759b472ee9be183eaf1b2ca3ae3f0a16a28659c5e9edeb8e73e",
     "22": "747fa7a35b3b85b0ac3ee7990a6440827433d95bbd49633dbb1d761e57907472",
     "23": "5e43a95a34269a371e8d9cc5c20d9eb8645158b1e6176675ddde0aa8d120e8b6",
-    "24": "638d78f8097f3f697b214d9cce03819fab3793eebfae6b3f44195f28fb22e952",
-    "25": "c574b388e3edffff548f06b0cf3980eed8702c7f1f85a25c268f366d45eda78d",
-    "26": "97616bfe6c1b78754dcab34aa63cfb4323ee2bd24a4496624a4b053ba702e54f",
-    "27": "70337a5b468136381dc6892f0fc3899427ec0b919e4324790eed8b4885460052",
+    "24": "4fbc396e499a798a62b5001b551aac329cbebbba6991fe23a3515900f14c4007",
+    "25": "fe44800eb71fe26db3d781ddd62ad2a19e1fb41da2d31c5144f5842fbc20a634",
+    "26": "b700172d37fda6db282965cab51643f7ea63494b136f1f4243ccafe88c0dbe78",
+    "27": "d65f65d0f0af8eac25d974506e47802e276ee2264fb6e882802cd9e45b435740",
     "28": "824ad6337c1175545dcc41f0713408eb906f65042467e982e5506108f1d96643"
   },
   "scope": "Bundled LibreOffice background rendering with local CJK fonts; this verifies document layout, not native application/manual GUI acceptance.",
   "pending_content": [
-    "Actual project AI tool screenshot remains to be inserted",
-    "20-hour soak still running; no pass claimed",
-    "Real local GUI acceptance remains pending"
+    "Real AI-tool screenshot reserved for a teammate as explicitly requested."
   ]
 }

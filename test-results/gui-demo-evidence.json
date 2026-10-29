@@ -1,60 +1,60 @@
 {
   "passed" : true,
   "method" : "real offscreen AppKit view; automated production handlers; no mouse\/system picker",
-  "seconds" : 115.00338804721832,
+  "seconds" : 115.0289900302887,
   "events" : [
     {
       "event" : "backup_started",
-      "elapsed_seconds" : 6.0071510076522827
+      "elapsed_seconds" : 6.0308899879455566
     },
     {
       "event" : "backup_published",
-      "elapsed_seconds" : 16.004244089126587
+      "elapsed_seconds" : 16.027503967285156
     },
     {
       "event" : "verification_passed",
-      "elapsed_seconds" : 25.006695032119751
+      "elapsed_seconds" : 25.0313880443573
     },
     {
       "event" : "wrong_password_rejected",
-      "elapsed_seconds" : 44.003777027130127
+      "elapsed_seconds" : 44.02817702293396
     },
     {
       "event" : "restore_bytes_and_links_passed",
-      "elapsed_seconds" : 55.445232033729553
+      "elapsed_seconds" : 55.433053970336914
     },
     {
       "event" : "schedule_started",
-      "elapsed_seconds" : 61.0070880651474
+      "elapsed_seconds" : 61.032444953918457
     },
     {
       "event" : "retention_two_confirmed",
-      "elapsed_seconds" : 77.003770112991333
+      "elapsed_seconds" : 77.028957009315491
     },
     {
       "event" : "schedule_stopped",
-      "elapsed_seconds" : 83.003433108329773
+      "elapsed_seconds" : 83.029351949691772
     },
     {
       "event" : "source_file_added",
-      "elapsed_seconds" : 91.103857040405273
+      "elapsed_seconds" : 91.030194997787476
     },
     {
       "event" : "watch_change_snapshot_confirmed",
-      "elapsed_seconds" : 101.0014899969101
+      "elapsed_seconds" : 101.03123795986176
     },
     {
       "event" : "watch_stopped",
-      "elapsed_seconds" : 105.00332605838776
+      "elapsed_seconds" : 105.03132200241089
     },
     {
       "event" : "cancelled_output_absent",
-      "elapsed_seconds" : 109.00348901748657
+      "elapsed_seconds" : 109.03137695789337
     },
     {
       "event" : "demo_finished",
-      "elapsed_seconds" : 115.00339210033417
+      "elapsed_seconds" : 115.02899503707886
     }
   ],
-  "frames" : 571
+  "frames" : 573
 }

@@ -12,6 +12,9 @@ import stat
 import sys
 
 IGNORED = {'.DS_Store'}
+# Desktop selection and newly created files can acquire these system labels
+# after fixture preparation. Keep user-owned extended attributes strict.
+IGNORED_XATTRS = {'com.apple.macl', 'com.apple.provenance'}
 if sys.platform != 'darwin':
     raise SystemExit('此验收工具使用macOS扩展属性接口，请在Mac上运行。')
 LIBC = ctypes.CDLL(None, use_errno=True)
@@ -121,7 +124,11 @@ def compare(expected, actual):
         differences.append({'path': name, 'field': 'entry', 'expected': 'absent', 'actual': 'unexpected'})
     for name in sorted(expected.keys() & actual.keys()):
         for field in sorted(expected[name].keys() | actual[name].keys()):
-            if expected[name].get(field) != actual[name].get(field):
+            before, after = expected[name].get(field), actual[name].get(field)
+            if field == 'xattrs_sha256':
+                before = {k: v for k, v in (before or {}).items() if k not in IGNORED_XATTRS}
+                after = {k: v for k, v in (after or {}).items() if k not in IGNORED_XATTRS}
+            if before != after:
                 differences.append({'path': name, 'field': field,
                                     'expected': expected[name].get(field), 'actual': actual[name].get(field)})
     return differences
@@ -157,6 +164,7 @@ def main():
               'scope': '文件和元数据自动核对，不证明真人GUI操作已完成。',
               'manual_gui_verified': False,
               'ignored_names': sorted(IGNORED),
+              'ignored_system_xattrs': sorted(IGNORED_XATTRS),
               'excluded_metadata': ['atime', 'ctime', 'directory_mtime', 'birthtime', 'ACL', 'flags']}
     try:
         actual = snapshot(args.restored)

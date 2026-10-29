@@ -118,8 +118,21 @@ def main():
         alias = root.with_name(root.name + '-alias'); alias.symlink_to(root, target_is_directory=True)
         return alias
     run_case('reject-symlink-root', symlink_root, expect_error=True)
+    # Real desktop selection added com.apple.macl between preparing the fixture
+    # and taking the backup. Other extended attributes must remain strict.
+    import copy
+    before = copy.deepcopy(baseline)
+    after = copy.deepcopy(baseline)
+    after['.']['xattrs_sha256']['com.apple.macl'] = '814a5078df9cd4856c4674a67c5ebd99e52219eab7c57bcfe7fb7c2cc4f73403'
+    before['.']['xattrs_sha256'].pop('com.apple.provenance', None)
+    after['.']['xattrs_sha256']['com.apple.provenance'] = 'd4fa932f1694310d5e3b9d82d3fb07f218ce6f91357fcd0564a85c6582847cdb'
+    ignored_only = not module.compare(before, after)
+    after['.']['xattrs_sha256']['user.squirrel.unexpected'] = '0' * 64
+    strict_other = any(x['field'] == 'xattrs_sha256' for x in module.compare(before, after))
+    cases.append({'name': 'system-access-label-versus-user-xattr',
+                  'passed': ignored_only and strict_other})
     report = {'checked_at': datetime.now(timezone.utc).isoformat(),
-              'passed': len(cases) == 12 and all(x['passed'] for x in cases),
+              'passed': len(cases) == 13 and all(x['passed'] for x in cases),
               'scope': 'Checks the acceptance helper only; does not certify human GUI operation.',
               'baseline_entries': len(baseline), 'cases': cases}
     (output / 'acceptance-tools.json').write_text(json.dumps(report, ensure_ascii=False, indent=2) + '\n')

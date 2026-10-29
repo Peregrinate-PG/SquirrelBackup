@@ -1,23 +1,75 @@
 {
-  "pages": 9,
-  "pdf_sha256": "8ed0f280dc2be78e701a1f83e309f1edceb95116a4b498afd9a6751a3a1d4817",
-  "pptx_sha256": "1346d2d01f0c48c331631e374b81c05266cf4f94f903a1d110c83b52d34d09e5",
-  "changed_pages": [
-    3,
-    7,
-    8
-  ],
-  "changed_pages_visually_reviewed": true,
-  "unchanged_pages": [
+  "checked_at": "2026-10-29T14:49:09.887086+00:00",
+  "pages": 11,
+  "pptx_sha256": "f568b42b6d0e88bcebad3c5862e4060e751b695db920e3a74a950e218ce39d3e",
+  "pdf_sha256": "a797d47d7d18490247cbb57961b00f17cdffa44aec1668ed2f46b3a18adbf6a4",
+  "all_pages_visually_reviewed": true,
+  "reviewed_pages": [
     1,
     2,
+    3,
     4,
     5,
     6,
-    9
+    7,
+    8,
+    9,
+    10,
+    11
   ],
-  "unchanged_pages_raster_equal": true,
-  "method": "Headless LibreOffice; changed pages inspected individually against originals; remaining pages have identical raster bytes to previously reviewed PDF.",
-  "desktop_input": false,
-  "native_powerpoint_playback_verified": false
+  "method": "Artifact Tool editable preview and final LibreOffice PDF, each slide inspected individually.",
+  "native_powerpoint_playback_verified": false,
+  "native_playback_required": false,
+  "native_playback_basis": "User explicitly cancelled slideshow checking and requested a visual redesign.",
+  "visual_findings": {
+    "clipping": false,
+    "unintended_overlap": false,
+    "missing_glyphs": false
+  },
+  "page_images": [
+    {
+      "page": 1,
+      "sha256": "48d61234aab1dde1e4f64d9ce3ac4a525e4abcd63d7e16484d10485d589d4d0b"
+    },
+    {
+      "page": 2,
+      "sha256": "aee94bc36d55097e5f4d4b5a3f1f0ae080ad90cd9817cac4b902ad8599e59e19"
+    },
+    {
+      "page": 3,
+      "sha256": "a389a9e3c9a149ef6d101fcf4dbea78f3e3f67a1a27d59f6b2d80baa2086943e"
+    },
+    {
+      "page": 4,
+      "sha256": "480163d69844d5709b55f1b3a4fb2d98c62bc57607b337cd1385ebbbbeb0249f"
+    },
+    {
+      "page": 5,
+      "sha256": "dcb11b193e3e4f85365eba5079b586a81a1849b32f665c862ffcc273297a1509"
+    },
+    {
+      "page": 6,
+      "sha256": "1806b8f4d6cf8a09055e56b3eff2838030750cbcfe42ca732188b63102832886"
+    },
+    {
+      "page": 7,
+      "sha256": "37b2f56f4cf0687b5eb0533673961c8223af655ba8f326b4736b236c9bffee58"
+    },
+    {
+      "page": 8,
+      "sha256": "f420e329e0a432d68c91b8c79dae3bf46fb7bf4b2ee12c5bb0089f6ca13e2d53"
+    },
+    {
+      "page": 9,
+      "sha256": "635d495b3e1c9a755a6475407da627c37f85e7599840cc25e28bb26fdaf98897"
+    },
+    {
+      "page": 10,
+      "sha256": "788834033c6ba2d2e1127ab815654b5ad292aa10e375eeccaca0707c02ce710c"
+    },
+    {
+      "page": 11,
+      "sha256": "fb78eac3900880f43d9cf2a5833cd2f2fb9d8c4c19eb6737bbb337ca6b4b2d1a"
+    }
+  ]
 }

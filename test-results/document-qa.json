@@ -1,6 +1,6 @@
 {
   "version": "0.2.0",
-  "checked_at": "2026-10-29T11:30:29.537199+00:00",
+  "checked_at": "2026-10-29T14:52:59.216439+00:00",
   "documents": [
     {
       "name": "01_需求分析说明书",
@@ -12,13 +12,13 @@
       "name": "02_系统设计文档",
       "pages": 9,
       "bounds_warnings": [],
-      "pdf_sha256": "d0cb37dbd1792d4d471fc003ba8839690124a016b80a7c25118c36faf90bcbb6"
+      "pdf_sha256": "37951a7ef1b825b4053bfbc47dc8979ea1a45bbdf99686972d526cf5c7e74c5b"
     },
     {
       "name": "03_软件测试报告",
       "pages": 4,
       "bounds_warnings": [],
-      "pdf_sha256": "d29c7960522729bc004c27c6246085d70a6cd47c7537577d3aa22320533d7c80"
+      "pdf_sha256": "544fe199dbf0178223ea098905e4b033699eef23b4ba6029b0f990aa8b3752b6"
     },
     {
       "name": "04_StarUML绘图指导",
@@ -30,31 +30,31 @@
       "name": "05_实验报告",
       "pages": 21,
       "bounds_warnings": [],
-      "pdf_sha256": "ffa507d0b5d1099dfa3264558a6cc39af5bf6987d0d5bb23caa09f78603b2dae"
+      "pdf_sha256": "ea843de797fc8678df4e410a24dece29ba520a437aec01fca8c2fc16a0366bd4"
     },
     {
       "name": "06_演示与答辩指南",
       "pages": 2,
       "bounds_warnings": [],
-      "pdf_sha256": "ab9b589f7fc8beac3d4d6ca9138d985939f0c1ec4dd5af788da6cceb89c23c79"
+      "pdf_sha256": "68f03f4d0992ad804b9f1c3376cb023794288f87055d1a78d6f31e72a55ff0f8"
     },
     {
       "name": "07_三人分工与协作方案",
       "pages": 4,
       "bounds_warnings": [],
-      "pdf_sha256": "4605cd22e8685b961e55d3431da62bb22f4481ed8da90acdf40dd9327a5011e2"
+      "pdf_sha256": "6f0853c9f9d492a7abd25f5407ca854c5fb0ed713f9d3b6d6dedbbe493ee2601"
     },
     {
       "name": "08_提交前验收清单",
       "pages": 2,
       "bounds_warnings": [],
-      "pdf_sha256": "45405f8fa9b14fa24a2db652d23e40ca3e10e1a5898921146e95b86db66ec38f"
+      "pdf_sha256": "e42b86b9e1748fb292ee90c94b8a9e043ba813eb4c72f032e93a0e0cd4762a08"
     },
     {
       "name": "09_复核结论与后续安排",
       "pages": 2,
       "bounds_warnings": [],
-      "pdf_sha256": "1aa968fc0b8fbae362edfd06ffbadc249843418c96768a0431220f3d27ff235f"
+      "pdf_sha256": "f81429376305ff1c6f7db5f9b67f3bbf1eae7cab01b950e318295c65f24e7459"
     },
     {
       "name": "10_学习证书办理说明",
@@ -64,38 +64,113 @@
     }
   ],
   "pages": 54,
-  "visual_review": "Repository status updates inspected on reading pages 01:6, 05:7, 06:1, 07:3, 08:2 and 09:2; other pages pixel-identical at 1.8 scale to the previously reviewed set. All ten PDFs retain their page counts and have no bounds warnings.",
+  "visual_review": "All changed reading pages inspected individually. Document 03 was compacted to four pages and all four reviewed. All other unchanged pages raster-equal to the previously reviewed set.",
   "report_docx_qa": "report-visual-qa.json",
   "latest_reviewed_documents": [
     {
       "name": "01_需求分析说明书",
       "pages": 6,
-      "sha256": "cbf1f65f702baa5f3ab64e1de631c6921d02c7bdb0194a06bbae99477ab50099"
+      "changed_pages": [],
+      "changed_pages_visually_reviewed": true,
+      "unchanged_pages_raster_equal": true,
+      "pdf_sha256": "cbf1f65f702baa5f3ab64e1de631c6921d02c7bdb0194a06bbae99477ab50099"
+    },
+    {
+      "name": "02_系统设计文档",
+      "pages": 9,
+      "changed_pages": [
+        9
+      ],
+      "changed_pages_visually_reviewed": true,
+      "unchanged_pages_raster_equal": true,
+      "pdf_sha256": "37951a7ef1b825b4053bfbc47dc8979ea1a45bbdf99686972d526cf5c7e74c5b"
+    },
+    {
+      "name": "03_软件测试报告",
+      "pages": 4,
+      "changed_pages": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "changed_pages_visually_reviewed": true,
+      "unchanged_pages_raster_equal": true,
+      "pdf_sha256": "544fe199dbf0178223ea098905e4b033699eef23b4ba6029b0f990aa8b3752b6"
+    },
+    {
+      "name": "04_StarUML绘图指导",
+      "pages": 2,
+      "changed_pages": [],
+      "changed_pages_visually_reviewed": true,
+      "unchanged_pages_raster_equal": true,
+      "pdf_sha256": "7613c46fabb154bc3a307a8c807d581fe6b868db343c3aad8435ca387f5ca193"
     },
     {
       "name": "05_实验报告",
       "pages": 21,
-      "sha256": "ffa507d0b5d1099dfa3264558a6cc39af5bf6987d0d5bb23caa09f78603b2dae"
+      "changed_pages": [
+        16,
+        18,
+        19,
+        20,
+        21
+      ],
+      "changed_pages_visually_reviewed": true,
+      "unchanged_pages_raster_equal": true,
+      "pdf_sha256": "ea843de797fc8678df4e410a24dece29ba520a437aec01fca8c2fc16a0366bd4"
     },
     {
       "name": "06_演示与答辩指南",
       "pages": 2,
-      "sha256": "ab9b589f7fc8beac3d4d6ca9138d985939f0c1ec4dd5af788da6cceb89c23c79"
+      "changed_pages": [
+        1,
+        2
+      ],
+      "changed_pages_visually_reviewed": true,
+      "unchanged_pages_raster_equal": true,
+      "pdf_sha256": "68f03f4d0992ad804b9f1c3376cb023794288f87055d1a78d6f31e72a55ff0f8"
     },
     {
       "name": "07_三人分工与协作方案",
       "pages": 4,
-      "sha256": "4605cd22e8685b961e55d3431da62bb22f4481ed8da90acdf40dd9327a5011e2"
+      "changed_pages": [
+        1,
+        4
+      ],
+      "changed_pages_visually_reviewed": true,
+      "unchanged_pages_raster_equal": true,
+      "pdf_sha256": "6f0853c9f9d492a7abd25f5407ca854c5fb0ed713f9d3b6d6dedbbe493ee2601"
     },
     {
       "name": "08_提交前验收清单",
       "pages": 2,
-      "sha256": "45405f8fa9b14fa24a2db652d23e40ca3e10e1a5898921146e95b86db66ec38f"
+      "changed_pages": [
+        1,
+        2
+      ],
+      "changed_pages_visually_reviewed": true,
+      "unchanged_pages_raster_equal": true,
+      "pdf_sha256": "e42b86b9e1748fb292ee90c94b8a9e043ba813eb4c72f032e93a0e0cd4762a08"
     },
     {
       "name": "09_复核结论与后续安排",
       "pages": 2,
-      "sha256": "1aa968fc0b8fbae362edfd06ffbadc249843418c96768a0431220f3d27ff235f"
+      "changed_pages": [
+        1,
+        2
+      ],
+      "changed_pages_visually_reviewed": true,
+      "unchanged_pages_raster_equal": true,
+      "pdf_sha256": "f81429376305ff1c6f7db5f9b67f3bbf1eae7cab01b950e318295c65f24e7459"
+    },
+    {
+      "name": "10_学习证书办理说明",
+      "pages": 2,
+      "changed_pages": [],
+      "changed_pages_visually_reviewed": true,
+      "unchanged_pages_raster_equal": true,
+      "pdf_sha256": "f061e8abe8b5da92d0dc2f4455dbe93b4c1633eeb7d57df6c51fd87120581afd"
     }
   ]
 }

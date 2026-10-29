@@ -53,7 +53,7 @@ def para(text,kind='body'):
  # pageBreakBefore/keepNext inside the template's long outer table row.
  if text in ('5 项目规划','3 原生界面验证'):child(pr,'spacing',before=960)
  if text in ('4 编译检查与动态内存检查','李想 界面与自动任务'):child(pr,'spacing',before=480)
- if text=='5 性能与兼容性':child(pr,'spacing',before=400)
+ if text=='5 性能与兼容性':child(pr,'spacing',before=1300)
  if text.startswith('工具生成的内容不能直接代替验证。'):child(pr,'keepLines')
  child(pr,'widowControl',val=1)
  r=E.SubElement(p,q('r'));r.append(rp);t=E.SubElement(r,q('t'));t.set('{http://www.w3.org/XML/1998/namespace}space','preserve');t.text=clean_text(text)

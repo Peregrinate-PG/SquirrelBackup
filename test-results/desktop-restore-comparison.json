@@ -1,0 +1,24 @@
+{
+  "checked_at": "2026-10-29T13:47:53.880983+00:00",
+  "passed": true,
+  "scope": "文件和元数据自动核对，不证明真人GUI操作已完成。",
+  "manual_gui_verified": false,
+  "ignored_names": [
+    ".DS_Store"
+  ],
+  "ignored_system_xattrs": [
+    "com.apple.macl",
+    "com.apple.provenance"
+  ],
+  "excluded_metadata": [
+    "atime",
+    "ctime",
+    "directory_mtime",
+    "birthtime",
+    "ACL",
+    "flags"
+  ],
+  "compared_entries": 11,
+  "actual_entries": 11,
+  "differences": []
+}

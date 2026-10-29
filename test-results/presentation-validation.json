@@ -1,15 +1,15 @@
 {
   "schemaVersion": "presentation-finalization.v1",
-  "finalSha256": "1346d2d01f0c48c331631e374b81c05266cf4f94f903a1d110c83b52d34d09e5",
-  "byteCount": 364043,
+  "finalSha256": "f568b42b6d0e88bcebad3c5862e4060e751b695db920e3a74a950e218ce39d3e",
+  "byteCount": 1599638,
   "packageIntegrity": {
     "chart_count": 0,
     "claim_boundary": "Structural package checks only; no slide text, notes, formulas, chart values, or native PowerPoint execution were inspected.",
     "finding_count": 0,
     "findings": [],
-    "notes_parts_skipped": 9,
-    "relationship_part_count": 28,
-    "slide_count": 9,
+    "notes_parts_skipped": 11,
+    "relationship_part_count": 32,
+    "slide_count": 11,
     "status": "pass",
     "exitCode": 0,
     "findingCount": 0,
@@ -19,18 +19,20 @@
     "finding_count": 0,
     "findings": [],
     "font_policy": {
-      "checked_text_script_count": 152,
+      "checked_text_script_count": 227,
       "native_font_rendering_verified": false,
       "observed_font_families": [
+        "Avenir Next",
         "PingFang SC"
       ],
       "observed_font_use_counts": {
-        "PingFang SC": 152
+        "Avenir Next": 44,
+        "PingFang SC": 183
       },
       "passed": true,
       "performed": true
     },
-    "slide_count": 9,
+    "slide_count": 11,
     "slide_size_in": [
       13.3333,
       7.5
@@ -40,13 +42,15 @@
     "exitCode": 0,
     "findingCount": 0,
     "fontPolicy": {
-      "checked_text_script_count": 152,
+      "checked_text_script_count": 227,
       "native_font_rendering_verified": false,
       "observed_font_families": [
+        "Avenir Next",
         "PingFang SC"
       ],
       "observed_font_use_counts": {
-        "PingFang SC": 152
+        "Avenir Next": 44,
+        "PingFang SC": 183
       },
       "passed": true,
       "performed": true
@@ -55,18 +59,21 @@
   "fontSelection": {
     "basis": "design",
     "approvedFamilies": [
-      "PingFang SC"
+      "PingFang SC",
+      "Avenir Next"
     ],
     "scriptFonts": {},
     "referenceSha256": null,
     "referenceFontsVerifiedInEncodedText": false,
-    "checked_text_script_count": 152,
+    "checked_text_script_count": 227,
     "native_font_rendering_verified": false,
     "observed_font_families": [
+      "Avenir Next",
       "PingFang SC"
     ],
     "observed_font_use_counts": {
-      "PingFang SC": 152
+      "Avenir Next": 44,
+      "PingFang SC": 183
     },
     "passed": true,
     "performed": true
@@ -74,8 +81,8 @@
   "firstPartyImport": {
     "performed": true,
     "passed": true,
-    "slideCount": 9,
-    "sha256": "1346d2d01f0c48c331631e374b81c05266cf4f94f903a1d110c83b52d34d09e5",
+    "slideCount": 11,
+    "sha256": "f568b42b6d0e88bcebad3c5862e4060e751b695db920e3a74a950e218ce39d3e",
     "runtimeNodeModules": "/Users/lixiang/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules",
     "nodeExecutable": "/Users/lixiang/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node"
   },
@@ -87,27 +94,22 @@
     "eligible_table_count": 0,
     "finding_count": 0,
     "findings": [],
-    "native_table_count": 3,
+    "native_table_count": 2,
     "passed": true,
     "schema_version": "presentation-native-table-arithmetic.v1",
     "skipped_tables": [
       {
-        "reason": "no_numeric_amounts",
-        "slide": 4,
-        "table": 1
-      },
-      {
         "reason": "no_unambiguous_bottom_total",
-        "slide": 6,
+        "slide": 8,
         "table": 1
       },
       {
         "reason": "no_numeric_amounts",
-        "slide": 7,
+        "slide": 9,
         "table": 1
       }
     ],
-    "slide_count": 9,
+    "slide_count": 11,
     "warning_count": 0,
     "warnings": []
   },
@@ -119,9 +121,9 @@
     "native_chart_count": 0,
     "native_powerpoint_verified": false,
     "passed": true,
-    "presentation_sha256": "1346d2d01f0c48c331631e374b81c05266cf4f94f903a1d110c83b52d34d09e5",
+    "presentation_sha256": "f568b42b6d0e88bcebad3c5862e4060e751b695db920e3a74a950e218ce39d3e",
     "schema_version": "presentation-native-chart-titles.v1",
-    "slide_count": 9,
+    "slide_count": 11,
     "source_text_emitted": false,
     "unresolved_linked_title_count": 0
   },
@@ -131,17 +133,17 @@
     "--validate-bullet-geometry",
     "--validate-heading-fit",
     "--require-native-table-slide",
-    "4",
+    "8",
     "--require-native-table-slide",
-    "6",
-    "--require-native-table-slide",
-    "7",
+    "9",
     "--cover-role",
     "none",
     "--expected-slide-count",
-    "9",
+    "11",
     "--approved-font-family",
-    "PingFang SC"
+    "PingFang SC",
+    "--approved-font-family",
+    "Avenir Next"
   ],
   "nativeChartValidation": {
     "detectedOwnerSlides": [],

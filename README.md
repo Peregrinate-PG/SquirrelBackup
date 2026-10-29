@@ -77,7 +77,7 @@ GUI内部测试：build/SquirrelBackup.app/Contents/MacOS/SquirrelBackup --self-
 | docs/09_复核结论与后续安排.md | 原版问题、修订内容和后续安排 |
 | docs/10_学习证书办理说明.md | 每人完成课程、实践与审核的步骤 |
 | docs/uml/SquirrelBackup.mdj | StarUML模型，另附SVG、PNG和官方导出校验图 |
-| presentations/第3组_松鼠备份_答辩.pptx | 9页答辩稿及讲者备注，另有PDF和讲稿 |
+| presentations/第3组_松鼠备份_答辩.pptx | 11页答辩稿及讲者备注，另有PDF和讲稿 |
 | presentations/video/松鼠备份_115秒演示.mp4 | 实际应用后台演示，含中文字幕，无音轨 |
 
 组长杨梦宇2023150901002；郭畅2023040904017；李想2023150901012。实验环境为自主实验环境（macOS个人计算机），在线分组已由成员确认填写。三人按文件恢复、格式算法、界面任务分担主责，具体见07文档。李想的个人学习证书已取得，杨梦宇和郭畅的证书待本人提供；证书单独保存，不纳入软件源码。公开仓库为[https://github.com/Peregrinate-PG/SquirrelBackup](https://github.com/Peregrinate-PG/SquirrelBackup)，已上传并核对真实Git历史与源码。最终材料的完成状态见resources/submission-readiness.json。

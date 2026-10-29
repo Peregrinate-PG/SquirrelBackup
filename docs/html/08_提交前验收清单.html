@@ -1,5 +1,5 @@
 <!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>松鼠备份0.2.0提交前验收清单</title><style>body{max-width:900px;margin:48px auto;padding:0 32px;font:16px/1.85 -apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif;color:#202833}h1{color:#111;font-size:30px;line-height:1.5;margin-bottom:32px}h2{margin-top:36px;font-size:23px}h3{margin-top:24px;font-size:19px}table{border-collapse:collapse;width:100%;font-size:13px;line-height:1.65;margin:18px 0}th,td{border:1px solid #dde1e4;padding:8px 10px;text-align:left;vertical-align:top;overflow-wrap:anywhere}th{background:#edf0f1}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f4f5f6;padding:16px}code{font-size:.9em}a{color:#914321}nav{margin-bottom:28px;color:#777}footer{margin-top:44px;color:#777;font-size:12px}@media print{body{margin:0;padding:0;font-size:10pt}nav{display:none}h1,h2,h3,h4{break-after:avoid}tr{break-inside:avoid}thead{display:table-header-group}@page{size:A4;margin:18mm}}</style><nav><a href="index.html">文档目录</a></nav><main><style>img{max-width:100%;height:auto}</style><h1>松鼠备份0.2.0提交前验收清单</h1>
-<p>组长杨梦宇；组员郭畅、李想；第3组。本次验收统一在李想的Mac上完成；下表按实际证据填写，未执行的操作保持待验。</p>
+<p>组长杨梦宇；组员郭畅、李想；第3组。本次验收统一在李想的Mac上完成；软件桌面验收已完成，证据见test-results/gui-desktop-acceptance.json。</p>
 <h2>1 已准备的材料</h2>
 <table>
 <thead>
@@ -27,7 +27,7 @@
 </tr>
 <tr>
 <td>答辩材料</td>
-<td>9页可编辑PPT、PDF、三分钟讲稿、七分钟现场操作指南</td>
+<td>11页可编辑PPT、PDF、三分钟讲稿、七分钟现场操作指南</td>
 </tr>
 <tr>
 <td>视频</td>
@@ -39,89 +39,89 @@
 </tr>
 </tbody>
 </table>
-<h2>2 GUI人工验收表</h2>
-<p>先生成独立演示数据。记录执行日期、程序版本、执行人和证据路径；失败后修复并复测。内部自动断言不会自动替本表填写通过。</p>
+<h2>2 GUI桌面验收表</h2>
+<p>2026年10月29日，以系统辅助功能和鼠标、键盘事件操作普通发布应用。下表12项均完成；此记录属于桌面操作自动化，不标作组员人工点击。演示目录为“文稿/松鼠备份演示”，内部自测结果另行统计。</p>
 <table>
 <thead>
 <tr>
 <th>编号</th>
 <th>操作</th>
 <th>预期</th>
-<th>人工结果</th>
+<th>桌面结果</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>G01</td>
-<td>Finder打开并切换三页面</td>
+<td>系统打开应用并切换三页面</td>
 <td>控件和日志可读，状态不因切页丢失</td>
-<td>待验</td>
+<td>通过</td>
 </tr>
 <tr>
 <td>G02</td>
 <td>各文件选择器选择和取消</td>
 <td>路径填入正确，取消不启动任务</td>
-<td>待验</td>
+<td>通过</td>
 </tr>
 <tr>
 <td>G03</td>
 <td>中文、空格路径创建备份</td>
 <td>新归档可验证，源数据保留</td>
-<td>待验</td>
+<td>通过</td>
 </tr>
 <tr>
 <td>G04</td>
 <td>恢复到新目录</td>
 <td>内容、空目录、链接与FIFO正确</td>
-<td>待验</td>
+<td>通过</td>
 </tr>
 <tr>
 <td>G05</td>
 <td>选已有归档或恢复目录</td>
 <td>拒绝覆盖，已有内容不变</td>
-<td>待验</td>
+<td>通过</td>
 </tr>
 <tr>
 <td>G06</td>
 <td>错误密码后正确密码</td>
 <td>错误不发布目标，正确可恢复</td>
-<td>待验</td>
+<td>通过</td>
 </tr>
 <tr>
 <td>G07</td>
 <td>定时3秒、保留2份</td>
 <td>至少3次后仅保留本任务最新2份，无关文件保留</td>
-<td>待验</td>
+<td>通过</td>
 </tr>
 <tr>
 <td>G08</td>
 <td>变化检测期间修改文件</td>
 <td>稳定观察后新增快照</td>
-<td>待验</td>
+<td>通过</td>
 </tr>
 <tr>
 <td>G09</td>
 <td>等待和备份中分别点击停止</td>
 <td>请求取消并清理未完成输出，已发布快照可验证</td>
-<td>待验</td>
+<td>通过</td>
 </tr>
 <tr>
 <td>G10</td>
 <td>备份或恢复时关闭、退出</td>
 <td>清理完成后兑现关闭或退出请求</td>
-<td>待验</td>
+<td>通过</td>
 </tr>
 <tr>
 <td>G11</td>
 <td>正常退出再重启</td>
 <td>白名单参数恢复，密码为空，任务不自动启动</td>
-<td>待验</td>
+<td>通过</td>
 </tr>
 <tr>
 <td>G12</td>
 <td>非法间隔、份数、短密码和空路径</td>
 <td>显示原因，不启动无效任务</td>
-<td>待验</td>
+<td>通过</td>
 </tr>
 </tbody>
 </table>
@@ -129,23 +129,21 @@
 <h2>3 本人和协作材料</h2>
 <ul>
 <li>[x] 实验环境按实际填写为自主实验环境（macOS个人计算机）。</li>
-<li>[ ] 补项目实际AI工具使用截图，说明操作、采用的修改和验证方法。</li>
+<li>[ ] 组员补充项目实际AI工具使用截图；报告第七部分已预留位置，步骤见附件补齐说明。</li>
 <li>[x] 课程在线分组信息已由成员确认填写。</li>
 <li>[x] 公开仓库Peregrinate-PG/SquirrelBackup已建立；匿名克隆核对源码和真实历史通过。</li>
 <li>[x] 李想已取得本人AI辅助程序设计学习证书，原图单独保存。</li>
 <li>[ ] 杨梦宇和郭畅提供本人学习证书，步骤见10说明。</li>
-<li>[ ] 在李想的Mac打开PPT、播放视频并检查演示时长。</li>
+<li>[x] 视频在QuickTime播放至结尾，时长115.028秒；PPT按成员要求进行逐页导出检查。</li>
 </ul>
 <p>三人仍需为现场答辩熟悉各自主责代码与UML；这属于答辩准备，不再列为软件打包前置任务。计划表的未来安排不能写成已完成贡献。仓库按成员要求公开，个人证书、账号密码和私人文件不入库。</p>
 <h2>4 最终文件检查</h2>
 <ul>
-<li>[ ] 检查03报告中的长期测试状态，只有实际结束且passed才写通过。</li>
-<li>[ ] 报告DOCX、PDF、Markdown、PPT使用同一版测试结果。</li>
-<li>[ ] StarUML模型能在李想的Mac打开，主要关系与流程清晰。</li>
-<li>[ ] 从最终ZIP解压到新目录，离线make all、make test通过。</li>
-<li>[ ] 校验SHA256SUMS、程序版本、应用签名和视频播放。</li>
-<li>[ ] 按课程平台最终格式命名材料，再由组长提交。</li>
+<li>[x] 连续长测安排已取消，保留5.76小时、69次检查的观察结果，不认定20小时通过。</li>
+<li>[x] 报告DOCX、PDF、Markdown、PPT使用同一版测试结果。</li>
+<li>[x] StarUML打开七张可编辑图，模型哈希未变，见native-model-acceptance.json。</li>
 </ul>
+<p>最终ZIP的独立验收记录随交付目录提供：新目录解压、离线构建、自动测试、SHA256SUMS、版本、签名与GUI自测均由verify_release.py检查。组长补齐AI截图后更新Word与PDF、校验清单和ZIP，再在课程平台提交。当前尚未正式提交。</p>
 <h2>5 截止和提交方式</h2>
 <p>第9讲要求2026年11月18日上午答辩，当日23:59前由组长提交报告、PPT、源码、程序、构建脚本和不超过2分钟视频至成电慕课。PPT3分钟，现场操作7分钟；证书每人单独提交。若课程有更新通知，以更新通知为准。</p>
-<p>材料生成顺序：更新测试报告03，生成报告05及Word，导出并检查PDF；同步PPT；打包；新目录解压重建。视频本次115.003秒，符合包内第9讲的时长上限。</p></main><footer>松鼠备份 0.2.0 · 请以源码和测试结果为准</footer></html>
+<p>材料生成顺序：更新测试报告03，生成报告05及Word，导出并检查PDF；同步PPT；打包；新目录解压重建。视频本次115.028秒，符合包内第9讲的时长上限。</p></main><footer>松鼠备份 0.2.0 · 请以源码和测试结果为准</footer></html>

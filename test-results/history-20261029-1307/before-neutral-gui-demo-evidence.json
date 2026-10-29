@@ -1,0 +1,60 @@
+{
+  "passed" : true,
+  "method" : "real offscreen AppKit view; automated production handlers; no mouse\/system picker",
+  "seconds" : 115.00338804721832,
+  "events" : [
+    {
+      "event" : "backup_started",
+      "elapsed_seconds" : 6.0071510076522827
+    },
+    {
+      "event" : "backup_published",
+      "elapsed_seconds" : 16.004244089126587
+    },
+    {
+      "event" : "verification_passed",
+      "elapsed_seconds" : 25.006695032119751
+    },
+    {
+      "event" : "wrong_password_rejected",
+      "elapsed_seconds" : 44.003777027130127
+    },
+    {
+      "event" : "restore_bytes_and_links_passed",
+      "elapsed_seconds" : 55.445232033729553
+    },
+    {
+      "event" : "schedule_started",
+      "elapsed_seconds" : 61.0070880651474
+    },
+    {
+      "event" : "retention_two_confirmed",
+      "elapsed_seconds" : 77.003770112991333
+    },
+    {
+      "event" : "schedule_stopped",
+      "elapsed_seconds" : 83.003433108329773
+    },
+    {
+      "event" : "source_file_added",
+      "elapsed_seconds" : 91.103857040405273
+    },
+    {
+      "event" : "watch_change_snapshot_confirmed",
+      "elapsed_seconds" : 101.0014899969101
+    },
+    {
+      "event" : "watch_stopped",
+      "elapsed_seconds" : 105.00332605838776
+    },
+    {
+      "event" : "cancelled_output_absent",
+      "elapsed_seconds" : 109.00348901748657
+    },
+    {
+      "event" : "demo_finished",
+      "elapsed_seconds" : 115.00339210033417
+    }
+  ],
+  "frames" : 571
+}

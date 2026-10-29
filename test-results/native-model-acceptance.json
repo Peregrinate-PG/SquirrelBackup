@@ -1,0 +1,31 @@
+{
+  "passed": true,
+  "checked_at": "2026-10-29T14:47:02.819473+00:00",
+  "application": "StarUML 7.1.1 official trial",
+  "model": "docs/uml/SquirrelBackup.mdj",
+  "model_sha256": "f844f5b3ec2f76e2a95d88100758c4500798be27aa4066d9a4e7fe79a92bf58b",
+  "method": "AX/CG desktop control, opening each of the seven editable diagrams",
+  "diagrams_opened": [
+    "01_系统用例图",
+    "02_核心服务类图",
+    "03_配置与记录类图",
+    "04_系统构件图",
+    "05_创建备份顺序图",
+    "06_验证恢复顺序图",
+    "07_自动任务状态图"
+  ],
+  "all_seven_opened": true,
+  "trial_watermark_preserved": true,
+  "model_modified": false,
+  "notes": "Native viewport screenshots show portions at the selected zoom. Full diagrams are supplied as PNG/SVG and official CLI exports.",
+  "screenshots": [
+    {
+      "path": "docs/screenshots/native/42-staruml-backup-fit.png",
+      "sha256": "e2b083964a8b25101a6f6db758515865ad8cd6d5cfa8e0f4b9f321ceb3ba4efe"
+    },
+    {
+      "path": "docs/screenshots/native/50-uml-restore-open.png",
+      "sha256": "a8d0486b6a7d687fd009001e7fd66d22e38a408b5c80a41e3da086454f460524"
+    }
+  ]
+}

@@ -110,6 +110,8 @@ for src in sorted(DOCS.glob('[0-9][0-9]_*.md')):
     if len(sys.argv) > 1 and not any(src.name.startswith(prefix) for prefix in sys.argv[1:]):
         continue
     text=src.read_text();name=src.stem;title=text.splitlines()[0].lstrip('# ')
+    # Keep the test report's closing command paragraph with its conclusion.
+    styles['body'].spaceAfter = 4 if src.name.startswith('03_') else 6
     html=markdown.markdown(text,extensions=['tables','fenced_code'])
     # Generated HTML lives one directory below the Markdown source.
     html=re.sub(r'src="(?![a-z]+:|/|#)([^"]+)"',r'src="../\1"',html)

@@ -36,7 +36,7 @@ manifest = {
 (base / '验收基准.json').write_text(json.dumps({
     'format': 'squirrel-acceptance-v1',
     'entries': snapshot(source),
-    'note': '忽略Finder的.DS_Store及其会影响的目录mtime；不比较atime、ctime、ACL和flags。'
+    'note': '忽略Finder的.DS_Store及其会影响的目录mtime、系统标签com.apple.macl和com.apple.provenance；不比较atime、ctime、ACL和flags，用户扩展属性仍逐项核对。'
 }, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
 (base / '验收说明.txt').write_text(
     '此目录为人工验收生成的数据。请用 GUI 将演示源目录备份到此目录下的新 .sqbk 文件，'

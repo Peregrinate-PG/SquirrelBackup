@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-10-29T05:37:06.020231+00:00",
+  "checked_at": "2026-10-29T13:34:31.711382+00:00",
   "passed": true,
   "scope": "Checks the acceptance helper only; does not certify human GUI operation.",
   "baseline_entries": 11,
@@ -108,6 +108,10 @@
       "comparison_passed": false,
       "detected_fields": [],
       "reported_error": "请选择真实目录，不能使用指向目录的软链接。"
+    },
+    {
+      "name": "system-access-label-versus-user-xattr",
+      "passed": true
     }
   ]
 }

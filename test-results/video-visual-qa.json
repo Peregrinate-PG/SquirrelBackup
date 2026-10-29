@@ -1,0 +1,75 @@
+{
+  "passed": true,
+  "checked_at": "2026-10-29T14:47:02.819473+00:00",
+  "video_sha256": "a4c08a6947f1db89e9d0bc05bc1ee3febe97e8d9b2ae860d07b8aaff0b967a50",
+  "duration_seconds": 115.02833333333334,
+  "sampled_frames": 13,
+  "all_sampled_frames_visually_reviewed": true,
+  "samples": [
+    {
+      "file": "video-000.png",
+      "sha256": "53beb432a39991e4c2b7c4ef35be582e6d6968433231e35f92dbdbbc454a773c"
+    },
+    {
+      "file": "video-007.png",
+      "sha256": "d910db400f3e230ade8119b668bb59869e3d9b6f5dd136bde7c978c4bd1c28d9"
+    },
+    {
+      "file": "video-018.png",
+      "sha256": "7a8753fdc1169391dc34fc63045c6774e8dcdcd84f60f88fd11dece27a3cb80d"
+    },
+    {
+      "file": "video-027.png",
+      "sha256": "9be28cb4ca81a3435e94dab378d676a27c30d7642620e8cc5770b673658a89f2"
+    },
+    {
+      "file": "video-037.png",
+      "sha256": "32faa9962340fc808d6918ab06372f7bc9d97efdf010304d4e0842ecf7184e33"
+    },
+    {
+      "file": "video-049.png",
+      "sha256": "a515f0b1553bd0df9d5fd2cb2efae33a5c59baf86648a149107a3038b81eb0d1"
+    },
+    {
+      "file": "video-057.png",
+      "sha256": "9f4ac8ecdef68eaf8acfd76bd9a1bdd38b2416e846e16e68e5cade19161e5aba"
+    },
+    {
+      "file": "video-065.png",
+      "sha256": "778622c96938753ce901ec18087fe0a6cb3fbc1b38928cce8a8b7e30262a212d"
+    },
+    {
+      "file": "video-078.png",
+      "sha256": "564fa8cfd6ea6ace6f1b6446871e367b183fd285168e06bff7bb24c9c96d2eb6"
+    },
+    {
+      "file": "video-088.png",
+      "sha256": "c2410fb4649f642cc80bbb1315ec82bbe601976b02bb500723b40d8dd1750d1f"
+    },
+    {
+      "file": "video-098.png",
+      "sha256": "84632acea4caa95c7fd4493a17b0b3d12ae90b007c4bb7677e2bc4baabe4f6f6"
+    },
+    {
+      "file": "video-106.png",
+      "sha256": "1b3c51a8dc208660b3003c127316ee328677b271477846b411e7e6bbf675f462"
+    },
+    {
+      "file": "video-112.png",
+      "sha256": "efc52f2f740bcbb3c057bd8b967bcad04ba83175e2b951fb976c0fb058be31ed"
+    }
+  ],
+  "native_playback": {
+    "application": "QuickTime Player",
+    "opened": true,
+    "observed_playing_at": "00:35",
+    "observed_end": "01:55",
+    "elapsed_seconds_at_end": 115.02833333333332,
+    "control_value_at_end": 0,
+    "notes": "Playback was observed at an intermediate point and at the end. This is separate from full-frame decode validation.",
+    "evidence": "docs/screenshots/native/54-video-current-end.png"
+  },
+  "demo_root": "/Users/lixiang/Documents/松鼠备份演示/视频演示",
+  "caption_overflow": false,
+  "unrelated_desktop_content": false
+}

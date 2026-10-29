@@ -34,7 +34,7 @@ with (results/'test-matrix.csv').open('w',newline='') as f:
         for i,r in enumerate(data,1):w.writerow([f'{group}-{i:02}',group,r['name'],'通过' if r['passed'] else '失败'])
 text=f'''# 松鼠备份软件测试报告
 
-版本 {version}。整理时间 {display_now}。本轮命名测试 {len(alltests)} 项，通过 {summary['passed']} 项。结果来自可复现的测试程序及其 XML、JSON 和日志。GUI 内部断言与核心用例分开统计；未完成的长期测试不写成通过。
+版本 {version}。整理时间 {display_now}。本轮命名测试 {len(alltests)} 项，通过 {summary['passed']} 项。结果来自可复现的测试程序及其 XML、JSON 和日志。GUI 内部断言、桌面验收与核心用例分别统计。
 
 ## 1 测试环境与方法
 
@@ -96,11 +96,11 @@ text+='''
 gui=json.loads((results/'gui-selftest.json').read_text())
 text+=f'''后台AppKit测试通过 {gui['assertions']} 项内部断言，覆盖输入校验、密码字段、设置白名单、忙碌状态、加密备份、错误密码、恢复、内容查看、验证、保留数量、停止、取消、关闭和退出请求。界面状态和事件日志从真实应用生成，未用设计稿代替运行结果。
 
-测试没有操作系统文件选择器，也没有使用鼠标点击，因此系统授权、选择器行为和完整人工操作链仍需要验收。切换页面、按钮处理和关闭代理方法的内部测试不能替代这部分结论。
+另在李想的Mac上通过系统辅助功能和鼠标、键盘事件执行12项桌面验收，覆盖六个文件选择器的选择与取消、中文空格路径、拒绝覆盖、错误密码、定时保留、变化检测及运行中停止。备份中关闭窗口和恢复中退出均完成清理后结束进程；重启恢复参数，不保存密码，也不自动启动任务。此项使用普通发布应用，未进入内部自测模式。
 
-![图9 恢复完成的应用状态](screenshots/03-restored.png)
+![图9 桌面验收中恢复完成的实际窗口](screenshots/desktop/23-neutral-restored.png)
 
-错误密码时显示中文原因并拒绝发布恢复目录；取消后恢复输入状态并清理暂存。对应完整运行截图保存在docs/screenshots/02-wrong-password.png与06-cancelled.png，事件顺序见test-results/gui-events.txt。
+错误密码时显示中文原因并拒绝发布恢复目录；取消后恢复输入状态并清理暂存。桌面验收结果见test-results/gui-desktop-acceptance.json，截图位于docs/screenshots/desktop。恢复核对排除系统自动维护的com.apple.macl与com.apple.provenance；用户扩展属性仍严格比较。验收工具另通过13项正反例检查。
 
 ## 4 编译检查与动态内存检查
 
@@ -173,7 +173,12 @@ if not soak_path.exists():
     candidates=[root.parent/'soak-20h-020-restart-20261029/status.json',
                 root.parent/'soak-20h-020/status.json']
     soak_path=next((path for path in candidates if path.exists()),candidates[0])
-if soak_path.exists():
+cancelled=results/'soak-cancelled-20261029.json'
+if cancelled.exists():
+    record=json.loads(cancelled.read_text())
+    text+=f"后一次定时与加密watch联合观察从2026年10月29日15:22开始，最后有效检查覆盖{record['verified_elapsed_seconds']/3600:.2f}小时，共{record['verified_checkpoints']}次，记录中无错误。此后取消连续20小时测试安排，核对时进程已经结束，未再重启；不能据此认定20小时通过。课程材料没有连续20小时测试要求，本次保留观察记录，不再作为交付前置条件。原始记录及取消说明见soak-observation-20261029.raw.json与soak-cancelled-20261029.json。\n\n"
+    text+='观察使用冻结CLI，二进制对应关系见lint-rebuild-comparison.json。\n\n'
+elif soak_path.exists():
     soak=json.loads(soak_path.read_text());elapsed=soak.get('elapsed_seconds',0);cp=soak.get('checkpoints',[])
     text+=f"计划连续运行20小时，同时执行定时任务和加密watch任务，每5分钟检查保留份数、verify、恢复哈希、软硬链接、FIFO及只读目录。记录开始时间为{readable_time(soak['started_at'])}（北京时间）；报告读取时已运行{elapsed/3600:.2f}小时，完成{len(cp)}次检查。当前状态为{soak['status']}。\n\n"
     finished=(soak['status']=='passed' and soak.get('requested_seconds')==72000
@@ -198,7 +203,7 @@ text+='''## 7 结论和验收边界
 
 已覆盖的备份、验证、恢复、取消和自动任务路径均满足对应断言。发布前复查能发现已测的源树变化，但不能提供多文件事务一致性；应用不支持网络备份、增量备份、系统守护和重启后自动续跑。
 
-仍需真实环境检查的项目包括系统文件选择器、跨机器运行、外置卷和网络卷、真实磁盘耗尽、掉电持久性、异属主恢复、ACL与文件flags。强制终止只验证了补测中列出的时机和输入；未实现的功能不作为本轮通过项。
+本轮未覆盖跨机器运行、外置卷和网络卷、真实磁盘耗尽、掉电持久性、异属主恢复、ACL与文件flags。强制终止只验证了补测中列出的时机和输入；未实现的功能不作为本轮通过项。
 
 复现命令见README：make test、make sanitize及tests/benchmark.py。GUI自测使用--self-test，长测脚本为tests/soak.py；两者均使用新的测试目录，不使用工作数据。
 '''
