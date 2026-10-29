@@ -8,7 +8,15 @@ if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
 fi
 APP_VERSION=$(/usr/libexec/PlistBuddy -c 'Print CFBundleShortVersionString' build/SquirrelBackup.app/Contents/Info.plist)
 [ "$VERSION" = "$APP_VERSION" ] || { echo 'CLI and GUI versions differ.' >&2; exit 2; }
-python3 scripts/check_report_artifacts.py .
+python3 scripts/check_report_artifacts.py . --require-current-inputs
+if [ "$(git rev-parse --show-toplevel 2>/dev/null || true)" != "$(pwd -P)" ]; then
+  echo 'Package from the dedicated project repository.' >&2
+  exit 2
+fi
+if [ -n "$(git status --porcelain)" ]; then
+  echo 'Review and commit project changes before packaging.' >&2
+  exit 2
+fi
 RELEASE="dist/SquirrelBackup-${VERSION}-macOS-arm64"
 # The path is constrained to the project's generated dist directory.
 rm -rf "$RELEASE"
@@ -21,31 +29,16 @@ codesign --force --sign - "$RELEASE/SquirrelBackup.app"
 codesign --force --sign - "$RELEASE/squirrel"
 codesign --verify --deep --strict "$RELEASE/SquirrelBackup.app"
 codesign --verify --strict "$RELEASE/squirrel"
-cp -R include src tests scripts resources .vscode "$RELEASE/source/"
-cp Makefile .gitignore .gitattributes .clang-format README.md LICENSE THIRD_PARTY.md CHANGELOG.md "$RELEASE/source/"
-cp -R docs/. "$RELEASE/documents/"
-cp -R docs presentations test-results "$RELEASE/source/"
-find "$RELEASE/source" -type d -name __pycache__ -prune -exec rm -rf {} +
-cp -R presentations "$RELEASE/presentations"
-cp -R test-results/. "$RELEASE/test-results/"
-mkdir -p "$RELEASE/source/vendor/googletest"
-if [ -d vendor/googletest ]; then
-  cp -R vendor/googletest/. "$RELEASE/source/vendor/googletest/"
-else
-  cp -R .tools/src/googletest/googletest "$RELEASE/source/vendor/googletest/"
-  cp .tools/src/googletest/LICENSE "$RELEASE/source/vendor/googletest/"
-fi
-# Optional parser fuzzing also builds offline; it never links into the app.
-if [ -d vendor/libfuzzer ]; then
-  cp -R vendor/libfuzzer "$RELEASE/source/vendor/libfuzzer"
-fi
-# Include only this project's history, never a parent workspace's repository.
-if [ "$(git rev-parse --show-toplevel 2>/dev/null || true)" = "$(pwd -P)" ]; then
-  git bundle create "$RELEASE/source-history.bundle" --all
-  git log --date=iso-strict --format='%h %ad %an %s' > "$RELEASE/source/版本管理记录.txt"
-  git status --porcelain > "$RELEASE/source/打包时工作区状态.txt"
-  git rev-parse HEAD > "$RELEASE/source/历史基线提交.txt"
-fi
+# Export one reviewed commit; ignored scratch files never enter the release.
+git archive HEAD | tar -x -C "$RELEASE/source"
+test -f "$RELEASE/source/vendor/googletest/googletest/src/gtest-all.cc"
+cp -R "$RELEASE/source/docs/." "$RELEASE/documents/"
+cp -R "$RELEASE/source/presentations" "$RELEASE/presentations"
+cp -R "$RELEASE/source/test-results/." "$RELEASE/test-results/"
+git bundle create "$RELEASE/source-history.bundle" --all
+git log --date=iso-strict --format='%h %ad %an %s' > "$RELEASE/source/版本管理记录.txt"
+git status --porcelain > "$RELEASE/source/打包时工作区状态.txt"
+git rev-parse HEAD > "$RELEASE/source/历史基线提交.txt"
 cat > "$RELEASE/打开说明.txt" <<NOTE
 松鼠备份 ${VERSION} · 第3组
 
@@ -68,11 +61,13 @@ cat > "$RELEASE/打开说明.txt" <<NOTE
 NOTE
 python3 - "$RELEASE" "$VERSION" <<'PY'
 from pathlib import Path
-import hashlib,json,sys
+import hashlib,json,subprocess,sys
 root=Path(sys.argv[1]);summary=json.loads((root/'test-results/summary.json').read_text())
 assert sys.argv[2]==summary['version'], 'Test summary version differs from the build'
 report=json.loads((root/'test-results/report-visual-qa.json').read_text())
 manifest={'version':sys.argv[2],
+          'source_head':subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),
+          'tracked_source_files':len(subprocess.check_output(['git','ls-files','-z']).split(b'\0'))-1,
           'built_cli_sha256':hashlib.sha256(Path('build/squirrel').read_bytes()).hexdigest(),
           'test_summary_cli_sha256':summary['binary_sha256'],
           'packaged_cli_sha256':hashlib.sha256((root/'squirrel').read_bytes()).hexdigest(),

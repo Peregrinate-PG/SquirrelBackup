@@ -7,6 +7,7 @@ import os
 import subprocess
 import sys
 import time
+import xml.etree.ElementTree as ET
 from pathlib import Path
 from zipfile import ZipFile
 
@@ -56,14 +57,47 @@ try:
     result['version']=(output/'version.log').read_text().strip()
     manifest=json.loads((release/'release-manifest.json').read_text())
     assert result['version']==manifest['version']
-    run('report-artifacts',[sys.executable,source/'scripts/check_report_artifacts.py',source])
+    for label,path in [('cli',release/'squirrel'),
+                       ('gui',release/'SquirrelBackup.app/Contents/MacOS/SquirrelBackup')]:
+        assert hashlib.sha256(path.read_bytes()).hexdigest()==manifest['packaged_'+label+'_sha256']
+    run('report-artifacts',[sys.executable,source/'scripts/check_report_artifacts.py',source,
+                            '--require-current-inputs'])
     report=json.loads((output/'report-artifacts.log').read_text())
     for kind in ('docx','pdf'):
         digest=report[kind+'_sha256']
         assert digest==manifest['report_'+kind+'_sha256']
         assert hashlib.sha256((release/'documents'/('第3组_松鼠备份_实验报告.'+kind)).read_bytes()).hexdigest()==digest
     result['report_pages']=report['pages']
+    history=output/'history-check'
+    run('git-history',['git','clone',release/'source-history.bundle',history])
+    run('git-bundle',['git','bundle','verify',release/'source-history.bundle'],cwd=history)
+    commit=subprocess.check_output(['git','rev-parse','HEAD'],cwd=history,text=True).strip()
+    assert commit==(source/'历史基线提交.txt').read_text().strip()==manifest['source_head']
+    names=subprocess.check_output(['git','ls-files','-z'],cwd=history).decode().rstrip('\0').split('\0')
+    assert len(names)==manifest['tracked_source_files']
+    for name in names:
+        assert (history/name).read_bytes()==(source/name).read_bytes(), 'Source differs from history: '+name
+    result['source_files_matched_to_history']=len(names)
+    result['source_head']=commit
     run('offline-build-test',['make','-j4','all','test'],cwd=source)
+    unit=ET.parse(source/'test-results/unit.xml').getroot()
+    assert int(unit.attrib['failures'])==int(unit.attrib['errors'])==0
+    counts={'unit':int(unit.attrib['tests'])}
+    for group in ['integration','security','workflow-regression']:
+        rows=json.loads((source/'test-results'/(group+'.json')).read_text())
+        assert rows and all(row['passed'] for row in rows)
+        counts[group]=len(rows)
+    result['rebuilt_core_tests']=counts
+    # Exercise the distributed executable too, not only the freshly linked CLI.
+    published_tests=output/'published-cli-tests'
+    published_tests.mkdir()
+    for name,script in [('integration','integration.py'),('security','adversarial.py'),
+                        ('workflow-regression','workflow_regression.py')]:
+        run('published-'+name,[sys.executable,source/'tests'/script,release/'squirrel'],
+            cwd=published_tests)
+        rows=json.loads((published_tests/'test-results'/(name+'.json')).read_text())
+        assert len(rows)==counts[name] and all(row['passed'] for row in rows)
+    result['packaged_cli_cases_replayed']=sum(counts[n] for n in counts if n!='unit')
     run('demo-cli',['bash','scripts/demo.sh'],cwd=source)
     fixture=output/'published-smoke';fixture.mkdir();(fixture/'source').mkdir()
     (fixture/'source'/'中文.txt').write_text('Release binary round trip\n')
@@ -71,12 +105,6 @@ try:
     run('published-verify',[release/'squirrel','verify',fixture/'smoke.sqbk'])
     run('published-restore',[release/'squirrel','restore',fixture/'smoke.sqbk',fixture/'restored'])
     assert (fixture/'restored/中文.txt').read_bytes()==(fixture/'source/中文.txt').read_bytes()
-    if (release/'source-history.bundle').exists():
-        history=output/'history-check'
-        run('git-history',['git','clone',release/'source-history.bundle',history])
-        run('git-bundle',['git','bundle','verify',release/'source-history.bundle'],cwd=history)
-        commit=subprocess.check_output(['git','rev-parse','HEAD'],cwd=history,text=True).strip()
-        assert commit==(source/'历史基线提交.txt').read_text().strip()
     result['passed']=True
 except BaseException as error:
     result['error']=str(error)
