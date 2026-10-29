@@ -1,0 +1,104 @@
+{
+  "checked_at": "2026-10-29T07:30:40.225Z",
+  "status": "passed",
+  "purpose": "Local certificate status synchronization only; no new external upload/submission performed.",
+  "certificate_fact_basis": "Parent verified the official original visually; this synchronization independently checked its exact original byte hash and preserved it.",
+  "pdf_visual_qa": {
+    "document": "docs/pdf/10_学习证书办理说明.pdf",
+    "pages": 2,
+    "pages_individually_viewed": [
+      1,
+      2
+    ],
+    "bounds_warnings": 0,
+    "missing_glyphs": false,
+    "clipping": false,
+    "overlap": false,
+    "outcome": "passed"
+  },
+  "protected_artifacts_unchanged": [
+    "certificate",
+    "submitted_report",
+    "work_submitted_report",
+    "candidate",
+    "software_zip"
+  ],
+  "certificate_image_not_added_to_source_zip": true,
+  "submitted_six_page_pdf_unchanged": true,
+  "software_candidate_and_release_zip_unchanged": true,
+  "school_course_submission_on_hold": true,
+  "archive_entries": 64,
+  "archive_integrity": "passed",
+  "archive_manifest_all_match": true,
+  "platform_status": {
+    "task1_platform_completed": true,
+    "task2_practical_ended": true,
+    "homework_uploaded": true,
+    "homework_submitted": true,
+    "certificate_obtained": true,
+    "cloud_resources_released": true,
+    "school_course_submission_on_hold": true
+  },
+  "files": {
+    "certificate": {
+      "path": "outputs/阿里云读书笔记实验/个人证书/李想_阿里云训练营结课证书.jpg",
+      "sha256": "667c5c09c89b2ed00069841963cdb5cc8e1470154b60305edeb03b239cc6479d",
+      "size": 120614
+    },
+    "submitted_report": {
+      "path": "outputs/阿里云读书笔记实验/李想_2023150901012_读书笔记实验记录.pdf",
+      "sha256": "70b8f9c78e471173961ec4cc57d9a20c05c3b0ac260384cd0a49e424048e717d",
+      "size": 507046
+    },
+    "work_submitted_report": {
+      "path": "work/certificate/materials/李想_2023150901012_读书笔记实验记录.pdf",
+      "sha256": "70b8f9c78e471173961ec4cc57d9a20c05c3b0ac260384cd0a49e424048e717d",
+      "size": 507046
+    },
+    "candidate": {
+      "path": "outputs/SquirrelBackup-0.2.0-macOS-arm64-candidate-20261029-1311.zip",
+      "sha256": "dd3af1b500b677d27bad197c61a4c9ef2150432dcec4f9799807646eb8b62553",
+      "size": 67044835
+    },
+    "software_zip": {
+      "path": "outputs/SquirrelBackup-0.2.0-macOS-arm64.zip",
+      "sha256": "b0318982a3a1b2fa67f9db972ac8821e99959ff215c2bd44656e0e57768fec74",
+      "size": 66751731
+    },
+    "new_doc10_pdf": {
+      "path": "work/SquirrelBackup-improved/docs/pdf/10_学习证书办理说明.pdf",
+      "sha256": "f061e8abe8b5da92d0dc2f4455dbe93b4c1633eeb7d57df6c51fd87120581afd",
+      "size": 151031
+    },
+    "output_doc10_pdf": {
+      "path": "outputs/学习证书办理说明.pdf",
+      "sha256": "f061e8abe8b5da92d0dc2f4455dbe93b4c1633eeb7d57df6c51fd87120581afd",
+      "size": 151031
+    },
+    "doc10_md": {
+      "path": "work/SquirrelBackup-improved/docs/10_学习证书办理说明.md",
+      "sha256": "b6e546f66fb5d655bb0784ee518a4e26cda1df2d477d1ebca5d1e16fc062d9fa",
+      "size": 4355
+    },
+    "doc10_html": {
+      "path": "work/SquirrelBackup-improved/docs/html/10_学习证书办理说明.html",
+      "sha256": "010a91f15dcb47692917305267965d55897c3ab8a99f7b11a90e9861d1d7df87",
+      "size": 5821
+    },
+    "reading_notes_zip": {
+      "path": "outputs/阿里云读书笔记实验/读书笔记系统_源码与实验记录.zip",
+      "sha256": "6e868f47000c2f6c44168cf8b7281a2fbcdc4270351a012256e0fc03d591f3ef",
+      "size": 3208679
+    },
+    "course_delivery_note": {
+      "path": "outputs/阿里云读书笔记实验/交付说明.txt",
+      "sha256": "2c9747c6870e5000c91e35a371c3ca627c3bd32951c5222606f2ce29c916b7f9",
+      "size": 1698
+    },
+    "main_delivery_note": {
+      "path": "outputs/交付说明.txt",
+      "sha256": "16847e0bd2c1a82bdec4bcc4ba04d991ee893ea17530553630d6102327fc9783",
+      "size": 1578
+    }
+  }
+}
