@@ -64,7 +64,8 @@ def audit_history():
         'findings': findings,
         'largest_blobs': sorted(largest, key=lambda item: item['bytes'], reverse=True)[:5],
         'limits': 'Pattern checks do not prove the absence of every possible secret. '
-                  'Student names and IDs in course documents are intentional; prefer a private repository.',
+                  'Student names and IDs are present in the course documents. '
+                  'Public visibility was explicitly requested by the user.',
     }
 
 
@@ -119,7 +120,8 @@ def main():
         plan = {
             'prepared_at': datetime.now(timezone.utc).isoformat(),
             'owner': 'Peregrinate-PG', 'suggested_name': 'SquirrelBackup',
-            'suggested_visibility': 'private',
+            'suggested_visibility': 'public',
+            'visibility_basis': 'User explicitly requested a public repository on 2026-10-29.',
             'description': '第3组软件开发综合实验：macOS文件备份与恢复工具',
             'default_branch': branch, 'head': head, 'refs': refs,
             'bundle_sha256': digest(bundle), 'tracked_files_verified': len(files),
@@ -139,7 +141,7 @@ def main():
 
 ## 包内材料
 
-source是当前提交的全部跟踪文件；source-history.bundle保存真实Git历史，包括vendor/googletest下的离线测试依赖。JSON文件记录基线、文件数量和检查范围。个人证书不在包内，课程文档中保留小组姓名和学号，建议先建私有仓库，再按课程要求给老师访问权限。
+source是当前提交的全部跟踪文件；source-history.bundle保存真实Git历史，包括vendor/googletest下的离线测试依赖。JSON文件记录基线、文件数量和检查范围。个人证书不在包内，课程文档中保留小组姓名和学号。按成员2026年10月29日的明确要求，仓库使用公开可见性。
 
 历史作者和提交时间保持原样。不要把Codex提交改成成员姓名，也不要补造过去的协作记录。后续三人分别用自己的账号提交实际修改、测试或复核内容。
 
@@ -156,9 +158,9 @@ make test
 
 构建平台为macOS 13及以上的Apple Silicon，需要Command Line Tools。测试依赖已纳入历史，克隆后可直接离线构建，无需再复制依赖或下载软件包。
 
-## 批准发布后的操作
+## 创建与上传
 
-先在Peregrinate-PG账号下创建空的SquirrelBackup仓库，选择私有，不预先生成README、许可证或.gitignore。取得发布批准后，才在上面克隆的SquirrelBackup目录执行以下命令；本次没有执行。
+成员已授权在Peregrinate-PG账号下创建公开的SquirrelBackup仓库。新仓库不预先生成README、许可证或.gitignore；完成GitHub官方登录授权后，可在上面克隆的SquirrelBackup目录执行以下命令。此准备脚本只生成本地材料，不执行创建或上传；实际完成状态以远程核验记录为准。
 
 ```sh
 git remote remove origin

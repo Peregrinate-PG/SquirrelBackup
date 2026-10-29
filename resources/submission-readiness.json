@@ -4,7 +4,9 @@
   "online_group_basis": "User confirmed the group information is already filled in during the 2026-10-29 conversation.",
   "online_repository_verified": false,
   "repository_account": "Peregrinate-PG",
-  "repository_status": "User is creating the GitHub repository; URL and remote contents have not yet been verified.",
+  "repository_status": "User authorized Codex to create and populate public Peregrinate-PG/SquirrelBackup. Official GitHub device login is pending; remote creation and content verification are not yet complete.",
+  "repository_visibility": "public",
+  "repository_creation_authorized": true,
   "report_complete": false,
   "ai_evidence_included": false,
   "materials_consistent": false,
@@ -19,6 +21,7 @@
   "laboratory": "自主实验环境（macOS个人计算机）",
   "laboratory_basis": "Describes the actual local Mac used for this project; no institutional room number is asserted.",
   "local_acceptance_verified": false,
+  "desktop_operations_status": "Paused at user request until they notify Codex; background work remains authorized.",
   "acceptance_computer": "李想的Mac",
   "acceptance_scope_basis": "User requested all software, screenshot, presentation and model validation on the current Mac; no separate defense-computer check is required."
 }
