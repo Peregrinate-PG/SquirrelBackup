@@ -76,5 +76,10 @@ with (root/'SHA256SUMS').open('w') as out:
             out.write(hashlib.sha256(path.read_bytes()).hexdigest()+'  ./'+path.relative_to(root).as_posix()+'\n')
 PY
 python3 scripts/zip_release.py "$RELEASE"
-shasum -a 256 "$RELEASE.zip" > "$RELEASE.zip.sha256"
+python3 - "$RELEASE.zip" <<'PY'
+from pathlib import Path
+import hashlib,sys
+archive=Path(sys.argv[1])
+Path(str(archive)+'.sha256').write_text(hashlib.sha256(archive.read_bytes()).hexdigest()+'  '+archive.name+'\n')
+PY
 printf 'Release ready: %s\n' "$RELEASE.zip"
