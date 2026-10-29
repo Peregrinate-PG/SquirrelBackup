@@ -145,7 +145,7 @@ TEST_F(BackupTest, SymlinkHardlinkFifo) {
   EXPECT_EQ(fs::read_symlink(restored / "sym"), fs::path("中文.txt"));
   EXPECT_TRUE(fs::is_symlink(restored / "broken"));
   EXPECT_TRUE(fs::equivalent(restored / "hard", restored / "中文.txt"));
-  struct stat st{};
+  struct stat st {};
   ASSERT_EQ(::lstat((restored / "pipe").c_str(), &st), 0);
   EXPECT_TRUE(S_ISFIFO(st.st_mode));
 }
@@ -157,7 +157,7 @@ TEST_F(BackupTest, Metadata) {
   ASSERT_EQ(::setxattr(path.c_str(), "user.squirrel", "value", 5, 0, 0), 0);
   service.backup(source, archive);
   service.restore(archive, restored);
-  struct stat st{};
+  struct stat st {};
   ASSERT_EQ(::stat((restored / "中文.txt").c_str(), &st), 0);
   EXPECT_EQ(st.st_mode & 0777, 0640);
   EXPECT_EQ(st.st_mtimespec.tv_sec, times[1].tv_sec);
@@ -172,7 +172,7 @@ TEST_F(BackupTest, ReadOnlyRootRestoresWithOriginalPermissions) {
   service.backup(source, archive);
   service.restore(archive, restored);
   EXPECT_EQ(contents(restored / "中文.txt"), "hello\n");
-  struct stat st{};
+  struct stat st {};
   ASSERT_EQ(::lstat(restored.c_str(), &st), 0);
   EXPECT_EQ(st.st_mode & 0777, 0555);
 }
@@ -181,9 +181,9 @@ TEST_F(BackupTest, RewritePreservingMtimeIsRejected) {
   bool changed = false;
   Log log = [&](const std::string& line) {
     if (line.find("Scanned ") == 0) {
-      struct stat before{};
+      struct stat before {};
       ASSERT_EQ(::stat(file.c_str(), &before), 0);
-      ::usleep(1000);  // Ensure distinct ctime even on a fast temporary volume.
+      ::usleep(1000);                    // Ensure distinct ctime even on a fast temporary volume.
       std::ofstream(file) << "other\n";  // Same length as the original file.
       struct timespec times[2] = {before.st_atimespec, before.st_mtimespec};
       ASSERT_EQ(::utimensat(AT_FDCWD, file.c_str(), times, 0), 0);
@@ -210,7 +210,7 @@ TEST_F(BackupTest, PrivateCleanupHandlesUnreadableDirectoriesWithoutFollowingSym
   }
   EXPECT_FALSE(fs::exists(private_path));
   EXPECT_EQ(contents(external / "keep"), "preserve");
-  struct stat st{};
+  struct stat st {};
   ASSERT_EQ(::lstat(external.c_str(), &st), 0);
   EXPECT_EQ(st.st_mode & 0777, 0500);
 }
@@ -345,13 +345,14 @@ TEST_P(CancelBackupTest, LeavesNoPublishedOrTemporaryFiles) {
   options.compress = false;
   options.password = "cancellation-test";
   bool reached = false;
-  Operation operation{&stop, [&](const ProgressInfo& info) {
-    bool in_block = info.phase == Phase::Pack || info.phase == Phase::Seal;
-    if (info.phase == GetParam() && (!in_block || info.completed >= kBlockSize)) {
-      reached = true;
-      stop.store(true);
-    }
-  }};
+  Operation operation{
+      &stop, [&](const ProgressInfo& info) {
+        bool in_block = info.phase == Phase::Pack || info.phase == Phase::Seal;
+        if (info.phase == GetParam() && (!in_block || info.completed >= kBlockSize)) {
+          reached = true;
+          stop.store(true);
+        }
+      }};
   EXPECT_THROW(service.backup(source, archive, options, {}, operation), Cancelled);
   EXPECT_TRUE(reached);
   EXPECT_FALSE(fs::exists(archive));
@@ -361,7 +362,8 @@ TEST_P(CancelBackupTest, LeavesNoPublishedOrTemporaryFiles) {
   EXPECT_EQ(contents(source / "中文.txt"), "hello\n");
 }
 INSTANTIATE_TEST_SUITE_P(EachStage, CancelBackupTest,
-    ::testing::Values(Phase::Scan, Phase::Pack, Phase::Seal, Phase::CheckSource, Phase::Publish));
+                         ::testing::Values(Phase::Scan, Phase::Pack, Phase::Seal,
+                                           Phase::CheckSource, Phase::Publish));
 
 class CancelRestoreTest : public BackupTest, public ::testing::WithParamInterface<Phase> {};
 TEST_P(CancelRestoreTest, LeavesNoDestinationAndPreservesArchive) {
@@ -373,14 +375,15 @@ TEST_P(CancelRestoreTest, LeavesNoDestinationAndPreservesArchive) {
   const auto original = contents(archive);
   std::atomic<bool> stop{false};
   bool reached = false;
-  Operation operation{&stop, [&](const ProgressInfo& info) {
-    bool in_block = info.phase == Phase::Authenticate || info.phase == Phase::Decode ||
-                    info.phase == Phase::Read;
-    if (info.phase == GetParam() && (!in_block || info.completed >= kBlockSize)) {
-      reached = true;
-      stop.store(true);
-    }
-  }};
+  Operation operation{
+      &stop, [&](const ProgressInfo& info) {
+        bool in_block = info.phase == Phase::Authenticate || info.phase == Phase::Decode ||
+                        info.phase == Phase::Read;
+        if (info.phase == GetParam() && (!in_block || info.completed >= kBlockSize)) {
+          reached = true;
+          stop.store(true);
+        }
+      }};
   EXPECT_THROW(service.restore(archive, restored, options.password, {}, operation), Cancelled);
   EXPECT_TRUE(reached);
   EXPECT_FALSE(fs::exists(restored));
@@ -390,33 +393,33 @@ TEST_P(CancelRestoreTest, LeavesNoDestinationAndPreservesArchive) {
   }
 }
 INSTANTIATE_TEST_SUITE_P(EachStage, CancelRestoreTest,
-    ::testing::Values(Phase::Authenticate, Phase::Decode, Phase::Read, Phase::Metadata,
-                      Phase::Publish));
+                         ::testing::Values(Phase::Authenticate, Phase::Decode, Phase::Read,
+                                           Phase::Metadata, Phase::Publish));
 
 TEST_F(BackupTest, SourceAdditionAfterPackingPreventsPublication) {
   Operation operation{nullptr, [&](const ProgressInfo& info) {
-    if (info.phase == Phase::CheckSource) {
-      std::ofstream(source / "late-file") << "created during backup";
-    }
-  }};
+                        if (info.phase == Phase::CheckSource) {
+                          std::ofstream(source / "late-file") << "created during backup";
+                        }
+                      }};
   EXPECT_THROW(service.backup(source, archive, {}, {}, operation), Error);
   EXPECT_FALSE(fs::exists(archive));
 }
 TEST_F(BackupTest, SourceDeletionAfterPackingPreventsPublication) {
   Operation operation{nullptr, [&](const ProgressInfo& info) {
-    if (info.phase == Phase::CheckSource) {
-      fs::remove(source / "empty");
-    }
-  }};
+                        if (info.phase == Phase::CheckSource) {
+                          fs::remove(source / "empty");
+                        }
+                      }};
   EXPECT_THROW(service.backup(source, archive, {}, {}, operation), Error);
   EXPECT_FALSE(fs::exists(archive));
 }
 TEST_F(BackupTest, SourceMetadataChangeAfterPackingPreventsPublication) {
   Operation operation{nullptr, [&](const ProgressInfo& info) {
-    if (info.phase == Phase::CheckSource) {
-      ASSERT_EQ(::chmod((source / "nested").c_str(), 0500), 0);
-    }
-  }};
+                        if (info.phase == Phase::CheckSource) {
+                          ASSERT_EQ(::chmod((source / "nested").c_str(), 0500), 0);
+                        }
+                      }};
   EXPECT_THROW(service.backup(source, archive, {}, {}, operation), Error);
   EXPECT_FALSE(fs::exists(archive));
 }

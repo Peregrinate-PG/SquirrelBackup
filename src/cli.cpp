@@ -3,11 +3,11 @@
 #include <cstdlib>
 #include <iomanip>
 #include <iostream>
-#include <map>
 #include <set>
 #include <string>
 
 #include "squirrel/backup.h"
+
 namespace {
 std::atomic<bool> stopped{false};
 static_assert(std::atomic<bool>::is_always_lock_free, "Signal stop flag must be lock-free");
@@ -53,7 +53,114 @@ uint64_t number(const std::string& value) {
   }
   return n;
 }
+
+struct Arguments {
+  squirrel::BackupOptions backup;
+  squirrel::ScheduleOptions schedule;
+  bool quiet = false;
+};
+
+Arguments parseOptions(int argc, char** argv, int begin, const std::string& command) {
+  using squirrel::Error;
+  Arguments parsed;
+  auto& options = parsed.backup;
+  auto& schedule = parsed.schedule;
+  schedule.watch = command == "watch";
+  auto& quiet = parsed.quiet;
+  std::set<std::string> used;
+  for (int i = begin; i < argc; ++i) {
+    std::string arg = argv[i];
+    if (arg != "--exclude" && !used.insert(arg).second) {
+      throw Error("Duplicate option: " + arg);
+    }
+    if (arg == "--quiet") {
+      quiet = true;
+      continue;
+    }
+    if (arg == "--no-compress") {
+      if (command == "restore" || command == "list" || command == "verify") {
+        throw Error("Option not valid for this command");
+      }
+      options.compress = false;
+      continue;
+    }
+    if (++i >= argc) {
+      throw Error("Missing value for " + arg);
+    }
+    std::string value = argv[i];
+    if (arg == "--password-env") {
+      const char* password = std::getenv(value.c_str());
+      if (!password || !*password) {
+        throw Error("Password environment variable is missing or empty");
+      }
+      options.password = password;
+    } else {
+      if (command == "restore" || command == "list" || command == "verify") {
+        throw Error("Option not valid for this command: " + arg);
+      }
+      if (arg == "--exclude") {
+        options.filter.excludes.push_back(value);
+      } else if (arg == "--path") {
+        options.filter.path_pattern = value;
+      } else if (arg == "--name") {
+        options.filter.name_pattern = value;
+      } else if (arg == "--type") {
+        options.filter.types = value;
+      } else if (arg == "--min-size") {
+        options.filter.min_size = number(value);
+      } else if (arg == "--max-size") {
+        options.filter.max_size = number(value);
+      } else if (arg == "--since") {
+        auto n = number(value);
+        if (n > INT64_MAX) {
+          throw Error("Time out of range");
+        }
+        options.filter.since = n;
+      } else if (arg == "--until") {
+        auto n = number(value);
+        if (n > INT64_MAX) {
+          throw Error("Time out of range");
+        }
+        options.filter.until = n;
+      } else if (arg == "--owner") {
+        auto n = number(value);
+        if (n > UINT32_MAX) {
+          throw Error("UID out of range");
+        }
+        options.filter.owner = n;
+      } else if (arg == "--every" || arg == "--keep" || arg == "--poll" || arg == "--runs") {
+        if (command == "backup") {
+          throw Error("Schedule option not valid for backup");
+        }
+        if ((arg == "--every" && command != "schedule") ||
+            (arg == "--poll" && command != "watch")) {
+          throw Error("Option not valid for this command: " + arg);
+        }
+        auto n = number(value);
+        if (n > 8640000 || !n) {
+          throw Error("Job option must be in 1..8640000");
+        }
+        if (arg == "--every") {
+          schedule.interval_seconds = n;
+        }
+        if (arg == "--keep") {
+          schedule.keep = n;
+        }
+        if (arg == "--poll") {
+          schedule.poll_seconds = n;
+        }
+        if (arg == "--runs") {
+          schedule.max_runs = n;
+        }
+      } else {
+        throw Error("Unknown option: " + arg);
+      }
+    }
+  }
+  return parsed;
+}
 }  // namespace
+
 int main(int argc, char** argv) {
   using namespace squirrel;
   try {
@@ -66,109 +173,19 @@ int main(int argc, char** argv) {
       return 0;
     }
     std::string command = argv[1];
-    bool pair =
+    const bool takesTwoPaths =
         command == "backup" || command == "restore" || command == "schedule" || command == "watch";
-    if (!pair && command != "list" && command != "verify") {
+    if (!takesTwoPaths && command != "list" && command != "verify") {
       throw Error("Unknown command; use --help");
     }
-    int begin = pair ? 4 : 3;
+    const int begin = takesTwoPaths ? 4 : 3;
     if (argc < begin) {
       throw Error("Missing path arguments; use --help");
     }
-    BackupOptions options;
-    ScheduleOptions schedule;
-    schedule.watch = command == "watch";
-    bool quiet = false;
-    std::set<std::string> used;
-    for (int i = begin; i < argc; ++i) {
-      std::string arg = argv[i];
-      if (arg != "--exclude" && !used.insert(arg).second) {
-        throw Error("Duplicate option: " + arg);
-      }
-      if (arg == "--quiet") {
-        quiet = true;
-        continue;
-      }
-      if (arg == "--no-compress") {
-        if (command == "restore" || command == "list" || command == "verify") {
-          throw Error("Option not valid for this command");
-        }
-        options.compress = false;
-        continue;
-      }
-      if (++i >= argc) {
-        throw Error("Missing value for " + arg);
-      }
-      std::string value = argv[i];
-      if (arg == "--password-env") {
-        const char* p = std::getenv(value.c_str());
-        if (!p || !*p) {
-          throw Error("Password environment variable is missing or empty");
-        }
-        options.password = p;
-      } else {
-        if (command == "restore" || command == "list" || command == "verify") {
-          throw Error("Option not valid for this command: " + arg);
-        }
-        if (arg == "--exclude") {
-          options.filter.excludes.push_back(value);
-        } else if (arg == "--path") {
-          options.filter.path_pattern = value;
-        } else if (arg == "--name") {
-          options.filter.name_pattern = value;
-        } else if (arg == "--type") {
-          options.filter.types = value;
-        } else if (arg == "--min-size") {
-          options.filter.min_size = number(value);
-        } else if (arg == "--max-size") {
-          options.filter.max_size = number(value);
-        } else if (arg == "--since") {
-          auto n = number(value);
-          if (n > INT64_MAX) {
-            throw Error("Time out of range");
-          }
-          options.filter.since = n;
-        } else if (arg == "--until") {
-          auto n = number(value);
-          if (n > INT64_MAX) {
-            throw Error("Time out of range");
-          }
-          options.filter.until = n;
-        } else if (arg == "--owner") {
-          auto n = number(value);
-          if (n > UINT32_MAX) {
-            throw Error("UID out of range");
-          }
-          options.filter.owner = n;
-        } else if (arg == "--every" || arg == "--keep" || arg == "--poll" || arg == "--runs") {
-          if (command == "backup") {
-            throw Error("Schedule option not valid for backup");
-          }
-          if ((arg == "--every" && command != "schedule") ||
-              (arg == "--poll" && command != "watch")) {
-            throw Error("Option not valid for this command: " + arg);
-          }
-          auto n = number(value);
-          if (n > 8640000 || !n) {
-            throw Error("Job option must be in 1..8640000");
-          }
-          if (arg == "--every") {
-            schedule.interval_seconds = n;
-          }
-          if (arg == "--keep") {
-            schedule.keep = n;
-          }
-          if (arg == "--poll") {
-            schedule.poll_seconds = n;
-          }
-          if (arg == "--runs") {
-            schedule.max_runs = n;
-          }
-        } else {
-          throw Error("Unknown option: " + arg);
-        }
-      }
-    }
+    const auto parsed = parseOptions(argc, argv, begin, command);
+    const auto& options = parsed.backup;
+    const auto& schedule = parsed.schedule;
+    const bool quiet = parsed.quiet;
     auto log = [quiet](const std::string& line) {
       if (!quiet) {
         std::cerr << line << '\n';

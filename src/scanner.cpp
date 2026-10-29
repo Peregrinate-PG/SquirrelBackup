@@ -9,6 +9,7 @@
 #include <vector>
 
 #include "internal.h"
+
 namespace squirrel {
 bool Filter::excluded(const std::string& path) const {
   for (const auto& pattern : excludes) {
@@ -19,6 +20,7 @@ bool Filter::excluded(const std::string& path) const {
   }
   return false;
 }
+
 bool Filter::accepts(const std::string& path, const struct stat& st) const {
   if (S_ISDIR(st.st_mode)) {
     return true;
@@ -43,6 +45,7 @@ bool Filter::accepts(const std::string& path, const struct stat& st) const {
   return !S_ISREG(st.st_mode) || (static_cast<uint64_t>(st.st_size) >= min_size &&
                                   static_cast<uint64_t>(st.st_size) <= max_size);
 }
+
 std::string typeName(FileType type) {
   switch (type) {
     case FileType::Directory:
@@ -60,7 +63,7 @@ std::string typeName(FileType type) {
 }
 namespace {
 std::vector<std::pair<std::string, Bytes>> attributes(const fs::path& path,
-                                                    const Operation& operation) {
+                                                      const Operation& operation) {
   ssize_t n = ::listxattr(path.c_str(), nullptr, 0, XATTR_NOFOLLOW);
   if (n < 0 && (errno == ENOTSUP || errno == EPERM)) {
     return {};
@@ -81,19 +84,19 @@ std::vector<std::pair<std::string, Bytes>> attributes(const fs::path& path,
     ssize_t len = ::getxattr(path.c_str(), name.c_str(), nullptr, 0, 0, XATTR_NOFOLLOW);
     syscheck(len >= 0, "Cannot read xattr: " + name);
     total += len;
-    require(total <= 64 * 1024 * 1024, "Extended attributes exceed 64 MiB per entry");
+    require(total <= kMaxAttributeBytes, "Extended attributes exceed 64 MiB per entry");
     Bytes value(len);
     syscheck(::getxattr(path.c_str(), name.c_str(), value.data(), value.size(), 0,
                         XATTR_NOFOLLOW) == len,
              "Extended attributes changed during scan");
     result.push_back({name, std::move(value)});
   }
-  require(result.size() <= 4096, "Too many extended attributes");
+  require(result.size() <= kMaxAttributeCount, "Too many extended attributes");
   return result;
 }
 }  // namespace
 std::vector<Entry> FileScanner::scan(const fs::path& root, const Filter& filter, const Log& log,
-                                    const Operation& operation) {
+                                     const Operation& operation) {
   operation.checkpoint(Phase::Scan);
   require(fs::is_directory(root), "Source must be a directory");
   require(filter.min_size <= filter.max_size && filter.since <= filter.until,
@@ -103,59 +106,60 @@ std::vector<Entry> FileScanner::scan(const fs::path& root, const Filter& filter,
   }
   std::vector<Entry> entries;
   std::map<std::pair<uint64_t, uint64_t>, std::string> hardlinks;
-  std::function<void(const std::string&)> visit = [&](const std::string& rel) {
-    operation.checkpoint(Phase::Scan, entries.size(), 0, rel);
-    if (!rel.empty() && filter.excluded(rel)) {
+  std::function<void(const std::string&)> visit = [&](const std::string& relative) {
+    operation.checkpoint(Phase::Scan, entries.size(), 0, relative);
+    if (!relative.empty() && filter.excluded(relative)) {
       return;
     }
-    fs::path path = root / rel;
-    struct stat st{};
-    syscheck(::lstat(path.c_str(), &st) == 0, "Cannot stat: " + rel);
+    fs::path path = root / relative;
+    struct stat st {};
+    syscheck(::lstat(path.c_str(), &st) == 0, "Cannot stat: " + relative);
     require(
         S_ISDIR(st.st_mode) || S_ISREG(st.st_mode) || S_ISLNK(st.st_mode) || S_ISFIFO(st.st_mode),
-        "Unsupported special file (socket or device): " + rel);
-    if (!filter.accepts(rel, st)) {
+        "Unsupported special file (socket or device): " + relative);
+    if (!filter.accepts(relative, st)) {
       return;
     }
-    Entry e;
-    e.path = rel;
-    e.mode = st.st_mode & 0777;
-    e.uid = st.st_uid;
-    e.gid = st.st_gid;
-    e.mtime = st.st_mtimespec.tv_sec;
-    e.mtime_ns = st.st_mtimespec.tv_nsec;
-    e.atime = st.st_atimespec.tv_sec;
-    e.atime_ns = st.st_atimespec.tv_nsec;
-    e.ctime = st.st_ctimespec.tv_sec;
-    e.ctime_ns = st.st_ctimespec.tv_nsec;
-    e.device = st.st_dev;
-    e.inode = st.st_ino;
-    e.type = S_ISDIR(st.st_mode)    ? FileType::Directory
-             : S_ISLNK(st.st_mode)  ? FileType::Symlink
-             : S_ISFIFO(st.st_mode) ? FileType::Fifo
-                                    : FileType::Regular;
-    if (e.type == FileType::Symlink) {
+    Entry entry;
+    entry.path = relative;
+    entry.mode = st.st_mode & 0777;
+    entry.uid = st.st_uid;
+    entry.gid = st.st_gid;
+    entry.mtime = st.st_mtimespec.tv_sec;
+    entry.mtime_ns = st.st_mtimespec.tv_nsec;
+    entry.atime = st.st_atimespec.tv_sec;
+    entry.atime_ns = st.st_atimespec.tv_nsec;
+    entry.ctime = st.st_ctimespec.tv_sec;
+    entry.ctime_ns = st.st_ctimespec.tv_nsec;
+    entry.device = st.st_dev;
+    entry.inode = st.st_ino;
+    entry.type = S_ISDIR(st.st_mode)    ? FileType::Directory
+                 : S_ISLNK(st.st_mode)  ? FileType::Symlink
+                 : S_ISFIFO(st.st_mode) ? FileType::Fifo
+                                        : FileType::Regular;
+    if (entry.type == FileType::Symlink) {
       std::vector<char> buffer(65537);
       ssize_t len = ::readlink(path.c_str(), buffer.data(), buffer.size());
-      syscheck(len >= 0, "Cannot read symlink: " + rel);
+      syscheck(len >= 0, "Cannot read symlink: " + relative);
       require(size_t(len) < buffer.size(), "Symlink target too long");
-      e.link.assign(buffer.data(), len);
+      entry.link.assign(buffer.data(), len);
     }
-    if (e.type == FileType::Regular) {
-      e.size = st.st_size;
-      require(e.size <= (uint64_t{1} << 40), "Source file exceeds the 1 TiB format limit: " + rel);
-      auto key = std::make_pair(e.device, e.inode);
+    if (entry.type == FileType::Regular) {
+      entry.size = st.st_size;
+      require(entry.size <= kMaxFileSize,
+              "Source file exceeds the 1 TiB format limit: " + relative);
+      auto key = std::make_pair(entry.device, entry.inode);
       auto it = hardlinks.find(key);
       if (it != hardlinks.end()) {
-        e.type = FileType::Hardlink;
-        e.link = it->second;
+        entry.type = FileType::Hardlink;
+        entry.link = it->second;
       } else {
-        hardlinks[key] = rel;
+        hardlinks[key] = relative;
       }
     }
-    e.xattrs = attributes(path, operation);
-    entries.push_back(std::move(e));
-    require(entries.size() <= 1000000, "Entry limit exceeded (1 million)");
+    entry.xattrs = attributes(path, operation);
+    entries.push_back(std::move(entry));
+    require(entries.size() <= kMaxEntries, "Entry limit exceeded (1 million)");
     if (S_ISDIR(st.st_mode)) {
       std::vector<std::string> children;
       for (const auto& child : fs::directory_iterator(path)) {
@@ -164,7 +168,7 @@ std::vector<Entry> FileScanner::scan(const fs::path& root, const Filter& filter,
       }
       std::sort(children.begin(), children.end());
       for (const auto& child : children) {
-        visit(rel.empty() ? child : rel + "/" + child);
+        visit(relative.empty() ? child : relative + "/" + child);
       }
     }
   };

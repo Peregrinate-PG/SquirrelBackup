@@ -1,7 +1,7 @@
 {
-  "started_at": "2026-10-29T05:20:50.488424+00:00",
-  "binary_sha256": "524c56d8b66c7bf533b1a7649f86b908a0fa4251b552681d87316c58da6424e4",
-  "injection_library_sha256": "8e0ee8c49eb99e82db99835d23a5a346421eb8fcefda8d050ce510190742bb3a",
+  "started_at": "2026-10-29T17:01:23.096281+00:00",
+  "binary_sha256": "ebb110c143b1ce54ffa5ccaa549bca37cf9980fe0a9de936950fbb236710bba8",
+  "injection_library_sha256": "cf06a38dbf2898ea621ad3c1e9db547905eedf07a1b9624e1fd602ef72e5402f",
   "results": [
     {
       "name": "plain-pack-enospc",
@@ -13,7 +13,7 @@
       "staging_cleaned": true,
       "prior_archive_unchanged": true,
       "same_target_retry_passed": true,
-      "elapsed_seconds": 0.2251
+      "elapsed_seconds": 0.3431
     },
     {
       "name": "plain-seal-enospc",
@@ -25,7 +25,7 @@
       "staging_cleaned": true,
       "prior_archive_unchanged": true,
       "same_target_retry_passed": true,
-      "elapsed_seconds": 0.2741
+      "elapsed_seconds": 0.2641
     },
     {
       "name": "plain-flush-eio",
@@ -37,7 +37,7 @@
       "staging_cleaned": true,
       "prior_archive_unchanged": true,
       "same_target_retry_passed": true,
-      "elapsed_seconds": 0.3405
+      "elapsed_seconds": 0.33
     },
     {
       "name": "plain-publish-eacces",
@@ -49,7 +49,7 @@
       "staging_cleaned": true,
       "prior_archive_unchanged": true,
       "same_target_retry_passed": true,
-      "elapsed_seconds": 0.3471
+      "elapsed_seconds": 0.3364
     },
     {
       "name": "plain-decode-enospc",
@@ -61,7 +61,7 @@
       "staging_cleaned": true,
       "prior_archive_unchanged": true,
       "same_target_retry_passed": true,
-      "elapsed_seconds": 0.1518
+      "elapsed_seconds": 0.1493
     },
     {
       "name": "plain-write-enospc",
@@ -73,7 +73,7 @@
       "staging_cleaned": true,
       "prior_archive_unchanged": true,
       "same_target_retry_passed": true,
-      "elapsed_seconds": 0.2136
+      "elapsed_seconds": 0.2158
     },
     {
       "name": "plain-publish-eio",
@@ -85,7 +85,7 @@
       "staging_cleaned": true,
       "prior_archive_unchanged": true,
       "same_target_retry_passed": true,
-      "elapsed_seconds": 0.2272
+      "elapsed_seconds": 0.2288
     },
     {
       "name": "plain-metadata-eperm",
@@ -97,7 +97,7 @@
       "staging_cleaned": true,
       "prior_archive_unchanged": true,
       "same_target_retry_passed": true,
-      "elapsed_seconds": 0.2599
+      "elapsed_seconds": 0.2254
     },
     {
       "name": "plain-write-eintr",
@@ -107,7 +107,7 @@
       "restored_hash_matches": true,
       "staging_cleaned": true,
       "prior_archive_unchanged": true,
-      "elapsed_seconds": 0.1397
+      "elapsed_seconds": 0.1386
     },
     {
       "name": "plain-write-short",
@@ -117,7 +117,7 @@
       "restored_hash_matches": true,
       "staging_cleaned": true,
       "prior_archive_unchanged": true,
-      "elapsed_seconds": 0.1939
+      "elapsed_seconds": 0.1871
     },
     {
       "name": "encrypted-pack-enospc",
@@ -129,7 +129,7 @@
       "staging_cleaned": true,
       "prior_archive_unchanged": true,
       "same_target_retry_passed": true,
-      "elapsed_seconds": 0.5224
+      "elapsed_seconds": 0.5287
     },
     {
       "name": "encrypted-seal-enospc",
@@ -141,7 +141,7 @@
       "staging_cleaned": true,
       "prior_archive_unchanged": true,
       "same_target_retry_passed": true,
-      "elapsed_seconds": 0.7143
+      "elapsed_seconds": 0.7163
     },
     {
       "name": "encrypted-flush-eio",
@@ -153,7 +153,7 @@
       "staging_cleaned": true,
       "prior_archive_unchanged": true,
       "same_target_retry_passed": true,
-      "elapsed_seconds": 0.8019
+      "elapsed_seconds": 0.803
     },
     {
       "name": "encrypted-publish-eacces",
@@ -165,7 +165,7 @@
       "staging_cleaned": true,
       "prior_archive_unchanged": true,
       "same_target_retry_passed": true,
-      "elapsed_seconds": 0.8001
+      "elapsed_seconds": 0.8071
     },
     {
       "name": "encrypted-decode-enospc",
@@ -177,7 +177,7 @@
       "staging_cleaned": true,
       "prior_archive_unchanged": true,
       "same_target_retry_passed": true,
-      "elapsed_seconds": 0.4234
+      "elapsed_seconds": 0.4247
     },
     {
       "name": "encrypted-write-enospc",
@@ -189,7 +189,7 @@
       "staging_cleaned": true,
       "prior_archive_unchanged": true,
       "same_target_retry_passed": true,
-      "elapsed_seconds": 0.4885
+      "elapsed_seconds": 0.4935
     },
     {
       "name": "encrypted-publish-eio",
@@ -201,7 +201,7 @@
       "staging_cleaned": true,
       "prior_archive_unchanged": true,
       "same_target_retry_passed": true,
-      "elapsed_seconds": 0.5018
+      "elapsed_seconds": 0.5064
     },
     {
       "name": "encrypted-metadata-eperm",
@@ -213,7 +213,7 @@
       "staging_cleaned": true,
       "prior_archive_unchanged": true,
       "same_target_retry_passed": true,
-      "elapsed_seconds": 0.4982
+      "elapsed_seconds": 0.4971
     },
     {
       "name": "encrypted-write-eintr",
@@ -223,7 +223,7 @@
       "restored_hash_matches": true,
       "staging_cleaned": true,
       "prior_archive_unchanged": true,
-      "elapsed_seconds": 0.2727
+      "elapsed_seconds": 0.2724
     },
     {
       "name": "encrypted-write-short",
@@ -233,7 +233,7 @@
       "restored_hash_matches": true,
       "staging_cleaned": true,
       "prior_archive_unchanged": true,
-      "elapsed_seconds": 0.321
+      "elapsed_seconds": 0.3222
     },
     {
       "name": "plain-backup-SIGKILL",
@@ -241,8 +241,8 @@
       "signal": "SIGKILL",
       "exit_code": -9,
       "observed_io": {
-        "path": ".squirrel-oWsLDB/tree",
-        "bytes": 4272128
+        "path": ".squirrel-B8T9TI/tree",
+        "bytes": 4689920
       },
       "unpublished_on_kill": true,
       "prior_archive_unchanged": true,
@@ -251,7 +251,7 @@
       "staging_root_mode": "0700",
       "same_target_retry_passed": true,
       "old_staging_not_removed_by_retry": true,
-      "elapsed_seconds": 3.4245
+      "elapsed_seconds": 3.3374
     },
     {
       "name": "plain-restore-SIGKILL",
@@ -259,43 +259,7 @@
       "signal": "SIGKILL",
       "exit_code": -9,
       "observed_io": {
-        "path": ".squirrel-Wvu5nm/restored/data.bin",
-        "bytes": 5242880
-      },
-      "unpublished_on_kill": true,
-      "prior_archive_unchanged": true,
-      "source_unchanged": true,
-      "private_staging_left_by_kill": 1,
-      "staging_root_mode": "0700",
-      "same_target_retry_passed": true,
-      "old_staging_not_removed_by_retry": true,
-      "elapsed_seconds": 3.2924
-    },
-    {
-      "name": "encrypted-backup-SIGKILL",
-      "passed": true,
-      "signal": "SIGKILL",
-      "exit_code": -9,
-      "observed_io": {
-        "path": ".squirrel-kfb5G6/tree",
-        "bytes": 4530176
-      },
-      "unpublished_on_kill": true,
-      "prior_archive_unchanged": true,
-      "source_unchanged": true,
-      "private_staging_left_by_kill": 1,
-      "staging_root_mode": "0700",
-      "same_target_retry_passed": true,
-      "old_staging_not_removed_by_retry": true,
-      "elapsed_seconds": 4.0901
-    },
-    {
-      "name": "encrypted-restore-SIGKILL",
-      "passed": true,
-      "signal": "SIGKILL",
-      "exit_code": -9,
-      "observed_io": {
-        "path": ".squirrel-lzyVLF/restored/data.bin",
+        "path": ".squirrel-Gaoctj/restored/data.bin",
         "bytes": 4194304
       },
       "unpublished_on_kill": true,
@@ -305,11 +269,47 @@
       "staging_root_mode": "0700",
       "same_target_retry_passed": true,
       "old_staging_not_removed_by_retry": true,
-      "elapsed_seconds": 3.5891
+      "elapsed_seconds": 3.3042
+    },
+    {
+      "name": "encrypted-backup-SIGKILL",
+      "passed": true,
+      "signal": "SIGKILL",
+      "exit_code": -9,
+      "observed_io": {
+        "path": ".squirrel-rIrxWg/tree",
+        "bytes": 4194304
+      },
+      "unpublished_on_kill": true,
+      "prior_archive_unchanged": true,
+      "source_unchanged": true,
+      "private_staging_left_by_kill": 1,
+      "staging_root_mode": "0700",
+      "same_target_retry_passed": true,
+      "old_staging_not_removed_by_retry": true,
+      "elapsed_seconds": 4.025
+    },
+    {
+      "name": "encrypted-restore-SIGKILL",
+      "passed": true,
+      "signal": "SIGKILL",
+      "exit_code": -9,
+      "observed_io": {
+        "path": ".squirrel-z06gNr/restored/data.bin",
+        "bytes": 4194304
+      },
+      "unpublished_on_kill": true,
+      "prior_archive_unchanged": true,
+      "source_unchanged": true,
+      "private_staging_left_by_kill": 1,
+      "staging_root_mode": "0700",
+      "same_target_retry_passed": true,
+      "old_staging_not_removed_by_retry": true,
+      "elapsed_seconds": 3.541
     }
   ],
   "passed": true,
   "scope": "Injected errno and real SIGKILL; not a physical full-disk or power-loss test.",
   "fixture_contents_unchanged": true,
-  "finished_at": "2026-10-29T05:21:18.907179+00:00"
+  "finished_at": "2026-10-29T17:01:50.583136+00:00"
 }

@@ -1,93 +1,92 @@
 # 松鼠备份 Squirrel Backup
 
-第3组软件开发综合实验项目，当前版本0.2.0。C++17实现备份核心，Objective-C++与Cocoa提供原生界面，同时提供命令行入口。
+软件开发综合实验第3组项目，版本0.2.0。使用C++17实现目录树备份与恢复，提供macOS原生界面和命令行两种入口。
 
-## 打开与构建
+## 构建与运行
 
-发布包根目录中双击SquirrelBackup.app；命令行运行./squirrel --help。支持macOS 13.0及以上的Apple Silicon，实际验证环境为macOS 13.0 arm64、Apple Clang 14.0.3。程序使用本地签名，未做Apple公证，其他电脑的启动需实测。
-
-源码目录中执行：
+开发环境：macOS 13.0、Apple Silicon arm64、Apple Clang 14.0.3。构建需要macOS Command Line Tools中的clang++、SDK和make。
 
 ```sh
 make -j4 all
 open build/SquirrelBackup.app
-bash scripts/demo.sh
+./build/squirrel --help
 ```
 
-构建需要macOS Command Line Tools，无需Homebrew、Qt、Python后端或云服务。GUI需要图形登录会话；CLI可独立运行。发布源码附GoogleTest，make test可离线执行。
+应用使用Cocoa/AppKit，密码封装使用系统CommonCrypto/Security。构建不需要下载运行库。GoogleTest随源码提供，Python 3用于运行集成测试。
 
-## 主要功能
+## 功能
 
-- 目录树备份与恢复，保留普通文件、空目录、软硬链接、FIFO及声明范围内的元数据。
-- 自定义归档、分块Huffman压缩、密码加密与完整性校验。
-- 路径、文件名、类型、时间、大小、UID六类筛选，CLI完整提供，GUI提供常用项。
-- 定时备份、目录变化检测、每个任务独立保留最近若干快照。
-- 运行阶段与进度、协作取消、忙碌时关闭或退出清理、非密码设置记忆。
+- 备份和恢复目录树，保留空目录、软硬链接、FIFO、权限、时间及扩展属性。
+- 自定义归档、分块Huffman压缩、密码加密和完整性验证。
+- 按路径、文件名、类型、时间、大小和UID筛选文件，支持排除规则。
+- 定时备份、目录变化检测及任务内快照保留。
+- 界面显示进度，支持取消、关闭时清理和表单参数记忆。
 
-恢复目标必须尚不存在，程序不合并或覆盖已有目录。备份输出也必须是新文件。源目录和目标父目录须已存在。
+备份文件和恢复目录都须使用新路径，目标父目录须已存在。备份位置放在源目录之外。界面密码不写入偏好设置或日志。
 
 ```sh
 ./build/squirrel backup /路径/源目录 /另一位置/备份.sqbk
 ./build/squirrel verify /另一位置/备份.sqbk
 ./build/squirrel list /另一位置/备份.sqbk
-./build/squirrel restore /另一位置/备份.sqbk /另一位置/新的恢复目录
+./build/squirrel restore /另一位置/备份.sqbk /另一位置/恢复目录
 ./build/squirrel backup /路径/源目录 /另一位置/筛选.sqbk --exclude '*.tmp' --name '*.txt'
 ./build/squirrel schedule /路径/源目录 /备份存储目录 --every 300 --keep 5
 ./build/squirrel watch /路径/源目录 /备份存储目录 --poll 2 --keep 5
 ```
 
-CLI密码通过环境变量传入。在zsh中先执行read -rs 'SQUIRREL_PASSWORD?备份密码：'和export SQUIRREL_PASSWORD，在备份、验证或恢复命令后加--password-env SQUIRREL_PASSWORD，结束后unset SQUIRREL_PASSWORD。环境变量可能被同权限进程读取；一般演示可直接使用GUI密码框。密码不写入设置或日志。
+CLI通过`--password-env`读取密码。在zsh中输入：
 
-## 验证与复现
+```sh
+read -rs 'SQUIRREL_PASSWORD?备份密码：'
+export SQUIRREL_PASSWORD
+./build/squirrel backup /路径/源目录 /另一位置/加密.sqbk --password-env SQUIRREL_PASSWORD
+unset SQUIRREL_PASSWORD
+```
+
+恢复加密备份时使用同一选项。密码由用户保存，程序没有找回功能。
+
+## 源码结构
+
+| 路径 | 职责 |
+| --- | --- |
+| include/squirrel/backup.h | 公共类型和服务接口 |
+| src/scanner.cpp | 目录扫描、筛选与元数据读取 |
+| src/archive.cpp | 树记录编码、解析和文件恢复 |
+| src/huffman.cpp | 分块Huffman编码与解码 |
+| src/crypto.cpp | 密码派生、加密和完整性认证 |
+| src/service.cpp | 备份、检查和恢复流程 |
+| src/scheduler.cpp | 定时、变化检测与快照保留 |
+| src/cli.cpp | 命令行参数和命令执行 |
+| src/gui*.mm、src/gui*.h | 应用入口、界面布局、控制器和辅助函数 |
+| tests/ | 单元、集成及界面测试 |
+| vendor/ | 测试依赖及其许可证 |
+
+## 测试
 
 ```sh
 make test
 make sanitize
-bash scripts/bootstrap.sh --docs-tools
-make lint
-make fuzz
-python3 tests/benchmark.py build/squirrel
-python3 tests/signals.py build/squirrel /已存在父目录/新的信号测试目录
-make gui-demo video-inspector
-./build/gui_demo /已存在父目录/新的演示目录
-./build/video_inspect /演示目录/松鼠备份_后台演示.mp4 /校验输出目录
+make lint CPPLINT=/本机工具目录/cpplint
+make format-check CLANG_FORMAT=/本机工具目录/clang-format
+./build/SquirrelBackup.app/Contents/MacOS/SquirrelBackup --self-test /已存在父目录/新测试目录
 ```
 
-GUI内部测试：build/SquirrelBackup.app/Contents/MacOS/SquirrelBackup --self-test /已存在父目录/新的测试目录。该模式不显示窗口、不读写用户偏好，不操作鼠标或系统选择器。后台演示同样调用真实按钮处理流程并渲染应用视图，不捕获桌面。
+`make test`执行52项单元测试、21项CLI集成测试、18项异常归档与并发测试、6项工作流回归。GUI自测单独执行53项断言，需要图形登录会话，以后台窗口检查控件状态和操作结果。
 
-当前命名用例97项，GUI内部断言53项，兼容性4种组合，实际信号中断20种组合，分别统计。动态内存检查、随机输入与持续运行证据见docs/03_软件测试报告.md和test-results。持续运行状态按生成报告时的实际记录填写。
+`make sanitize`对核心测试启用AddressSanitizer与UndefinedBehaviorSanitizer。`.clang-format`规定源码排版，`make lint`检查C++编码规范。测试输出写入`test-results`。
 
-另有归档解析器libFuzzer补测：10分钟119,844次输入执行，未发现崩溃或Sanitizer错误。范围仅为SQTREE解析和Huffman解码，不包含恢复写入、加密封装或全项目覆盖。离线构建与复现命令见test-results/archive-fuzz-020.md；所需LLVM运行时源码及许可证随包保留，正式应用不依赖该工具。
+## 文件系统约定
 
-人工验收可用 `python3 scripts/package_acceptance.py /已存在父目录/新工具包目录` 生成辅助包。包内两个 `.command` 分别准备独立演示数据、核对实际恢复结果，另附操作单和空白真人记录表。核对覆盖内容、权限、软硬链接、FIFO及扩展属性；这不替代系统文件选择器和鼠标操作验收。工具自身12个正反例见test-results/acceptance-tools-020.json，不并入97项产品测试。
+恢复使用私有暂存目录，在检查成功后发布到新路径。普通文件分块处理；扫描期间保留文件列表与元数据。对源树进行备份前后检查，使用中的数据库等需要一致性的数据应先停止写入。
 
-## 材料入口
+自动任务在应用或CLI进程运行期间执行，电脑休眠时暂停。变化检测通过轮询确认稳定状态。取消在工作单元之间响应，完成的备份保留。
 
-| 文件 | 内容 |
-| --- | --- |
-| docs/01_需求分析说明书.md | 需求、用例、范围与有日期的计划 |
-| docs/02_系统设计文档.md | 模块、真实接口、格式、算法与流程 |
-| docs/03_软件测试报告.md | 本版结果、原始证据和验证范围 |
-| docs/04_StarUML绘图指导.md | 7张可编辑UML图及打开、修改、导出方法 |
-| docs/05_实验报告.md | 与Word主体一致的可编辑阅读稿 |
-| docs/第3组_松鼠备份_实验报告.docx | 按课程原模板填写的Word报告，另附同名PDF |
-| docs/06_演示与答辩指南.md | 三分钟讲解、七分钟操作及常见问题 |
-| docs/07_三人分工与协作方案.md | 均衡主责、交叉复核与确认事项 |
-| docs/08_提交前验收清单.md | 提交前尚需完成的具体检查 |
-| docs/09_复核结论与后续安排.md | 原版问题、修订内容和后续安排 |
-| docs/10_学习证书办理说明.md | 每人完成课程、实践与审核的步骤 |
-| docs/uml/SquirrelBackup.mdj | StarUML模型，另附SVG、PNG和官方导出校验图 |
-| presentations/第3组_松鼠备份_答辩.pptx | 11页答辩稿及讲者备注，另有PDF和讲稿 |
-| presentations/video/松鼠备份_115秒演示.mp4 | 实际应用后台演示，含中文字幕，无音轨 |
+UID/GID按原值记录；当前用户无权恢复属主或扩展属性时输出警告。权限和时间恢复失败会中止。支持范围为普通文件、目录、软硬链接和FIFO；遇到设备节点或socket时报错。强制终止可能留下私有暂存目录。
 
-组长杨梦宇2023150901002；郭畅2023040904017；李想2023150901012。实验环境为自主实验环境（macOS个人计算机），在线分组已由成员确认填写。三人按文件恢复、格式算法、界面任务分担主责，具体见07文档。李想的个人学习证书已取得，杨梦宇和郭畅的证书待本人提供；证书单独保存，不纳入软件源码。公开仓库为[https://github.com/Peregrinate-PG/SquirrelBackup](https://github.com/Peregrinate-PG/SquirrelBackup)，已上传并核对真实Git历史与源码。最终材料的完成状态见resources/submission-readiness.json。
+## 项目信息
 
-## 功能边界
+组长：杨梦宇（2023150901002）；组员：郭畅（2023040904017）、李想（2023150901012）。
 
-权限、atime/mtime纳秒时间、UID/GID记录、xattrs按实现范围保存；异属主恢复可能因权限不足产生警告。不支持设备节点、socket、ACL、文件flags和创建时间；恢复时去除setuid/setgid/sticky权限位。
+仓库：https://github.com/Peregrinate-PG/SquirrelBackup
 
-定时与变化检测只在程序运行期间有效，不是系统守护。变化检测采用元数据轮询与稳定判断，不能捕获两次观察之间产生又消失的变化。发布前复查能拒绝已测的源树变化，但不是文件系统原子快照。没有网络备份、增量备份、断点续传和开机自启。
-
-取消在扫描、数据块、元数据和发布前检查停止标志；单次系统调用或密码派生完成后才能继续响应。未完成暂存会清理，已经发布的备份保留；强制终止和掉电不属于正常清理保证。临时目录0700、文件0600，不承诺APFS安全擦除。未加密摘要用于检测损坏，不能抵抗主动重算摘要。
-
-课程第9讲要求PPT3分钟、现场操作7分钟、视频不超过2分钟；2026年11月18日23:59前由组长提交小组材料至成电慕课，证书每人单独提交。后续通知如有更新，以课程通知为准。
+依赖来源与许可证见`THIRD_PARTY.md`和`LICENSE`。

@@ -12,22 +12,33 @@
 #include <vector>
 
 #include "squirrel/backup.h"
+
 namespace squirrel {
+
+constexpr uint64_t kMaxFileSize = uint64_t{1} << 40;
+constexpr size_t kMaxEntries = 1000000;
+constexpr size_t kMaxTextSize = 65536;
+constexpr size_t kMaxAttributeCount = 4096;
+constexpr size_t kMaxAttributeBytes = 64 * 1024 * 1024;
+
 inline void require(bool ok, const std::string& message) {
   if (!ok) {
     throw Error(message);
   }
 }
+
 inline void syscheck(bool ok, const std::string& message) {
   if (!ok) {
     throw Error(message + ": " + std::strerror(errno));
   }
 }
+
 inline void emit(const Log& log, const std::string& message) {
   if (log) {
     log(message);
   }
 }
+
 struct Fd {
   int value;
   explicit Fd(int fd) : value(fd) {}
@@ -49,12 +60,14 @@ struct TempDir {
     syscheck(result != nullptr, "Cannot create private temporary directory");
     path = result;
   }
+  TempDir(const TempDir&) = delete;
+  TempDir& operator=(const TempDir&) = delete;
+
   ~TempDir() {
     std::error_code ec;
     fs::remove_all(path, ec);
     if (ec) {
-      // A failed restore may already have applied read-only directory modes.
-      // Repair only directories in our private tree, never symlink targets.
+      // Restore directory access for cleanup without following symlinks.
       writableDirectories(path);
       fs::remove_all(path, ec);
     }
@@ -85,6 +98,7 @@ inline fs::path outputPath(const fs::path& p) {
   require(fs::is_directory(absolute.parent_path()), "Output parent must exist");
   return fs::canonical(absolute.parent_path()) / absolute.filename();
 }
+
 inline bool beneath(const fs::path& child, const fs::path& parent) {
   auto c = child.begin();
   for (auto p = parent.begin(); p != parent.end(); ++p, ++c) {
@@ -94,18 +108,21 @@ inline bool beneath(const fs::path& child, const fs::path& parent) {
   }
   return true;
 }
+
 inline bool existsNoFollow(const fs::path& p) {
-  struct stat st{};
+  struct stat st {};
   if (::lstat(p.c_str(), &st) == 0) {
     return true;
   }
   syscheck(errno == ENOENT, "Cannot inspect output");
   return false;
 }
+
 inline void privateFile(const fs::path& p) {
   Fd fd(::open(p.c_str(), O_CREAT | O_EXCL | O_WRONLY | O_NOFOLLOW, 0600));
   syscheck(fd.value >= 0, "Cannot create temporary file");
 }
+
 inline void syncFile(const fs::path& p) {
   Fd fd(::open(p.c_str(), O_RDONLY | O_NOFOLLOW));
   syscheck(fd.value >= 0 && ::fsync(fd.value) == 0, "Cannot flush file");

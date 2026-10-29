@@ -17,7 +17,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def git(*arguments, cwd=ROOT, data=None):
-    return subprocess.check_output(['git', *arguments], cwd=cwd, input=data)
+    return subprocess.check_output(["git", *arguments], cwd=cwd, input=data)
 
 
 def digest(path):
@@ -26,123 +26,166 @@ def digest(path):
 
 def audit_history():
     """Check reachable names and common credential signatures, without printing secrets."""
-    objects = git('rev-list', '--objects', '--all').splitlines()
-    sizes = git('cat-file', '--batch-check=%(objectname) %(objecttype) %(objectsize)',
-                data=b'\n'.join(row.split(b' ', 1)[0] for row in objects) + b'\n')
-    metadata = {oid: (kind, int(size)) for oid, kind, size in
-                (row.split() for row in sizes.splitlines())}
+    objects = git("rev-list", "--objects", "--all").splitlines()
+    sizes = git(
+        "cat-file",
+        "--batch-check=%(objectname) %(objecttype) %(objectsize)",
+        data=b"\n".join(row.split(b" ", 1)[0] for row in objects) + b"\n",
+    )
+    metadata = {
+        oid: (kind, int(size)) for oid, kind, size in (row.split() for row in sizes.splitlines())
+    }
     signatures = {
-        'private_key': rb'-----BEGIN (?:RSA |EC |OPENSSH |DSA )?PRIVATE KEY-----',
-        'github_token': rb'\bgh[pousr]_[A-Za-z0-9]{36,255}\b|\bgithub_pat_[A-Za-z0-9_]{40,255}\b',
-        'aws_access_key': rb'\bAKIA[A-Z0-9]{16}\b',
-        'aliyun_access_key': rb'\bLTAI[A-Za-z0-9]{16,30}\b',
+        "private_key": rb"-----BEGIN (?:RSA |EC |OPENSSH |DSA )?PRIVATE KEY-----",
+        "github_token": rb"\bgh[pousr]_[A-Za-z0-9]{36,255}\b|\bgithub_pat_[A-Za-z0-9_]{40,255}\b",
+        "aws_access_key": rb"\bAKIA[A-Z0-9]{16}\b",
+        "aliyun_access_key": rb"\bLTAI[A-Za-z0-9]{16,30}\b",
     }
     findings, scanned, largest = [], 0, []
-    forbidden = {'.env', 'credentials', 'cookies.json', 'storage-state.json', 'id_rsa', 'id_ed25519'}
+    forbidden = {
+        ".env",
+        "credentials",
+        "cookies.json",
+        "storage-state.json",
+        "id_rsa",
+        "id_ed25519",
+    }
     for row in objects:
-        if b' ' not in row:
+        if b" " not in row:
             continue
-        oid, raw_name = row.split(b' ', 1)
-        name = raw_name.decode('utf-8')
+        oid, raw_name = row.split(b" ", 1)
+        name = raw_name.decode("utf-8")
         kind, size = metadata[oid]
-        if kind != b'blob':
+        if kind != b"blob":
             continue
-        largest.append({'path': name, 'bytes': size})
-        if Path(name).name in forbidden or '/个人证书/' in '/' + name:
-            findings.append({'path': name, 'kind': 'private_file_name'})
+        largest.append({"path": name, "bytes": size})
+        if Path(name).name in forbidden or "/个人证书/" in "/" + name:
+            findings.append({"path": name, "kind": "private_file_name"})
         if size >= 100 * 1024 * 1024:
-            findings.append({'path': name, 'kind': 'oversized_git_blob'})
-        content = git('cat-file', 'blob', oid.decode())
-        if b'\0' not in content[:8192]:
+            findings.append({"path": name, "kind": "oversized_git_blob"})
+        content = git("cat-file", "blob", oid.decode())
+        if b"\0" not in content[:8192]:
             scanned += 1
             for label, pattern in signatures.items():
                 if re.search(pattern, content):
-                    findings.append({'path': name, 'kind': label, 'object': oid.decode()})
+                    findings.append({"path": name, "kind": label, "object": oid.decode()})
     return {
-        'method': 'Reachable Git object names, blob sizes and selected credential signatures',
-        'reachable_objects': len(objects), 'text_blobs_scanned': scanned,
-        'findings': findings,
-        'largest_blobs': sorted(largest, key=lambda item: item['bytes'], reverse=True)[:5],
-        'limits': 'Pattern checks do not prove the absence of every possible secret. '
-                  'Student names and IDs are present in the course documents. '
-                  'Public visibility was explicitly requested by the user.',
+        "method": "Reachable Git object names, blob sizes and selected credential signatures",
+        "reachable_objects": len(objects),
+        "text_blobs_scanned": scanned,
+        "findings": findings,
+        "largest_blobs": sorted(largest, key=lambda item: item["bytes"], reverse=True)[:5],
+        "limits": "Pattern checks do not prove the absence of every possible secret. "
+        "Student names and IDs are present in the course documents. "
+        "Public visibility was explicitly requested by the user.",
     }
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('output_directory', type=Path)
+    parser.add_argument("output_directory", type=Path)
     args = parser.parse_args()
     target = args.output_directory.resolve()
-    zipped = target.with_suffix('.zip')
+    zipped = target.with_suffix(".zip")
     if target.exists() or zipped.exists() or not target.parent.is_dir():
-        raise SystemExit('Choose a new directory under an existing parent')
-    if Path(git('rev-parse', '--show-toplevel').decode().strip()) != ROOT:
-        raise SystemExit('Expected a dedicated project repository')
-    if git('status', '--porcelain').strip():
-        raise SystemExit('Commit the reviewed changes before preparing repository materials')
+        raise SystemExit("Choose a new directory under an existing parent")
+    if Path(git("rev-parse", "--show-toplevel").decode().strip()) != ROOT:
+        raise SystemExit("Expected a dedicated project repository")
+    if git("status", "--porcelain").strip():
+        raise SystemExit("Commit the reviewed changes before preparing repository materials")
     audit = audit_history()
-    if audit['findings']:
-        raise SystemExit(json.dumps(audit['findings'], ensure_ascii=False))
-    head = git('rev-parse', 'HEAD').decode().strip()
-    branch = git('branch', '--show-current').decode().strip()
-    if branch != 'main':
-        raise SystemExit('Preparation expects the reviewed main branch')
-    refs = git('for-each-ref', '--format=%(refname) %(objectname)',
-               'refs/heads', 'refs/tags').decode().splitlines()
-    publication_path = ROOT / 'test-results/repository-publication.json'
+    if audit["findings"]:
+        raise SystemExit(json.dumps(audit["findings"], ensure_ascii=False))
+    head = git("rev-parse", "HEAD").decode().strip()
+    branch = git("branch", "--show-current").decode().strip()
+    if branch != "main":
+        raise SystemExit("Preparation expects the reviewed main branch")
+    refs = (
+        git("for-each-ref", "--format=%(refname) %(objectname)", "refs/heads", "refs/tags")
+        .decode()
+        .splitlines()
+    )
+    publication_path = ROOT / "test-results/repository-publication.json"
     publication = json.loads(publication_path.read_text()) if publication_path.exists() else None
     repository_status = (
         f"公开仓库为{publication['repository_url']}，已有远程核验记录。"
         f"记录对应提交{publication['verified_head'][:12]}，本脚本不重新检查线上状态。"
-        if publication else '目前只有本地材料，尚无远程核验记录。')
-    with tempfile.TemporaryDirectory(prefix='repository-preparation-', dir=target.parent) as temp:
+        if publication
+        else "目前只有本地材料，尚无远程核验记录。"
+    )
+    with tempfile.TemporaryDirectory(prefix="repository-preparation-", dir=target.parent) as temp:
         stage = Path(temp) / target.name
         stage.mkdir()
-        bundle = stage / 'source-history.bundle'
-        git('bundle', 'create', str(bundle), '--all')
-        with (stage / 'bundle-verification.log').open('wb') as log:
-            subprocess.run(['git', 'bundle', 'verify', str(bundle)], cwd=ROOT,
-                           stdout=log, stderr=subprocess.STDOUT, check=True)
-        clone = Path(temp) / 'local-clone'
-        with (stage / 'clone-verification.log').open('wb') as log:
-            subprocess.run(['git', 'clone', '--no-hardlinks', str(bundle), str(clone)],
-                           stdout=log, stderr=subprocess.STDOUT, check=True)
-            subprocess.run(['git', 'fsck', '--full'], cwd=clone,
-                           stdout=log, stderr=subprocess.STDOUT, check=True)
-        assert git('rev-parse', 'HEAD', cwd=clone).decode().strip() == head
-        assert not git('status', '--porcelain', cwd=clone).strip()
-        source = stage / 'source'
+        bundle = stage / "source-history.bundle"
+        git("bundle", "create", str(bundle), "--all")
+        with (stage / "bundle-verification.log").open("wb") as log:
+            subprocess.run(
+                ["git", "bundle", "verify", str(bundle)],
+                cwd=ROOT,
+                stdout=log,
+                stderr=subprocess.STDOUT,
+                check=True,
+            )
+        clone = Path(temp) / "local-clone"
+        with (stage / "clone-verification.log").open("wb") as log:
+            subprocess.run(
+                ["git", "clone", "--no-hardlinks", str(bundle), str(clone)],
+                stdout=log,
+                stderr=subprocess.STDOUT,
+                check=True,
+            )
+            subprocess.run(
+                ["git", "fsck", "--full"],
+                cwd=clone,
+                stdout=log,
+                stderr=subprocess.STDOUT,
+                check=True,
+            )
+        assert git("rev-parse", "HEAD", cwd=clone).decode().strip() == head
+        assert not git("status", "--porcelain", cwd=clone).strip()
+        source = stage / "source"
         source.mkdir()
-        files = [name.decode() for name in git('ls-files', '-z').split(b'\0') if name]
+        files = [name.decode() for name in git("ls-files", "-z").split(b"\0") if name]
         for name in files:
             original, copy = ROOT / name, source / name
             assert not original.is_symlink(), name
             copy.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy2(original, copy)
             assert digest(copy) == digest(clone / name), name
-        dependency = 'vendor/googletest/googletest/src/gtest-all.cc'
-        assert dependency in files and (clone / dependency).is_file(), 'Offline test dependency missing'
+        dependency = "vendor/googletest/googletest/src/gtest-all.cc"
+        assert (
+            dependency in files and (clone / dependency).is_file()
+        ), "Offline test dependency missing"
         plan = {
-            'prepared_at': datetime.now(timezone.utc).isoformat(),
-            'owner': 'Peregrinate-PG', 'suggested_name': 'SquirrelBackup',
-            'suggested_visibility': 'public',
-            'visibility_basis': 'User explicitly requested a public repository on 2026-10-29.',
-            'description': '第3组软件开发综合实验：macOS文件备份与恢复工具',
-            'default_branch': branch, 'head': head, 'refs': refs,
-            'bundle_sha256': digest(bundle), 'tracked_files_verified': len(files),
-            'local_clone_and_fsck_passed': True,
-            'offline_test_dependency_in_history': True,
-            'remote_repository_created_by_this_run': False, 'remote_write_performed': False,
-            'existing_repository_evidence': publication,
-            'personal_certificates_included': False,
-            'scope': 'Current local preparation snapshot; regenerate after final document review.',
+            "prepared_at": datetime.now(timezone.utc).isoformat(),
+            "owner": "Peregrinate-PG",
+            "suggested_name": "SquirrelBackup",
+            "suggested_visibility": "public",
+            "visibility_basis": "User explicitly requested a public repository on 2026-10-29.",
+            "description": "第3组软件开发综合实验：macOS文件备份与恢复工具",
+            "default_branch": branch,
+            "head": head,
+            "refs": refs,
+            "bundle_sha256": digest(bundle),
+            "tracked_files_verified": len(files),
+            "local_clone_and_fsck_passed": True,
+            "offline_test_dependency_in_history": True,
+            "remote_repository_created_by_this_run": False,
+            "remote_write_performed": False,
+            "existing_repository_evidence": publication,
+            "personal_certificates_included": False,
+            "scope": "Current local preparation snapshot; regenerate after final document review.",
         }
-        (stage / 'repository-plan.json').write_text(json.dumps(plan, ensure_ascii=False, indent=2) + '\n')
-        (stage / 'history-audit.json').write_text(json.dumps(audit, ensure_ascii=False, indent=2) + '\n')
-        (stage / '真实提交记录.txt').write_bytes(
-            git('log', '--all', '--date=iso-strict', '--format=%h %ad %an <%ae> %s'))
-        guide = f'''# 第3组 GitHub仓库准备材料
+        (stage / "repository-plan.json").write_text(
+            json.dumps(plan, ensure_ascii=False, indent=2) + "\n"
+        )
+        (stage / "history-audit.json").write_text(
+            json.dumps(audit, ensure_ascii=False, indent=2) + "\n"
+        )
+        (stage / "真实提交记录.txt").write_bytes(
+            git("log", "--all", "--date=iso-strict", "--format=%h %ad %an <%ae> %s")
+        )
+        guide = f"""# 第3组 GitHub仓库准备材料
 
 账号为Peregrinate-PG，仓库名SquirrelBackup，默认分支main。{repository_status}本地快照对应提交{head[:12]}；报告补充和长测结束后应重新生成，最后发布经核对的版本。
 
@@ -178,28 +221,31 @@ git push -u origin main
 每次推送后重新读取远程main的提交号，与repository-plan.json的head比较。若材料已更新，先重新准备并核对新提交号。遇到远程已有不同修改时先复核和合并，不使用强制推送；旧核验记录不能代替对新提交的检查。
 
 程序安装包和课程提交包单独交付，不必把历史ZIP、个人证书、账号会话或运行时缓存加进源码仓库。准备过程会扫描可达历史中的常见密钥格式和私密文件名，检查结果见history-audit.json；该扫描有明确范围，不等于证明不存在任何形式的敏感信息。
-'''
-        (stage / '00_仓库准备说明.md').write_text(guide)
-        with (stage / 'SHA256SUMS').open('w') as hashes:
-            for path in sorted(stage.rglob('*')):
-                if path.is_file() and path != stage / 'SHA256SUMS':
-                    hashes.write(digest(path) + '  ' + path.relative_to(stage).as_posix() + '\n')
-        with ZipFile(zipped, 'x', ZIP_DEFLATED, compresslevel=6) as archive:
-            for path in sorted(stage.rglob('*')):
+"""
+        (stage / "00_仓库准备说明.md").write_text(guide)
+        with (stage / "SHA256SUMS").open("w") as hashes:
+            for path in sorted(stage.rglob("*")):
+                if path.is_file() and path != stage / "SHA256SUMS":
+                    hashes.write(digest(path) + "  " + path.relative_to(stage).as_posix() + "\n")
+        with ZipFile(zipped, "x", ZIP_DEFLATED, compresslevel=6) as archive:
+            for path in sorted(stage.rglob("*")):
                 if path.is_file():
-                    name = unicodedata.normalize('NFC',
-                        (Path(target.name) / path.relative_to(stage)).as_posix())
+                    name = unicodedata.normalize(
+                        "NFC", (Path(target.name) / path.relative_to(stage)).as_posix()
+                    )
                     archive.write(path, name)
         with ZipFile(zipped) as archive:
             assert archive.testzip() is None
-            for row in archive.read(target.name + '/SHA256SUMS').decode().splitlines():
-                expected, name = row.split('  ', 1)
-                assert hashlib.sha256(archive.read(target.name + '/' + name)).hexdigest() == expected
+            for row in archive.read(target.name + "/SHA256SUMS").decode().splitlines():
+                expected, name = row.split("  ", 1)
+                assert (
+                    hashlib.sha256(archive.read(target.name + "/" + name)).hexdigest() == expected
+                )
         shutil.move(stage, target)
-    zipped.with_suffix('.zip.sha256').write_text(digest(zipped) + '  ' + zipped.name + '\n')
+    zipped.with_suffix(".zip.sha256").write_text(digest(zipped) + "  " + zipped.name + "\n")
     print(json.dumps(plan, ensure_ascii=False, indent=2))
     print(zipped)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

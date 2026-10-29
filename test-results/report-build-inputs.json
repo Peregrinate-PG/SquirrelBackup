@@ -1,10 +1,10 @@
 {
   "schema": 1,
-  "docx_sha256": "e1e7a13f3eedeefb44047f591aed9718efe1a3379cb9f7e4f293b804f6e21106",
+  "docx_sha256": "aa8bf21856394295add500f1a5474830ea2454acb996d0a02e995251a39388cd",
   "input_files": {
-    "docs/01_需求分析说明书.md": "f70c8b04663fdaad1614ae331d5c36f53b226bc4de0f06395cd7825893f5912a",
-    "docs/02_系统设计文档.md": "d452488ad50fc0c8f8b1e4eff75d4a2db35589c869420c02c0e26be6aa2705d1",
-    "docs/03_软件测试报告.md": "9436fcdeef8a8bddc6d96169c1c9dfe96f9cd70a871adb7e1a67e24349d385db",
+    "docs/01_需求分析说明书.md": "e58e8ad20452b181c66811b57f923686c037ac999e3663e9d08c52ffa42f9d21",
+    "docs/02_系统设计文档.md": "54f358a2040ad0c636d1a7f73d648d52b3263ea9411c3c5d2fda16fde8d6bddd",
+    "docs/03_软件测试报告.md": "6d890513c23cba2205934a61227eadf786e6385487e4b66013192c4897865c36",
     "docs/planning/gantt.png": "641e031636dee782093082c13926cc7d33bd041e0b174004e871ca06a6be9b84",
     "docs/screenshots/desktop/23-neutral-restored.png": "99cc85efbfeebb18423c5c8793bd48763ed5786501cc2a872bed4bc242744458",
     "docs/uml/png/01_系统用例图.png": "4ee05ce526c297373c214745fe9e1bcf0ae2394d464c9a1a55539043d3a7c404",
@@ -14,9 +14,9 @@
     "docs/uml/png/05_创建备份顺序图.png": "28c89f1de522b0e289e48f47ffd3e545344486c6a7ec3a8d8648f2c551bf3cdc",
     "docs/uml/png/06_验证恢复顺序图.png": "4a58e2f390343e858b3d076bdbcc8a7abbbffd0e7ff406ca31a25e28d75cc358",
     "docs/uml/png/07_自动任务状态图.png": "3e24719e36fe6b3dcba7140b9b55488d7de0dcdf7431715b0aed28c5194decdb",
-    "resources/report-sections.json": "62f79c2de1625b3a48a6c5b1475fc8b59cd533735419d406e8d4afc8c5a5c0b4",
+    "resources/report-sections.json": "a0f49918662ae3a857fdfea2475aed279b52e1d1f976fb44acbe7be58872b6c2",
     "resources/实验报告模板.docx": "3323e15ccfa3445483575fd6b77a1606c8b7c64cbdc30cca69cdea858913a2e0",
-    "scripts/build_template_report.py": "280cfbae1cd5752d2b3b561b06dc3b68289104d5f80479d3d3015c82fa0ddd67"
+    "scripts/build_template_report.py": "b4748170dfe1a166947c1c5ccae3bedab4edc3a6f74a80f8ae08cd9f236414da"
   },
   "profile_fields": {
     "laboratory": "自主实验环境（macOS个人计算机）"

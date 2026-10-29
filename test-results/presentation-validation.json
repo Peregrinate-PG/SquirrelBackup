@@ -1,7 +1,7 @@
 {
   "schemaVersion": "presentation-finalization.v1",
-  "finalSha256": "f568b42b6d0e88bcebad3c5862e4060e751b695db920e3a74a950e218ce39d3e",
-  "byteCount": 1599638,
+  "finalSha256": "35ed1d7e4e3fdffdce4ea66120ba36c10bf7d4b81efbbe963d93b59a1e52dc09",
+  "byteCount": 1597989,
   "packageIntegrity": {
     "chart_count": 0,
     "claim_boundary": "Structural package checks only; no slide text, notes, formulas, chart values, or native PowerPoint execution were inspected.",
@@ -82,7 +82,7 @@
     "performed": true,
     "passed": true,
     "slideCount": 11,
-    "sha256": "f568b42b6d0e88bcebad3c5862e4060e751b695db920e3a74a950e218ce39d3e",
+    "sha256": "35ed1d7e4e3fdffdce4ea66120ba36c10bf7d4b81efbbe963d93b59a1e52dc09",
     "runtimeNodeModules": "/Users/lixiang/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules",
     "nodeExecutable": "/Users/lixiang/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node"
   },
@@ -121,7 +121,7 @@
     "native_chart_count": 0,
     "native_powerpoint_verified": false,
     "passed": true,
-    "presentation_sha256": "f568b42b6d0e88bcebad3c5862e4060e751b695db920e3a74a950e218ce39d3e",
+    "presentation_sha256": "35ed1d7e4e3fdffdce4ea66120ba36c10bf7d4b81efbbe963d93b59a1e52dc09",
     "schema_version": "presentation-native-chart-titles.v1",
     "slide_count": 11,
     "source_text_emitted": false,

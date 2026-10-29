@@ -9,6 +9,7 @@
 #include <vector>
 
 #include "internal.h"
+
 namespace squirrel {
 namespace {
 class Writer {
@@ -29,7 +30,7 @@ class Writer {
     }
   }
   void text(const std::string& s) {
-    require(s.size() <= 65536, "Archive text too long");
+    require(s.size() <= kMaxTextSize, "Archive text too long");
     number(s.size(), 4);
     bytes(s.data(), s.size());
   }
@@ -55,63 +56,65 @@ class Reader {
   }
   std::string text() {
     size_t n = number(4);
-    require(n <= 65536, "Archive text limit exceeded");
+    require(n <= kMaxTextSize, "Archive text limit exceeded");
     std::string s(n, '\0');
     bytes(s.data(), n);
     require(s.find('\0') == std::string::npos, "NUL in archive text");
     return s;
   }
 };
-void writeEntry(Writer& w, const Entry& e) {
-  w.number(static_cast<uint8_t>(e.type), 1);
-  w.text(e.path);
-  w.number(e.mode, 4);
-  w.number(e.uid, 4);
-  w.number(e.gid, 4);
-  w.number(static_cast<uint64_t>(e.mtime), 8);
-  w.number(e.mtime_ns, 4);
-  w.number(static_cast<uint64_t>(e.atime), 8);
-  w.number(e.atime_ns, 4);
-  w.number(e.size, 8);
-  w.text(e.link);
-  w.number(e.xattrs.size(), 4);
-  for (const auto& pair : e.xattrs) {
-    w.text(pair.first);
-    w.number(pair.second.size(), 4);
-    w.bytes(pair.second.data(), pair.second.size());
+void writeEntry(Writer& writer, const Entry& entry) {
+  writer.number(static_cast<uint8_t>(entry.type), 1);
+  writer.text(entry.path);
+  writer.number(entry.mode, 4);
+  writer.number(entry.uid, 4);
+  writer.number(entry.gid, 4);
+  writer.number(static_cast<uint64_t>(entry.mtime), 8);
+  writer.number(entry.mtime_ns, 4);
+  writer.number(static_cast<uint64_t>(entry.atime), 8);
+  writer.number(entry.atime_ns, 4);
+  writer.number(entry.size, 8);
+  writer.text(entry.link);
+  writer.number(entry.xattrs.size(), 4);
+  for (const auto& pair : entry.xattrs) {
+    writer.text(pair.first);
+    writer.number(pair.second.size(), 4);
+    writer.bytes(pair.second.data(), pair.second.size());
   }
 }
-Entry readEntry(Reader& r) {
-  Entry e;
-  e.type = static_cast<FileType>(r.number(1));
-  e.path = r.text();
-  e.mode = r.number(4);
-  e.uid = r.number(4);
-  e.gid = r.number(4);
-  e.mtime = static_cast<int64_t>(r.number(8));
-  e.mtime_ns = r.number(4);
-  e.atime = static_cast<int64_t>(r.number(8));
-  e.atime_ns = r.number(4);
-  e.size = r.number(8);
-  e.link = r.text();
-  require(e.mode <= 0777 && e.mtime_ns < 1000000000 && e.atime_ns < 1000000000,
+
+Entry readEntry(Reader& reader) {
+  Entry entry;
+  entry.type = static_cast<FileType>(reader.number(1));
+  entry.path = reader.text();
+  entry.mode = reader.number(4);
+  entry.uid = reader.number(4);
+  entry.gid = reader.number(4);
+  entry.mtime = static_cast<int64_t>(reader.number(8));
+  entry.mtime_ns = reader.number(4);
+  entry.atime = static_cast<int64_t>(reader.number(8));
+  entry.atime_ns = reader.number(4);
+  entry.size = reader.number(8);
+  entry.link = reader.text();
+  require(entry.mode <= 0777 && entry.mtime_ns < 1000000000 && entry.atime_ns < 1000000000,
           "Invalid metadata fields");
-  require(e.size <= (static_cast<uint64_t>(1) << 40), "Entry exceeds 1 TiB size limit");
-  uint64_t count = r.number(4), total = 0;
-  require(count <= 4096, "Too many attributes");
+  require(entry.size <= kMaxFileSize, "Entry exceeds 1 TiB size limit");
+  uint64_t count = reader.number(4), total = 0;
+  require(count <= kMaxAttributeCount, "Too many attributes");
   std::set<std::string> names;
   for (uint64_t i = 0; i < count; ++i) {
-    auto name = r.text();
+    auto name = reader.text();
     require(!name.empty() && names.insert(name).second, "Invalid xattr name");
-    uint64_t n = r.number(4);
+    uint64_t n = reader.number(4);
     total += n;
-    require(total <= 64 * 1024 * 1024, "Attribute memory limit exceeded");
+    require(total <= kMaxAttributeBytes, "Attribute memory limit exceeded");
     Bytes value(n);
-    r.bytes(value.data(), n);
-    e.xattrs.push_back({name, std::move(value)});
+    reader.bytes(value.data(), n);
+    entry.xattrs.push_back({name, std::move(value)});
   }
-  return e;
+  return entry;
 }
+
 void validatePath(const std::string& s) {
   require(!s.empty() && s.front() != '/' && s.back() != '/', "Invalid relative path");
   require(s.find("//") == std::string::npos, "Empty path component");
@@ -119,62 +122,63 @@ void validatePath(const std::string& s) {
     require(part != "." && part != "..", "Unsafe archive path");
   }
 }
-void metadata(const fs::path& path, const Entry& e, const Log& log) {
+
+void metadata(const fs::path& path, const Entry& entry, const Log& log) {
   // Owner IDs are recorded; restoring different owners requires privileges and is best effort.
-  struct stat st{};
+  struct stat st {};
   syscheck(::lstat(path.c_str(), &st) == 0, "Cannot stat restored entry");
-  if (st.st_uid != e.uid || st.st_gid != e.gid) {
-    if (::lchown(path.c_str(), e.uid, e.gid) != 0) {
-      emit(log, "WARNING: owner/group not restored: " + e.path);
+  if (st.st_uid != entry.uid || st.st_gid != entry.gid) {
+    if (::lchown(path.c_str(), entry.uid, entry.gid) != 0) {
+      emit(log, "WARNING: owner/group not restored: " + entry.path);
     }
   }
-  for (const auto& pair : e.xattrs) {
+  for (const auto& pair : entry.xattrs) {
     if (::setxattr(path.c_str(), pair.first.c_str(), pair.second.data(), pair.second.size(), 0,
                    XATTR_NOFOLLOW) != 0) {
-      emit(log, "WARNING: xattr not restored: " + e.path + " / " + pair.first);
+      emit(log, "WARNING: xattr not restored: " + entry.path + " / " + pair.first);
     }
   }
-  if (e.type != FileType::Symlink) {
-    syscheck(::chmod(path.c_str(), e.mode) == 0, "Cannot restore permissions: " + e.path);
+  if (entry.type != FileType::Symlink) {
+    syscheck(::chmod(path.c_str(), entry.mode) == 0, "Cannot restore permissions: " + entry.path);
   }
-  struct timespec times[2] = {{e.atime, e.atime_ns}, {e.mtime, e.mtime_ns}};
+  struct timespec times[2] = {{entry.atime, entry.atime_ns}, {entry.mtime, entry.mtime_ns}};
   syscheck(::utimensat(AT_FDCWD, path.c_str(), times, AT_SYMLINK_NOFOLLOW) == 0,
-           "Cannot restore timestamps: " + e.path);
+           "Cannot restore timestamps: " + entry.path);
 }
 }  // namespace
 void ArchiveWriter::write(const fs::path& source, const std::vector<Entry>& entries,
                           const fs::path& output, bool compress, const Log& log,
                           const Operation& operation) {
   uint64_t total = 0, completed = 0;
-  for (const auto& e : entries) {
-    if (e.type == FileType::Regular) {
-      total += e.size;
+  for (const auto& entry : entries) {
+    if (entry.type == FileType::Regular) {
+      total += entry.size;
     }
   }
   operation.checkpoint(Phase::Pack, 0, total);
-  Writer w(output);
-  w.bytes("SQTREE01", 8);
-  w.number(entries.size(), 8);
-  for (const auto& e : entries) {
-    operation.checkpoint(Phase::Pack, completed, total, e.path);
-    writeEntry(w, e);
-    if (e.type != FileType::Regular) {
+  Writer writer(output);
+  writer.bytes("SQTREE01", 8);
+  writer.number(entries.size(), 8);
+  for (const auto& entry : entries) {
+    operation.checkpoint(Phase::Pack, completed, total, entry.path);
+    writeEntry(writer, entry);
+    if (entry.type != FileType::Regular) {
       continue;
     }
-    Fd fd(openSource(source, e.path));
-    struct stat st{};
+    Fd fd(openSource(source, entry.path));
+    struct stat st {};
     syscheck(::fstat(fd.value, &st) == 0, "Cannot stat opened source");
     auto unchanged = [&]() {
-      return S_ISREG(st.st_mode) && static_cast<uint64_t>(st.st_dev) == e.device &&
-             static_cast<uint64_t>(st.st_ino) == e.inode &&
-             static_cast<uint64_t>(st.st_size) == e.size && st.st_mtimespec.tv_sec == e.mtime &&
-             st.st_mtimespec.tv_nsec == e.mtime_ns && st.st_ctimespec.tv_sec == e.ctime &&
-             st.st_ctimespec.tv_nsec == e.ctime_ns;
+      return S_ISREG(st.st_mode) && static_cast<uint64_t>(st.st_dev) == entry.device &&
+             static_cast<uint64_t>(st.st_ino) == entry.inode &&
+             static_cast<uint64_t>(st.st_size) == entry.size &&
+             st.st_mtimespec.tv_sec == entry.mtime && st.st_mtimespec.tv_nsec == entry.mtime_ns &&
+             st.st_ctimespec.tv_sec == entry.ctime && st.st_ctimespec.tv_nsec == entry.ctime_ns;
     };
-    require(unchanged(), "Source changed before backup: " + e.path);
-    uint64_t remaining = e.size;
+    require(unchanged(), "Source changed before backup: " + entry.path);
+    uint64_t remaining = entry.size;
     while (remaining) {
-      operation.checkpoint(Phase::Pack, completed, total, e.path);
+      operation.checkpoint(Phase::Pack, completed, total, entry.path);
       size_t n = std::min<uint64_t>(remaining, kBlockSize);
       Bytes data(n);
       size_t offset = 0;
@@ -183,83 +187,85 @@ void ArchiveWriter::write(const fs::path& source, const std::vector<Entry>& entr
         if (got < 0 && errno == EINTR) {
           continue;
         }
-        require(got > 0, "Source changed or cannot be read: " + e.path);
+        require(got > 0, "Source changed or cannot be read: " + entry.path);
         offset += got;
       }
       Bytes packed = compress ? HuffmanCodec::encode(data) : Bytes{};
-      bool use = compress && packed.size() < data.size();
-      const Bytes& payload = use ? packed : data;
-      w.number(use ? 1 : 0, 1);
-      w.number(n, 4);
-      w.number(payload.size(), 4);
-      w.bytes(payload.data(), payload.size());
+      const bool useCompressed = compress && packed.size() < data.size();
+      const Bytes& payload = useCompressed ? packed : data;
+      writer.number(useCompressed ? 1 : 0, 1);
+      writer.number(n, 4);
+      writer.number(payload.size(), 4);
+      writer.bytes(payload.data(), payload.size());
       remaining -= n;
       completed += n;
     }
     syscheck(::fstat(fd.value, &st) == 0, "Cannot recheck source");
-    require(unchanged(), "Source changed while backing up: " + e.path);
-    emit(log, "Packed: " + e.path);
+    require(unchanged(), "Source changed while backing up: " + entry.path);
+    emit(log, "Packed: " + entry.path);
   }
   operation.checkpoint(Phase::Pack, completed, total);
-  w.bytes("SQEND001", 8);
-  w.stream.close();
-  require(static_cast<bool>(w.stream), "Cannot finish archive");
+  writer.bytes("SQEND001", 8);
+  writer.stream.close();
+  require(static_cast<bool>(writer.stream), "Cannot finish archive");
 }
+
 Summary ArchiveReader::read(const fs::path& plain, const fs::path* destination, const Log& log,
                             bool collect, const Operation& operation) {
   const auto total = fs::file_size(plain);
   operation.checkpoint(Phase::Read, 0, total);
-  Reader r(plain);
+  Reader reader(plain);
   char magic[8];
-  r.bytes(magic, 8);
+  reader.bytes(magic, 8);
   require(std::string(magic, 8) == "SQTREE01", "Unknown tree format");
-  uint64_t count = r.number(8);
-  require(count > 0 && count <= 1000000, "Invalid entry count");
+  uint64_t count = reader.number(8);
+  require(count > 0 && count <= kMaxEntries, "Invalid entry count");
   Summary result;
   std::map<std::string, std::pair<FileType, uint64_t>> seen;
   std::vector<Entry> directories;
   for (uint64_t i = 0; i < count; ++i) {
-    operation.checkpoint(Phase::Read, static_cast<uint64_t>(r.stream.tellg()), total);
-    Entry e = readEntry(r);
+    operation.checkpoint(Phase::Read, static_cast<uint64_t>(reader.stream.tellg()), total);
+    Entry entry = readEntry(reader);
     if (i == 0) {
-      require(e.path.empty() && e.type == FileType::Directory, "Missing root directory");
+      require(entry.path.empty() && entry.type == FileType::Directory, "Missing root directory");
     } else {
-      validatePath(e.path);
-      auto parent = fs::path(e.path).parent_path().generic_string();
+      validatePath(entry.path);
+      auto parent = fs::path(entry.path).parent_path().generic_string();
       auto it = seen.find(parent);
       require(it != seen.end() && it->second.first == FileType::Directory,
               "Parent is missing or is not a directory");
     }
-    require(seen.emplace(e.path, std::make_pair(e.type, e.size)).second, "Duplicate archive path");
-    fs::path path = destination ? *destination / e.path : fs::path{};
-    switch (e.type) {
+    require(seen.emplace(entry.path, std::make_pair(entry.type, entry.size)).second,
+            "Duplicate archive path");
+    fs::path path = destination ? *destination / entry.path : fs::path{};
+    switch (entry.type) {
       case FileType::Directory:
-        require(e.size == 0 && e.link.empty(), "Invalid directory record");
+        require(entry.size == 0 && entry.link.empty(), "Invalid directory record");
         if (destination) {
           if (i) {
-            syscheck(::mkdir(path.c_str(), 0700) == 0, "Cannot create directory: " + e.path);
+            syscheck(::mkdir(path.c_str(), 0700) == 0, "Cannot create directory: " + entry.path);
           }
-          directories.push_back(e);
+          directories.push_back(entry);
         }
         break;
       case FileType::Regular: {
-        require(e.link.empty(), "Invalid regular file record");
+        require(entry.link.empty(), "Invalid regular file record");
         int raw = -1;
         if (destination) {
           raw = ::open(path.c_str(), O_WRONLY | O_CREAT | O_EXCL | O_NOFOLLOW, 0600);
-          syscheck(raw >= 0, "Cannot create file: " + e.path);
+          syscheck(raw >= 0, "Cannot create file: " + entry.path);
         }
         Fd out(raw);
-        uint64_t remaining = e.size;
+        uint64_t remaining = entry.size;
         while (remaining) {
-          operation.checkpoint(Phase::Read, static_cast<uint64_t>(r.stream.tellg()), total,
-                               e.path);
-          uint64_t coding = r.number(1), n = r.number(4), packed = r.number(4);
+          operation.checkpoint(Phase::Read, static_cast<uint64_t>(reader.stream.tellg()), total,
+                               entry.path);
+          uint64_t coding = reader.number(1), n = reader.number(4), packed = reader.number(4);
           require(coding <= 1 && n > 0 && n <= kBlockSize && n <= remaining &&
                       packed <= kBlockSize && (coding == 1 || packed == n),
                   "Invalid archive data block");
           Bytes data(packed);
-          r.bytes(data.data(), packed);
+          reader.bytes(data.data(), packed);
           if (coding) {
             data = HuffmanCodec::decode(data, n);
           }
@@ -277,31 +283,31 @@ Summary ArchiveReader::read(const fs::path& plain, const fs::path* destination, 
           remaining -= n;
         }
         ++result.files;
-        result.bytes += e.size;
+        result.bytes += entry.size;
         break;
       }
       case FileType::Hardlink: {
-        validatePath(e.link);
-        auto it = seen.find(e.link);
+        validatePath(entry.link);
+        auto it = seen.find(entry.link);
         require(it != seen.end() && it->second.first == FileType::Regular &&
-                    it->second.second == e.size,
+                    it->second.second == entry.size,
                 "Invalid hardlink target");
         if (destination) {
-          syscheck(::link((*destination / e.link).c_str(), path.c_str()) == 0,
+          syscheck(::link((*destination / entry.link).c_str(), path.c_str()) == 0,
                    "Cannot restore hardlink");
         }
         ++result.files;
-        result.bytes += e.size;
+        result.bytes += entry.size;
         break;
       }
       case FileType::Symlink:
-        require(e.size == 0 && !e.link.empty(), "Invalid symlink record");
+        require(entry.size == 0 && !entry.link.empty(), "Invalid symlink record");
         if (destination) {
-          syscheck(::symlink(e.link.c_str(), path.c_str()) == 0, "Cannot restore symlink");
+          syscheck(::symlink(entry.link.c_str(), path.c_str()) == 0, "Cannot restore symlink");
         }
         break;
       case FileType::Fifo:
-        require(e.size == 0 && e.link.empty(), "Invalid FIFO record");
+        require(entry.size == 0 && entry.link.empty(), "Invalid FIFO record");
         if (destination) {
           syscheck(::mkfifo(path.c_str(), 0600) == 0, "Cannot restore FIFO");
         }
@@ -309,16 +315,16 @@ Summary ArchiveReader::read(const fs::path& plain, const fs::path* destination, 
       default:
         throw Error("Unsupported archive entry type");
     }
-    if (destination && e.type != FileType::Directory) {
-      metadata(path, e, log);
+    if (destination && entry.type != FileType::Directory) {
+      metadata(path, entry, log);
     }
     ++result.entries;
     if (collect) {
-      result.items.push_back(std::move(e));
+      result.items.push_back(std::move(entry));
     }
   }
-  r.bytes(magic, 8);
-  require(std::string(magic, 8) == "SQEND001" && r.stream.peek() == EOF,
+  reader.bytes(magic, 8);
+  require(std::string(magic, 8) == "SQEND001" && reader.stream.peek() == EOF,
           "Invalid archive footer or trailing data");
   if (destination) {
     uint64_t applied = 0;

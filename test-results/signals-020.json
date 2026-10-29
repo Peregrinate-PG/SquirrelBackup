@@ -1,14 +1,14 @@
 {
-  "tested_at": "2026-10-29T04:45:39.994969+00:00",
-  "binary_sha256": "524c56d8b66c7bf533b1a7649f86b908a0fa4251b552681d87316c58da6424e4",
+  "tested_at": "2026-10-29T17:00:49.552979+00:00",
+  "binary_sha256": "ebb110c143b1ce54ffa5ccaa549bca37cf9980fe0a9de936950fbb236710bba8",
   "fixture_bytes": 268435456,
   "results": [
     {
       "name": "plain-backup-SIGINT",
       "signal": "SIGINT",
       "observed_io": {
-        "path": ".squirrel-Yh7nCy/tree",
-        "bytes": 4714496
+        "path": ".squirrel-Ab9Bmj/tree",
+        "bytes": 4296704
       },
       "exit_code": 130,
       "exit_after_signal_seconds": 0.0037,
@@ -18,29 +18,161 @@
       "name": "plain-restore-SIGINT",
       "signal": "SIGINT",
       "observed_io": {
-        "path": ".squirrel-GvvRyg/restored/data.bin",
-        "bytes": 5242880
+        "path": ".squirrel-llcW5G/restored/data.bin",
+        "bytes": 4194304
       },
       "exit_code": 130,
-      "exit_after_signal_seconds": 0.0163,
+      "exit_after_signal_seconds": 0.0095,
       "passed": true
     },
     {
       "name": "plain-verify-SIGINT",
       "signal": "SIGINT",
       "observed_io": {
-        "path": ".squirrel-bQpAfK/tree",
-        "bytes": 4575232
+        "path": ".squirrel-2zY7SG/tree",
+        "bytes": 4468736
       },
       "exit_code": 130,
-      "exit_after_signal_seconds": 0.0033,
+      "exit_after_signal_seconds": 0.0035,
       "passed": true
     },
     {
       "name": "plain-list-SIGINT",
       "signal": "SIGINT",
       "observed_io": {
-        "path": ".squirrel-GITuea/tree",
+        "path": ".squirrel-yXcfZD/tree",
+        "bytes": 4558848
+      },
+      "exit_code": 130,
+      "exit_after_signal_seconds": 0.0031,
+      "passed": true
+    },
+    {
+      "name": "plain-backup-SIGTERM",
+      "signal": "SIGTERM",
+      "observed_io": {
+        "path": ".squirrel-MXg5IM/tree",
+        "bytes": 4194304
+      },
+      "exit_code": 130,
+      "exit_after_signal_seconds": 0.0037,
+      "passed": true
+    },
+    {
+      "name": "plain-restore-SIGTERM",
+      "signal": "SIGTERM",
+      "observed_io": {
+        "path": ".squirrel-Ivsw4i/restored/data.bin",
+        "bytes": 4194304
+      },
+      "exit_code": 130,
+      "exit_after_signal_seconds": 0.0087,
+      "passed": true
+    },
+    {
+      "name": "plain-verify-SIGTERM",
+      "signal": "SIGTERM",
+      "observed_io": {
+        "path": ".squirrel-Z9Jqaz/tree",
+        "bytes": 4788224
+      },
+      "exit_code": 130,
+      "exit_after_signal_seconds": 0.0023,
+      "passed": true
+    },
+    {
+      "name": "plain-list-SIGTERM",
+      "signal": "SIGTERM",
+      "observed_io": {
+        "path": ".squirrel-urvKmn/tree",
+        "bytes": 4603904
+      },
+      "exit_code": 130,
+      "exit_after_signal_seconds": 0.0031,
+      "passed": true
+    },
+    {
+      "name": "encrypted-backup-SIGINT",
+      "signal": "SIGINT",
+      "observed_io": {
+        "path": ".squirrel-1GJXn8/tree",
+        "bytes": 4214784
+      },
+      "exit_code": 130,
+      "exit_after_signal_seconds": 0.0036,
+      "passed": true
+    },
+    {
+      "name": "encrypted-restore-SIGINT",
+      "signal": "SIGINT",
+      "observed_io": {
+        "path": ".squirrel-MTvwpS/restored/data.bin",
+        "bytes": 4194304
+      },
+      "exit_code": 130,
+      "exit_after_signal_seconds": 0.012,
+      "passed": true
+    },
+    {
+      "name": "encrypted-verify-SIGINT",
+      "signal": "SIGINT",
+      "observed_io": {
+        "path": ".squirrel-dEtSFi/tree",
+        "bytes": 4755456
+      },
+      "exit_code": 130,
+      "exit_after_signal_seconds": 0.0031,
+      "passed": true
+    },
+    {
+      "name": "encrypted-list-SIGINT",
+      "signal": "SIGINT",
+      "observed_io": {
+        "path": ".squirrel-8zRoUa/tree",
+        "bytes": 4366336
+      },
+      "exit_code": 130,
+      "exit_after_signal_seconds": 0.0047,
+      "passed": true
+    },
+    {
+      "name": "encrypted-backup-SIGTERM",
+      "signal": "SIGTERM",
+      "observed_io": {
+        "path": ".squirrel-hYkDwA/tree",
+        "bytes": 4702208
+      },
+      "exit_code": 130,
+      "exit_after_signal_seconds": 0.0024,
+      "passed": true
+    },
+    {
+      "name": "encrypted-restore-SIGTERM",
+      "signal": "SIGTERM",
+      "observed_io": {
+        "path": ".squirrel-5bemkU/restored/data.bin",
+        "bytes": 6291456
+      },
+      "exit_code": 130,
+      "exit_after_signal_seconds": 0.0131,
+      "passed": true
+    },
+    {
+      "name": "encrypted-verify-SIGTERM",
+      "signal": "SIGTERM",
+      "observed_io": {
+        "path": ".squirrel-Z2xNz8/tree",
+        "bytes": 4784128
+      },
+      "exit_code": 130,
+      "exit_after_signal_seconds": 0.0027,
+      "passed": true
+    },
+    {
+      "name": "encrypted-list-SIGTERM",
+      "signal": "SIGTERM",
+      "observed_io": {
+        "path": ".squirrel-AHdXY1/tree",
         "bytes": 4554752
       },
       "exit_code": 130,
@@ -48,179 +180,47 @@
       "passed": true
     },
     {
-      "name": "plain-backup-SIGTERM",
-      "signal": "SIGTERM",
-      "observed_io": {
-        "path": ".squirrel-VXfo5e/tree",
-        "bytes": 4575232
-      },
-      "exit_code": 130,
-      "exit_after_signal_seconds": 0.0028,
-      "passed": true
-    },
-    {
-      "name": "plain-restore-SIGTERM",
-      "signal": "SIGTERM",
-      "observed_io": {
-        "path": ".squirrel-hBIsC0/restored/data.bin",
-        "bytes": 5242880
-      },
-      "exit_code": 130,
-      "exit_after_signal_seconds": 0.0132,
-      "passed": true
-    },
-    {
-      "name": "plain-verify-SIGTERM",
-      "signal": "SIGTERM",
-      "observed_io": {
-        "path": ".squirrel-rdp8Vy/tree",
-        "bytes": 4390912
-      },
-      "exit_code": 130,
-      "exit_after_signal_seconds": 0.0042,
-      "passed": true
-    },
-    {
-      "name": "plain-list-SIGTERM",
-      "signal": "SIGTERM",
-      "observed_io": {
-        "path": ".squirrel-7ANfvF/tree",
-        "bytes": 4509696
-      },
-      "exit_code": 130,
-      "exit_after_signal_seconds": 0.0049,
-      "passed": true
-    },
-    {
-      "name": "encrypted-backup-SIGINT",
-      "signal": "SIGINT",
-      "observed_io": {
-        "path": ".squirrel-oj3o21/tree",
-        "bytes": 4284416
-      },
-      "exit_code": 130,
-      "exit_after_signal_seconds": 0.004,
-      "passed": true
-    },
-    {
-      "name": "encrypted-restore-SIGINT",
-      "signal": "SIGINT",
-      "observed_io": {
-        "path": ".squirrel-3pjL7X/restored/data.bin",
-        "bytes": 6291456
-      },
-      "exit_code": 130,
-      "exit_after_signal_seconds": 0.0087,
-      "passed": true
-    },
-    {
-      "name": "encrypted-verify-SIGINT",
-      "signal": "SIGINT",
-      "observed_io": {
-        "path": ".squirrel-XMT1TZ/tree",
-        "bytes": 4702208
-      },
-      "exit_code": 130,
-      "exit_after_signal_seconds": 0.0032,
-      "passed": true
-    },
-    {
-      "name": "encrypted-list-SIGINT",
-      "signal": "SIGINT",
-      "observed_io": {
-        "path": ".squirrel-Z6I6yg/tree",
-        "bytes": 4292608
-      },
-      "exit_code": 130,
-      "exit_after_signal_seconds": 0.0041,
-      "passed": true
-    },
-    {
-      "name": "encrypted-backup-SIGTERM",
-      "signal": "SIGTERM",
-      "observed_io": {
-        "path": ".squirrel-sNNeBs/tree",
-        "bytes": 4255744
-      },
-      "exit_code": 130,
-      "exit_after_signal_seconds": 0.0041,
-      "passed": true
-    },
-    {
-      "name": "encrypted-restore-SIGTERM",
-      "signal": "SIGTERM",
-      "observed_io": {
-        "path": ".squirrel-OCYM9g/restored/data.bin",
-        "bytes": 5242880
-      },
-      "exit_code": 130,
-      "exit_after_signal_seconds": 0.0096,
-      "passed": true
-    },
-    {
-      "name": "encrypted-verify-SIGTERM",
-      "signal": "SIGTERM",
-      "observed_io": {
-        "path": ".squirrel-V9KwwO/tree",
-        "bytes": 4427776
-      },
-      "exit_code": 130,
-      "exit_after_signal_seconds": 0.0034,
-      "passed": true
-    },
-    {
-      "name": "encrypted-list-SIGTERM",
-      "signal": "SIGTERM",
-      "observed_io": {
-        "path": ".squirrel-lnR3yx/tree",
-        "bytes": 4427776
-      },
-      "exit_code": 130,
-      "exit_after_signal_seconds": 0.0035,
-      "passed": true
-    },
-    {
       "name": "schedule-active-SIGINT",
       "signal": "SIGINT",
       "observed_io": {
-        "path": "squirrel-job-vauHIv/.squirrel-ZpP4PQ/tree",
-        "bytes": 4902912
+        "path": "squirrel-job-cR8x9Q/.squirrel-71meBc/tree",
+        "bytes": 4333568
       },
       "exit_code": 0,
-      "exit_after_signal_seconds": 0.0028,
+      "exit_after_signal_seconds": 0.0046,
       "passed": true
     },
     {
       "name": "schedule-active-SIGTERM",
       "signal": "SIGTERM",
       "observed_io": {
-        "path": "squirrel-job-EmtIob/.squirrel-dEtSPc/tree",
-        "bytes": 4329472
+        "path": "squirrel-job-PQVlns/.squirrel-QGHFVr/tree",
+        "bytes": 4775936
       },
       "exit_code": 0,
-      "exit_after_signal_seconds": 0.0049,
+      "exit_after_signal_seconds": 0.0033,
       "passed": true
     },
     {
       "name": "watch-active-SIGINT",
       "signal": "SIGINT",
       "observed_io": {
-        "path": "squirrel-job-otJyai/.squirrel-8H5blf/tree",
-        "bytes": 4308992
+        "path": "squirrel-job-Bi9kdX/.squirrel-71CbAO/tree",
+        "bytes": 4620288
       },
       "exit_code": 0,
-      "exit_after_signal_seconds": 0.0038,
+      "exit_after_signal_seconds": 0.0041,
       "passed": true
     },
     {
       "name": "watch-active-SIGTERM",
       "signal": "SIGTERM",
       "observed_io": {
-        "path": "squirrel-job-ggdsyF/.squirrel-LfTWKK/tree",
-        "bytes": 4272128
+        "path": "squirrel-job-8W8Eci/.squirrel-yqQK3f/tree",
+        "bytes": 4194304
       },
       "exit_code": 0,
-      "exit_after_signal_seconds": 0.005,
+      "exit_after_signal_seconds": 0.0057,
       "passed": true
     }
   ],

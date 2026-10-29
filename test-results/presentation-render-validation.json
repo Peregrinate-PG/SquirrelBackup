@@ -1,8 +1,8 @@
 {
-  "checked_at": "2026-10-29T14:49:09.887086+00:00",
+  "checked_at": "2026-10-29T17:05:40.621880+00:00",
   "pages": 11,
-  "pptx_sha256": "f568b42b6d0e88bcebad3c5862e4060e751b695db920e3a74a950e218ce39d3e",
-  "pdf_sha256": "a797d47d7d18490247cbb57961b00f17cdffa44aec1668ed2f46b3a18adbf6a4",
+  "pptx_sha256": "35ed1d7e4e3fdffdce4ea66120ba36c10bf7d4b81efbbe963d93b59a1e52dc09",
+  "pdf_sha256": "84270841c88a5c7232bce88d7112f802f42de8d76b80fa4805e9d7b93a58430f",
   "all_pages_visually_reviewed": true,
   "reviewed_pages": [
     1,
@@ -71,5 +71,6 @@
       "page": 11,
       "sha256": "fb78eac3900880f43d9cf2a5833cd2f2fb9d8c4c19eb6737bbb337ca6b4b2d1a"
     }
-  ]
+  ],
+  "revision_check": "Only notesSlide9.xml changed; all 11 rendered slides are pixel-identical to the previously reviewed deck."
 }

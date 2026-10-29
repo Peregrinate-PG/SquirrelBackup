@@ -7,6 +7,7 @@
 #include <vector>
 
 #include "squirrel/backup.h"
+
 namespace squirrel {
 namespace {
 struct Node {
@@ -87,6 +88,7 @@ Bytes HuffmanCodec::encode(const Bytes& input) {
   }
   return out;
 }
+
 Bytes HuffmanCodec::decode(const Bytes& input, uint32_t expected) {
   if (expected > kBlockSize || input.size() < 1024 || input.size() > kBlockSize + 1024) {
     throw Error("Invalid Huffman block length");

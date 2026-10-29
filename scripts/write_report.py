@@ -4,12 +4,15 @@ import argparse
 import json
 import re
 from pathlib import Path
-root=Path(__file__).resolve().parents[1]
-parser=argparse.ArgumentParser(description=__doc__)
-parser.add_argument('--check',action='store_true',help='Reject a stale reading copy without changing it')
-args=parser.parse_args()
-docs=root/'docs'
-start="""# 软件开发综合实验小组报告
+
+root = Path(__file__).resolve().parents[1]
+parser = argparse.ArgumentParser(description=__doc__)
+parser.add_argument(
+    "--check", action="store_true", help="Reject a stale reading copy without changing it"
+)
+args = parser.parse_args()
+docs = root / "docs"
+start = """# 软件开发综合实验小组报告
 
 电子科技大学 计算机科学与工程学院 · 第3组 · 松鼠备份0.2.0
 
@@ -31,7 +34,7 @@ ________________（按实际填写）
 
 ## 四 实验内容
 
-实现macOS单机备份与恢复，提供GUI和CLI，共用C++业务核心。选做功能包括软硬链接、FIFO、基础元数据、六类筛选、打包压缩、密码加密、定时、变化检测和任务内保留策略。网络备份、增量备份与系统守护未实现。系统密码库和Cocoa的使用如实说明，不将库算法申报为自研。
+实现macOS单机备份与恢复，提供GUI和CLI，共用C++业务核心。选做功能包括软硬链接、FIFO、基础元数据、六类筛选、打包压缩、密码加密、定时、变化检测和任务内保留策略。密码封装使用系统CommonCrypto/Security，图形界面使用Cocoa/AppKit。
 
 ## 五 实验器材
 
@@ -40,23 +43,29 @@ macOS13.0、Apple Silicon、Apple Clang14.0.3、Command Line Tools、make、git�
 ## 六 实验步骤及操作
 
 """
-profile=json.loads((root/'resources/submission-readiness.json').read_text())
-start=start.replace('________________（按实际填写）',profile['laboratory'])
-parts=[start]
-for name in ['01_需求分析说明书.md','02_系统设计文档.md','03_软件测试报告.md']:
-    text=(docs/name).read_text()
-    text=re.sub(r'^(#{1,5}) ',r'#\1 ',text,flags=re.M)
+profile = json.loads((root / "resources/submission-readiness.json").read_text())
+start = start.replace("________________（按实际填写）", profile["laboratory"])
+parts = [start]
+for name in ["01_需求分析说明书.md", "02_系统设计文档.md", "03_软件测试报告.md"]:
+    text = (docs / name).read_text()
+    text = re.sub(r"^(#{1,5}) ", r"#\1 ", text, flags=re.M)
     parts.append(text)
-sections=json.loads((root/'resources/report-sections.json').read_text())
-titles=['七 AI开发工具使用总结','八 实验结论','九 总结及心得体会','十 对实验过程与方法的改进建议']
-for row,title in zip(range(13,17),titles):
-    parts.append('## '+title+'\n')
-    for kind,text in sections[str(row)]:parts.append(('### ' if kind=='h2' else '')+text+'\n')
-parts.append('报告评分、指导教师签字：由教师填写。\n')
-expected='\n'.join(parts)
-target=docs/'05_实验报告.md'
+sections = json.loads((root / "resources/report-sections.json").read_text())
+titles = [
+    "七 AI开发工具使用总结",
+    "八 实验结论",
+    "九 总结及心得体会",
+    "十 对实验过程与方法的改进建议",
+]
+for row, title in zip(range(13, 17), titles):
+    parts.append("## " + title + "\n")
+    for kind, text in sections[str(row)]:
+        parts.append(("### " if kind == "h2" else "") + text + "\n")
+parts.append("报告评分、指导教师签字：由教师填写。\n")
+expected = "\n".join(parts)
+target = docs / "05_实验报告.md"
 if args.check:
-    if not target.exists() or target.read_text()!=expected:
-        raise SystemExit('Reading report is stale; regenerate from the current sections')
+    if not target.exists() or target.read_text() != expected:
+        raise SystemExit("Reading report is stale; regenerate from the current sections")
 else:
     target.write_text(expected)

@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "internal.h"
+
 namespace squirrel {
 namespace {
 bool sameSource(const std::vector<Entry>& a, const std::vector<Entry>& b) {
@@ -13,8 +14,7 @@ bool sameSource(const std::vector<Entry>& a, const std::vector<Entry>& b) {
   for (size_t i = 0; i < a.size(); ++i) {
     const auto& x = a[i];
     const auto& y = b[i];
-    // Access times may legitimately change when files are read. Everything else
-    // which identifies an entry or supplies restored metadata must remain stable.
+    // Reading changes atime; the other scanned fields must stay unchanged.
     if (x.path != y.path || x.type != y.type || x.device != y.device || x.inode != y.inode ||
         x.size != y.size || x.mode != y.mode || x.uid != y.uid || x.gid != y.gid ||
         x.mtime != y.mtime || x.mtime_ns != y.mtime_ns || x.ctime != y.ctime ||
@@ -62,6 +62,7 @@ Summary BackupService::backup(const fs::path& source, const fs::path& archive,
   emit(log, "Backup complete: " + output.string());
   return summary;
 }
+
 Summary BackupService::inspect(const fs::path& archive, const std::string& password, const Log& log,
                                bool collect, const Operation& operation) const {
   operation.check();
@@ -73,6 +74,7 @@ Summary BackupService::inspect(const fs::path& archive, const std::string& passw
   emit(log, "Verification passed: " + std::to_string(result.entries) + " entries");
   return result;
 }
+
 Summary BackupService::restore(const fs::path& archive, const fs::path& destination,
                                const std::string& password, const Log& log,
                                const Operation& operation) const {
@@ -87,10 +89,9 @@ Summary BackupService::restore(const fs::path& archive, const fs::path& destinat
   Fd stage_fd(::open(stage.c_str(), O_RDONLY | O_DIRECTORY | O_NOFOLLOW));
   syscheck(stage_fd.value >= 0, "Cannot open staging directory");
   auto summary = ArchiveReader::read(plain, &stage, log, false, operation);
-  struct stat restored_root{};
+  struct stat restored_root {};
   syscheck(::fstat(stage_fd.value, &restored_root) == 0, "Cannot inspect restored root");
-  // macOS needs owner write/search permission to move a directory to a new parent.
-  // Keep its descriptor open so final permissions can be set even for mode 000.
+  // Keep the descriptor open to restore mode 000 after moving the directory.
   const mode_t final_mode = restored_root.st_mode & 0777;
   syscheck(::fchmod(stage_fd.value, final_mode | 0700) == 0,
            "Cannot prepare restored directory for publication");

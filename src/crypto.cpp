@@ -11,6 +11,7 @@
 #include <string>
 
 #include "internal.h"
+
 namespace squirrel {
 namespace {
 constexpr size_t kHeaderSize = 44, kTagSize = 32;
@@ -23,6 +24,7 @@ Key derive(const std::string& password, const Bytes& header) {
           "Password key derivation failed");
   return key;
 }
+
 struct Digest {
   bool encrypted;
   CC_SHA256_CTX sha{};
@@ -58,6 +60,9 @@ struct Cipher {
                             header.data() + 28, &ref) == kCCSuccess,
             "Cannot initialize AES");
   }
+  Cipher(const Cipher&) = delete;
+  Cipher& operator=(const Cipher&) = delete;
+
   ~Cipher() {
     if (ref) {
       CCCryptorRelease(ref);
@@ -134,14 +139,14 @@ void CryptoEnvelope::seal(const fs::path& plain, const fs::path& output,
   std::fill(key.begin(), key.end(), 0);
   operation.checkpoint(Phase::Seal, completed, total);
 }
+
 void CryptoEnvelope::open(const fs::path& archive, const fs::path& plain,
                           const std::string& password, const Operation& operation) {
   operation.checkpoint(Phase::Authenticate);
-  // Open once with O_NOFOLLOW so a replaced filename cannot swap verification and decryption
-  // inputs.
+  // Authenticate and decode through the same descriptor to prevent path replacement.
   Fd fd(::open(archive.c_str(), O_RDONLY | O_NOFOLLOW | O_NONBLOCK));
   syscheck(fd.value >= 0, "Cannot open backup");
-  struct stat before{};
+  struct stat before {};
   syscheck(::fstat(fd.value, &before) == 0, "Cannot stat backup");
   require(S_ISREG(before.st_mode) && before.st_size >= static_cast<int64_t>(kHeaderSize + kTagSize),
           "Not a valid backup file");
@@ -224,7 +229,7 @@ void CryptoEnvelope::open(const fs::path& archive, const fs::path& plain,
         "Invalid encrypted payload");
     write(out, transformed.data(), count);
   }
-  struct stat after{};
+  struct stat after {};
   syscheck(::fstat(fd.value, &after) == 0, "Cannot stat backup");
   require(before.st_size == after.st_size &&
               before.st_mtimespec.tv_sec == after.st_mtimespec.tv_sec &&

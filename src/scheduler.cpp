@@ -7,19 +7,19 @@
 #include <thread>
 
 #include "internal.h"
+
 namespace squirrel {
 namespace {
-std::string fingerprint(const fs::path& source, const Filter& filter,
-                        const Operation& operation) {
+std::string fingerprint(const fs::path& source, const Filter& filter, const Operation& operation) {
   auto entries = FileScanner::scan(source, filter, {}, operation);
   // Metadata polling does not read file bodies and never changes their access time.
   std::ostringstream out;
   for (const auto& e : entries) {
     operation.check();
     out << e.path.size() << ':' << e.path << ':' << int(e.type) << ':' << e.size << ':' << e.inode
-        << ':' << e.mtime << ':' << e.mtime_ns << ':' << e.ctime << ':' << e.ctime_ns
-        << ':' << e.device << ':' << e.mode << ':' << e.uid << ':' << e.gid
-        << ':' << e.link.size() << ':' << e.link << ':';
+        << ':' << e.mtime << ':' << e.mtime_ns << ':' << e.ctime << ':' << e.ctime_ns << ':'
+        << e.device << ':' << e.mode << ':' << e.uid << ':' << e.gid << ':' << e.link.size() << ':'
+        << e.link << ':';
     for (const auto& a : e.xattrs) {
       out << a.first.size() << ':' << a.first << ':' << a.second.size() << ':';
       out.write(reinterpret_cast<const char*>(a.second.data()), a.second.size());
@@ -49,7 +49,7 @@ void Scheduler::run(const fs::path& source, const fs::path& repository,
   require(fs::is_directory(root), "Source must be a directory");
   require(fs::is_directory(repo) && !beneath(repo, root),
           "Repository must be an existing directory outside the source");
-  // Each invocation owns a fresh isolated job folder. Retention never touches unrelated files.
+  // Retention is limited to snapshots created in this job directory.
   TempDir reservation(repo);
   auto job = repo / ("squirrel-job-" + reservation.path.filename().string().substr(10));
   syscheck(::renamex_np(reservation.path.c_str(), job.c_str(), RENAME_EXCL) == 0,
@@ -77,8 +77,7 @@ void Scheduler::run(const fs::path& source, const fs::path& repository,
         BackupService{}.backup(root, file, options, log, operation);
         owned.push_back(file);
         ++runs;
-        // Commit snapshot state before best-effort retention. Cleanup failure must not
-        // cause an extra backup, invalidate the watch baseline, or bypass max_runs.
+        // Record success before retention so a cleanup retry cannot repeat this backup.
         first = false;
         last = Clock::now();
         if (schedule.watch) {

@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-29T21:54:00+08:00",
+  "generated_at": "2026-10-30T01:02:21+08:00",
   "version": "0.2.0",
   "unit": 52,
   "integration": 21,
@@ -7,5 +7,5 @@
   "workflow": 6,
   "total": 97,
   "passed": 97,
-  "binary_sha256": "524c56d8b66c7bf533b1a7649f86b908a0fa4251b552681d87316c58da6424e4"
+  "binary_sha256": "ebb110c143b1ce54ffa5ccaa549bca37cf9980fe0a9de936950fbb236710bba8"
 }

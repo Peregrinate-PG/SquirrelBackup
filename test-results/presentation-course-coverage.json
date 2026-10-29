@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-10-29T14:49:09.887086+00:00",
+  "checked_at": "2026-10-29T17:05:40.626452+00:00",
   "basis": "第9讲第39页，work/course/text/9.知识拓展与项目完善.txt",
   "required_topics_covered": true,
   "optional_topic": "项目吐槽：讲义注明如有，未设置专页",
@@ -50,8 +50,8 @@
       "evidence": "三人模块主责与配套测试、文档工作，完成结果在相邻测试和版本页呈现"
     }
   ],
-  "pptx_sha256": "f568b42b6d0e88bcebad3c5862e4060e751b695db920e3a74a950e218ce39d3e",
-  "pdf_sha256": "a797d47d7d18490247cbb57961b00f17cdffa44aec1668ed2f46b3a18adbf6a4",
+  "pptx_sha256": "35ed1d7e4e3fdffdce4ea66120ba36c10bf7d4b81efbbe963d93b59a1e52dc09",
+  "pdf_sha256": "84270841c88a5c7232bce88d7112f802f42de8d76b80fa4805e9d7b93a58430f",
   "native_application_playback_verified": false,
   "speech_planned_seconds": 180,
   "speech_actual_recitation_verified": false,
@@ -75,5 +75,6 @@
     "杨梦宇": 60,
     "郭畅": 60,
     "李想": 60
-  }
+  },
+  "revision_check": "Only notesSlide9.xml changed; all 11 rendered slides are pixel-identical to the previously reviewed deck."
 }

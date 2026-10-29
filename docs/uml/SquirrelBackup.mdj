@@ -3,7 +3,7 @@
   "_id": "SQ7a6ecf3e927736f7c63edebdf652",
   "name": "松鼠备份 · 第3组 · 0.2.0",
   "author": "第3组（杨梦宇、郭畅、李想）",
-  "documentation": "依据当前源码生成；建模辅助使用 Codex。成员需复核并熟悉模型。",
+  "documentation": "松鼠备份的用例、构件、核心类、操作顺序与任务状态模型。",
   "ownedElements": [
     {
       "_type": "UMLModel",
