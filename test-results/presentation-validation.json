@@ -1,7 +1,7 @@
 {
   "schemaVersion": "presentation-finalization.v1",
-  "finalSha256": "b9bad96268cc25a8d610d22bee6cc8c47ab7d70a0793171f3426d4f0aa767a07",
-  "byteCount": 363246,
+  "finalSha256": "1346d2d01f0c48c331631e374b81c05266cf4f94f903a1d110c83b52d34d09e5",
+  "byteCount": 364043,
   "packageIntegrity": {
     "chart_count": 0,
     "claim_boundary": "Structural package checks only; no slide text, notes, formulas, chart values, or native PowerPoint execution were inspected.",
@@ -19,13 +19,13 @@
     "finding_count": 0,
     "findings": [],
     "font_policy": {
-      "checked_text_script_count": 146,
+      "checked_text_script_count": 152,
       "native_font_rendering_verified": false,
       "observed_font_families": [
         "PingFang SC"
       ],
       "observed_font_use_counts": {
-        "PingFang SC": 146
+        "PingFang SC": 152
       },
       "passed": true,
       "performed": true
@@ -40,13 +40,13 @@
     "exitCode": 0,
     "findingCount": 0,
     "fontPolicy": {
-      "checked_text_script_count": 146,
+      "checked_text_script_count": 152,
       "native_font_rendering_verified": false,
       "observed_font_families": [
         "PingFang SC"
       ],
       "observed_font_use_counts": {
-        "PingFang SC": 146
+        "PingFang SC": 152
       },
       "passed": true,
       "performed": true
@@ -60,13 +60,13 @@
     "scriptFonts": {},
     "referenceSha256": null,
     "referenceFontsVerifiedInEncodedText": false,
-    "checked_text_script_count": 146,
+    "checked_text_script_count": 152,
     "native_font_rendering_verified": false,
     "observed_font_families": [
       "PingFang SC"
     ],
     "observed_font_use_counts": {
-      "PingFang SC": 146
+      "PingFang SC": 152
     },
     "passed": true,
     "performed": true
@@ -75,7 +75,7 @@
     "performed": true,
     "passed": true,
     "slideCount": 9,
-    "sha256": "b9bad96268cc25a8d610d22bee6cc8c47ab7d70a0793171f3426d4f0aa767a07",
+    "sha256": "1346d2d01f0c48c331631e374b81c05266cf4f94f903a1d110c83b52d34d09e5",
     "runtimeNodeModules": "/Users/lixiang/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules",
     "nodeExecutable": "/Users/lixiang/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node"
   },
@@ -119,7 +119,7 @@
     "native_chart_count": 0,
     "native_powerpoint_verified": false,
     "passed": true,
-    "presentation_sha256": "b9bad96268cc25a8d610d22bee6cc8c47ab7d70a0793171f3426d4f0aa767a07",
+    "presentation_sha256": "1346d2d01f0c48c331631e374b81c05266cf4f94f903a1d110c83b52d34d09e5",
     "schema_version": "presentation-native-chart-titles.v1",
     "slide_count": 9,
     "source_text_emitted": false,

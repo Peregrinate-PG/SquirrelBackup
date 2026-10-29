@@ -59,7 +59,8 @@ arrow(s,guiBox,service);arrow(s,cliBox,service);arrow(s,schedule,service);
 const scan=box(s,'FileScanner\n扫描与筛选',939,149,264,84),archive=box(s,'ArchiveWriter\nArchiveReader',939,268,264,105,C.paper,23),codec=box(s,'HuffmanCodec\n分块压缩',939,408,264,84),crypto=box(s,'CryptoEnvelope\n摘要 / 认证加密',939,527,264,84);
 arrow(s,service,scan);arrow(s,service,archive);arrow(s,archive,codec,'bottom','top');arrow(s,service,crypto);
 text(s,'Operation：协作取消与阶段进度',416,469,457,82,27,C.teal,true);
-text(s,'C++17 · macOS 13.0 arm64 · Apple Clang 14.0.3',65,636,1075,32,22,C.muted);
+text(s,'C++17 · macOS 13.0 arm64 · Apple Clang 14.0.3',65,619,1075,30,22,C.muted);
+text(s,'Git：main分支与真实提交历史 · cpplint：Google C++规范',65,657,1075,31,22,C.muted);
 s=slide('归档格式与算法选择','20秒。郭畅：SQBK是外层封装，SQTREE描述目录树。Huffman按1MiB分块处理，压缩没有收益就保存原始块，单符号和空块单独处理。密码保护使用系统库完成PBKDF2、AES和HMAC，项目实现封装与边界检查，不把系统密码算法说成自研。源码：src/archive.cpp、src/huffman.cpp、src/crypto.cpp；依赖声明：THIRD_PARTY.md。');
 table(s,[['部分','实现','依赖'],['文件树归档','自定义SQBK / SQTREE\n明确长度、类型与结束标志','项目实现'],['Huffman压缩','1 MiB分块；收益不足回退原始块','项目实现'],['密码封装','PBKDF2 + AES-256-CBC\nHMAC-SHA256认证','CommonCrypto\nSecurity']],[215,610,320],65,159,[55,112,105,124],25);
 text(s,'先压缩，再加密；恢复时先认证，再解密',68,591,1120,50,31,C.accent,true);
@@ -80,12 +81,15 @@ text(s,'另有53项GUI内部断言；系统文件选择器仍待人工验收。'
 text(s,'20小时持续测试正在运行，未记为通过。',69,615,1135,40,25,C.muted);
 s=slide('三人职责与复核安排','20秒。李想：按文件与恢复、格式与算法、界面与任务分配，每人30个相对工作量点，均承担代码、测试、文档与演示。这里是接手与复核安排，不把自动生成或自动执行内容写成个人已完成工作。实际贡献以三人确认和后续提交记录为准。来源：docs/07_三人分工与协作方案.md。');
 table(s,[['成员','主责模块','配套工作'],['杨梦宇','扫描、筛选、安全恢复、CLI','需求与用例、文件测试'],['郭畅','归档、Huffman、密码封装','设计与类图、算法测试'],['李想','GUI、自动任务、构建发布','测试汇总、动态建模']],[205,565,375],65,157,[56,96,96,96],26);
-text(s,'每人30点：实现14 + 测试5 + 文档建模5 + 复核演示6',65,548,1140,52,28,C.accent,true);
+text(s,'实现与自动测试已完成；本机验收和材料封版待完成',65,548,1140,52,28,C.accent,true);
 text(s,'交叉复核：杨梦宇 → 郭畅 → 李想 → 杨梦宇',65,618,1140,40,25,C.muted);
-s=slide('答辩前推进计划','15秒。李想：以10月29日为起点安排接手复现、真实界面验收、材料复核和排练，11月18日答辩。甘特图是后续计划，尚未发生的日期不写成完成记录。在线Git仓库需要成员账号完成发布，个人证书各自完成。来源：课程9.pdf第38至40页，docs/planning/后续计划.csv及docs/10_学习证书办理说明.md。');
-const gx=367,gy=225,unit=39,rows=[['接手与复现',0,3],['界面与边界验收',3,5],['文档与模型复核',8,4],['演示与答辩排练',12,5],['最终检查与提交准备',17,3]];
-for(const [label,day]of[['10/29',0],['11/1',3],['11/6',8],['11/10',12],['11/15',17],['11/18',20]]){text(s,label,gx+day*unit-28,161,88,40,23,C.muted);s.shapes.add({geometry:'line',position:{left:gx+day*unit,top:211,width:0,height:359},line:{fill:'#DDE2DF',width:1}});}
-for(let i=0;i<rows.length;i++){const[label,start,duration]=rows[i];text(s,label,67,gy+i*70,283,43,26);s.shapes.add({geometry:'rect',position:{left:gx+start*unit,top:gy+i*70+5,width:duration*unit-5,height:30},fill:C.teal,line:{fill:'none',width:0}});}
+s=slide('项目进展与后续安排','15秒。李想：10月29日的Git记录显示，0.1.1修复恢复权限与变化检测，0.2.0加入取消和进度，并完成回归及离线候选验证。下方甘特图保留小组答辩准备计划；未来日期不作完成证据，也不要求程序等到计划末日才能交付。当前所有软件验收按成员要求在李想的Mac完成，桌面操作等成员通知。来源：git log中的dbde327、b2b5bb9及49300b7；课程第9讲38至40页；docs/planning/后续计划.csv。');
+text(s,'10/29：0.1.0基线 → 0.1.1恢复修复 → 0.2.0取消与进度',65,136,1140,44,29,C.accent,true);
+text(s,'97项回归通过；报告、UML、视频和离线候选包已形成',65,187,1140,40,27);
+text(s,'后续答辩准备计划',67,252,285,36,23,C.muted);
+const gx=367,gy=314,unit=39,rows=[['接手与复现',0,3],['界面与边界验收',3,5],['文档与模型复核',8,4],['演示与答辩排练',12,5],['最终检查与提交准备',17,3]];
+for(const [label,day]of[['10/29',0],['11/1',3],['11/6',8],['11/10',12],['11/15',17],['11/18',20]]){text(s,label,gx+day*unit-28,252,88,36,23,C.muted);s.shapes.add({geometry:'line',position:{left:gx+day*unit,top:300,width:0,height:287},line:{fill:'#DDE2DF',width:1}});}
+for(let i=0;i<rows.length;i++){const[label,start,duration]=rows[i];text(s,label,67,gy+i*53,283,39,25);s.shapes.add({geometry:'rect',position:{left:gx+start*unit,top:gy+i*53+5,width:duration*unit-5,height:27},fill:C.teal,line:{fill:'none',width:0}});}
 text(s,'2026年11月18日上午答辩；当日23:59前提交成电慕课',66,618,1150,40,26,C.accent,true);
 s=slide('现场演示：验证后恢复到新目录','20秒。杨梦宇：现场从准备好的独立数据目录开始，展示备份、验证、恢复和原文件哈希比对，再展示错误密码与任务保留、停止。不会使用个人真实文件。PPT讲解控制3分钟，现场操作7分钟，提交视频不超过2分钟。程序尚不支持网络、增量、系统守护与重启续跑。截图来源：docs/screenshots/03-restored.png，真实应用离屏状态。');
 await img(s,'docs/screenshots/03-restored.png',64,161,731,535);

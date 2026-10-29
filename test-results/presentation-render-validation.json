@@ -1,7 +1,23 @@
 {
   "pages": 9,
-  "all_pages_raster_equal": true,
-  "pdf_sha256": "3e472c1f88ecb033fe8995fc675f9e9e85ec1f2eccfd8ce0a0f96de9758f14bb",
-  "method": "Headless LibreOffice using repository render_presentation.sh, task-local fontconfig; compared all 9 page raster hashes against visually reviewed PDF.",
-  "desktop_input": false
+  "pdf_sha256": "8ed0f280dc2be78e701a1f83e309f1edceb95116a4b498afd9a6751a3a1d4817",
+  "pptx_sha256": "1346d2d01f0c48c331631e374b81c05266cf4f94f903a1d110c83b52d34d09e5",
+  "changed_pages": [
+    3,
+    7,
+    8
+  ],
+  "changed_pages_visually_reviewed": true,
+  "unchanged_pages": [
+    1,
+    2,
+    4,
+    5,
+    6,
+    9
+  ],
+  "unchanged_pages_raster_equal": true,
+  "method": "Headless LibreOffice; changed pages inspected individually against originals; remaining pages have identical raster bytes to previously reviewed PDF.",
+  "desktop_input": false,
+  "native_powerpoint_playback_verified": false
 }

@@ -1,0 +1,71 @@
+{
+  "checked_at": "2026-10-29T09:56:19.845675+00:00",
+  "basis": "第9讲第39页，work/course/text/9.知识拓展与项目完善.txt",
+  "required_topics_covered": true,
+  "optional_topic": "项目吐槽：讲义注明如有，未设置专页",
+  "items": [
+    {
+      "requirement": "开发环境",
+      "slides": [
+        3
+      ],
+      "evidence": "macOS 13.0 arm64、C++17、Apple Clang 14.0.3"
+    },
+    {
+      "requirement": "扩展功能、算法及第三方库",
+      "slides": [
+        2,
+        4,
+        5
+      ],
+      "evidence": "扩展项、SQBK/SQTREE、Huffman与系统密码库；依赖没有称为自研"
+    },
+    {
+      "requirement": "配置管理与编程规范",
+      "slides": [
+        3
+      ],
+      "evidence": "Git main及真实历史、cpplint与Google C++规范；在线仓库尚待授权完成"
+    },
+    {
+      "requirement": "软件测试与工具",
+      "slides": [
+        6
+      ],
+      "evidence": "97项分层结果、ASan/UBSan、GUI内部断言及长测范围"
+    },
+    {
+      "requirement": "项目进展回顾与甘特图",
+      "slides": [
+        8
+      ],
+      "evidence": "10/29实际Git版本进展及明确标注为后续计划的甘特图"
+    },
+    {
+      "requirement": "人员分工及完成情况",
+      "slides": [
+        7
+      ],
+      "evidence": "三人均有代码、测试与文档职责，分别说明项目已完成及待完成范围；不编造个人历史贡献"
+    }
+  ],
+  "pptx_sha256": "1346d2d01f0c48c331631e374b81c05266cf4f94f903a1d110c83b52d34d09e5",
+  "pdf_sha256": "8ed0f280dc2be78e701a1f83e309f1edceb95116a4b498afd9a6751a3a1d4817",
+  "changed_slides_visually_reviewed": [
+    3,
+    7,
+    8
+  ],
+  "unchanged_slides_pixel_equal": [
+    1,
+    2,
+    4,
+    5,
+    6,
+    9
+  ],
+  "native_application_playback_verified": false,
+  "speech_planned_seconds": 180,
+  "speech_actual_recitation_verified": false,
+  "online_repository_verified": false
+}

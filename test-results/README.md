@@ -22,6 +22,7 @@
 | gui-demo-evidence.json、gui-demo-events.txt、video-validation.json | 实际应用演示事件、完整视频解码与时长 |
 | uml-validation.json | StarUML模型引用、官方CLI导出结果及模型哈希 |
 | presentation-validation.json | PPTX字体、表格结构和重新导入检查 |
+| presentation-course-coverage.json、presentation-render-validation.json | 第9讲六项必讲内容逐项核对、变更页视觉检查及其余页面像素比较；不代表实际朗读或前台放映 |
 
 20小时长测在独立后台进程中进行。只有完成后的soak-20h.json明确记录status=passed，才能认定通过；soak-in-progress.json为打包前的中途快照。如果交付包只有报告里的中途快照，就仍属运行中。长测冻结CLI和最终构建CLI分别记录哈希，二者完整文件并不相同，映射节比较证据解释其对应关系。
 

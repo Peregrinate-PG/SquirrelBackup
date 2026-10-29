@@ -4,7 +4,7 @@
   "online_group_basis": "User confirmed the group information is already filled in during the 2026-10-29 conversation.",
   "online_repository_verified": false,
   "repository_account": "Peregrinate-PG",
-  "repository_status": "User authorized Codex to create and populate public Peregrinate-PG/SquirrelBackup. Official GitHub device login is pending; remote creation and content verification are not yet complete.",
+  "repository_status": "User authorized Codex to create and populate public Peregrinate-PG/SquirrelBackup. The first official device code expired without authorization; a new device login is required when the user is ready. Repository creation and remote verification are not complete.",
   "repository_visibility": "public",
   "repository_creation_authorized": true,
   "report_complete": false,
