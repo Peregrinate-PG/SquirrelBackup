@@ -15,5 +15,7 @@
     "final_visual_and_package_review",
     "defense_computer_acceptance",
     "other_two_certificates"
-  ]
+  ],
+  "laboratory": "自主实验环境（macOS个人计算机）",
+  "laboratory_basis": "Describes the actual local Mac used for this project; no institutional room number is asserted."
 }

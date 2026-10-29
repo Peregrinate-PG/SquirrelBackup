@@ -134,7 +134,8 @@ def markdown(s):
 put(0,[para('小组：3','field')]);put(0,[para('组长与组员信息','field')],1)
 for i,(name,number) in enumerate([('杨梦宇','2023150901002'),('郭畅','2023040904017'),('李想','2023150901012')],1):
  put(i,[para(('组长姓名：' if i==1 else '组员姓名：')+name,'field')]);put(i,[para('学号：'+number,'field')],1)
-put(4,[para('一、实验室名称：________________（按实际填写）','section')])
+profile=json.loads((ROOT/'resources/submission-readiness.json').read_text())
+put(4,[para('一、实验室名称：'+profile['laboratory'],'section')])
 put(5,[para('二、实验项目名称：文件备份软件 松鼠备份','section')])
 put(7,[para('本项目实现macOS上的目录树备份与恢复，提供原生GUI与CLI两种入口，共用C++核心。归档采用自定义格式，Huffman压缩由项目实现；密码加密与认证调用系统CommonCrypto/Security。'),para('选做功能包括软硬链接与FIFO、基础元数据、六类筛选、打包压缩、密码加密、图形界面、定时任务、目录变化检测与任务内保留策略。设备节点、socket、网络备份、增量备份和系统守护未实现。'),para('交付包含源代码、构建脚本、程序、UML可编辑模型、需求与设计文档、测试证据、报告和答辩材料。0.2.0加入协作取消、阶段进度和发布前源目录复查。运行结果按实际测试记录填写。')],preserve_title=True)
 put(8,[para('开发与测试平台为macOS 13.0、Apple Silicon arm64。使用Apple Clang 14.0.3、Command Line Tools、make、git、GoogleTest和Python；GUI使用Cocoa/AppKit。UML模型由StarUML 7.1.1后台读取验证，报告采用课程原DOCX模板。')],preserve_title=True)

@@ -11,7 +11,7 @@ start="""# 软件开发综合实验小组报告
 
 组长：杨梦宇 2023150901002；组员：郭畅 2023040904017、李想 2023150901012。
 
-本阅读稿与课程Word报告共用需求、设计、测试和总结正文；封面、原表格和教师评分栏保留在Word版本。个人职责与技术复核稿供本人确认。
+本阅读稿与课程Word报告共用需求、设计、测试和总结正文；封面、原表格和教师评分栏保留在Word版本。个人职责按模块划分，技术总结以项目实现与测试记录为依据。
 
 ## 一 实验室名称
 
@@ -36,6 +36,8 @@ macOS13.0、Apple Silicon、Apple Clang14.0.3、Command Line Tools、make、git�
 ## 六 实验步骤及操作
 
 """
+profile=json.loads((root/'resources/submission-readiness.json').read_text())
+start=start.replace('________________（按实际填写）',profile['laboratory'])
 parts=[start]
 for name in ['01_需求分析说明书.md','02_系统设计文档.md','03_软件测试报告.md']:
     text=(docs/name).read_text()

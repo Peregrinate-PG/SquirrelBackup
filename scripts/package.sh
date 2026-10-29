@@ -63,7 +63,7 @@ cat > "$RELEASE/打开说明.txt" <<NOTE
 视频来自真实应用后台操作，不包含系统选择器与真人鼠标验收。
 本地签名未经Apple公证，其他电脑启动需实际检查。
 恢复目标必须是尚不存在的新目录，备份输出也不可覆盖已有文件。
-实验室、本人贡献确认、AI使用截图、在线仓库和学习证书需成员完成。
+当前材料完成状态见source/resources/submission-readiness.json与验收清单。
 打包不等于已经提交课程平台，证书每人单独提交。
 NOTE
 python3 - "$RELEASE" "$VERSION" <<'PY'

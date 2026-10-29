@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build printable HTML and PDF from repository Markdown; no business logic here."""
+"""Render guide drafts into html/ and pdf/; reviewed PDFs in this directory are preserved."""
 from pathlib import Path
 from html import escape
 import re
