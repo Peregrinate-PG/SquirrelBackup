@@ -1,0 +1,108 @@
+encrypted-backup-SIGKILL.log
+Scanned 2 entries
+
+encrypted-decode-enospc.log
+[fault] fwrite-enospc errno=28
+ERROR: Cannot write envelope (disk full?)
+
+encrypted-flush-eio.log
+Scanned 2 entries
+Packed: data.bin
+[fault] fsync-eio errno=5
+ERROR: Cannot flush file: Input/output error
+
+encrypted-metadata-eperm.log
+[fault] chmod-eperm errno=1
+ERROR: Cannot restore permissions: data.bin: Operation not permitted
+
+encrypted-pack-enospc.log
+Scanned 2 entries
+[fault] fwrite-enospc errno=28
+ERROR: Cannot write archive (disk full?)
+
+encrypted-publish-eacces.log
+Scanned 2 entries
+Packed: data.bin
+[fault] link-eacces errno=13
+ERROR: Cannot publish backup without overwriting: Permission denied
+
+encrypted-publish-eio.log
+[fault] rename-eio errno=5
+ERROR: Cannot publish restored directory without overwriting: Input/output error
+
+encrypted-restore-SIGKILL.log
+
+encrypted-seal-enospc.log
+Scanned 2 entries
+Packed: data.bin
+[fault] fwrite-enospc errno=28
+ERROR: Cannot write envelope (disk full?)
+
+encrypted-write-eintr.log
+OK entries=2 files=1 source_bytes=16777216 archive_bytes=16777676
+[fault] write-eintr errno=4
+Restore complete: /Users/lixiang/Documents/Codex/2026-10-29/qi/work/fault-injection-020/results/fixtures-j29vq4sy/encrypted-write-eintr/result
+
+encrypted-write-enospc.log
+[fault] write-enospc errno=28
+ERROR: Cannot write restored file (disk full?): No space left on device
+
+encrypted-write-short.log
+OK entries=2 files=1 source_bytes=16777216 archive_bytes=16777676
+[fault] write-short errno=0
+Restore complete: /Users/lixiang/Documents/Codex/2026-10-29/qi/work/fault-injection-020/results/fixtures-j29vq4sy/encrypted-write-short/result
+
+plain-backup-SIGKILL.log
+Scanned 2 entries
+
+plain-decode-enospc.log
+[fault] fwrite-enospc errno=28
+ERROR: Cannot write envelope (disk full?)
+
+plain-flush-eio.log
+Scanned 2 entries
+Packed: data.bin
+[fault] fsync-eio errno=5
+ERROR: Cannot flush file: Input/output error
+
+plain-metadata-eperm.log
+[fault] chmod-eperm errno=1
+ERROR: Cannot restore permissions: data.bin: Operation not permitted
+
+plain-pack-enospc.log
+Scanned 2 entries
+[fault] fwrite-enospc errno=28
+ERROR: Cannot write archive (disk full?)
+
+plain-publish-eacces.log
+Scanned 2 entries
+Packed: data.bin
+[fault] link-eacces errno=13
+ERROR: Cannot publish backup without overwriting: Permission denied
+
+plain-publish-eio.log
+[fault] rename-eio errno=5
+ERROR: Cannot publish restored directory without overwriting: Input/output error
+
+plain-restore-SIGKILL.log
+
+plain-seal-enospc.log
+Scanned 2 entries
+Packed: data.bin
+[fault] fwrite-enospc errno=28
+ERROR: Cannot write envelope (disk full?)
+
+plain-write-eintr.log
+OK entries=2 files=1 source_bytes=16777216 archive_bytes=16777660
+[fault] write-eintr errno=4
+Restore complete: /Users/lixiang/Documents/Codex/2026-10-29/qi/work/fault-injection-020/results/fixtures-j29vq4sy/plain-write-eintr/result
+
+plain-write-enospc.log
+[fault] write-enospc errno=28
+ERROR: Cannot write restored file (disk full?): No space left on device
+
+plain-write-short.log
+OK entries=2 files=1 source_bytes=16777216 archive_bytes=16777660
+[fault] write-short errno=0
+Restore complete: /Users/lixiang/Documents/Codex/2026-10-29/qi/work/fault-injection-020/results/fixtures-j29vq4sy/plain-write-short/result
+

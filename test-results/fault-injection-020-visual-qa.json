@@ -1,0 +1,10 @@
+{
+  "visual_review_passed": true,
+  "pages": 1,
+  "reviewed_pages": [
+    1
+  ],
+  "pdf_sha256": "9af8b3d26a6a64899711cf8f26ed2cca44ad5a5df799600deefaa9ca830862a0",
+  "bounds_warnings": [],
+  "basis": "The complete rendered page was inspected at full size; table, command block and linked reference are readable."
+}

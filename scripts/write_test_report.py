@@ -135,6 +135,19 @@ cp=results/'compatibility-020.json'
 if cp.exists():
     comp=json.loads(cp.read_text())
     text+=f"0.1.0与{version}之间的双向恢复已检查明文和加密共{len(comp['results'])}种组合，均通过内容与链接关系比对。测试时间{readable_time(comp['tested_at'])}（北京时间），见compatibility-020.json。这些兼容性场景单独列出，不并入核心命名用例总数。\n\n"
+fault_path=results/'fault-injection-020.json'
+if fault_path.exists():
+    faults=json.loads(fault_path.read_text())
+    count=len(faults['results'])
+    passed=sum(item['passed'] for item in faults['results'])
+    text+=f'写入故障与强制终止另行补测{count}种场景，通过{passed}种。'
+    if count==24 and passed==count and faults.get('passed'):
+        text+='明文和加密分别检查打包、封装、解码、恢复写入返回ENOSPC，刷写或发布失败，权限恢复失败，以及EINTR和短写入。失败场景没有发布目标，已保存备份保持不变，同名目标重试成功。4种实际SIGKILL场景在观察到至少4MiB写入后强制结束，私有暂存根目录以0700权限遗留，正常重试不删除旧暂存。'
+    else:
+        text+='本次补测证据未满足24种场景全部通过的条件，不认定整体通过。'
+    if faults['binary_sha256']!=sha:
+        text+='这份补测使用的冻结CLI与本次构建哈希不同，不作为本次重建后的复测结果。'
+    text+='详细范围、源码和原始记录见test-results/fault-injection-020.md及对应JSON；没有实际占满磁盘或断电，不并入97项核心用例。\n\n'
 text+='## 6 持续运行测试\n\n'
 soak_path=results/'soak-20h.json'
 if not soak_path.exists():soak_path=root.parent/'soak-20h-020/status.json'
