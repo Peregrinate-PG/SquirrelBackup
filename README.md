@@ -57,6 +57,8 @@ GUI内部测试：build/SquirrelBackup.app/Contents/MacOS/SquirrelBackup --self-
 
 当前命名用例97项，GUI内部断言53项，兼容性4种组合，实际信号中断20种组合，分别统计。动态内存检查、随机输入与持续运行证据见docs/03_软件测试报告.md和test-results。持续运行状态按生成报告时的实际记录填写。
 
+人工验收可用 `python3 scripts/package_acceptance.py /已存在父目录/新工具包目录` 生成辅助包。包内两个 `.command` 分别准备独立演示数据、核对实际恢复结果，另附操作单和空白真人记录表。核对覆盖内容、权限、软硬链接、FIFO及扩展属性；这不替代系统文件选择器和鼠标操作验收。工具自身12个正反例见test-results/acceptance-tools-020.json，不并入97项产品测试。
+
 ## 材料入口
 
 | 文件 | 内容 |

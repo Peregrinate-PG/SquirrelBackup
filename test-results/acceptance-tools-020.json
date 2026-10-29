@@ -1,0 +1,113 @@
+{
+  "checked_at": "2026-10-29T05:37:06.020231+00:00",
+  "passed": true,
+  "scope": "Checks the acceptance helper only; does not certify human GUI operation.",
+  "baseline_entries": 11,
+  "cases": [
+    {
+      "name": "plain-roundtrip",
+      "passed": true,
+      "comparison_passed": true,
+      "detected_fields": [],
+      "reported_error": null
+    },
+    {
+      "name": "encrypted-roundtrip",
+      "passed": true,
+      "comparison_passed": true,
+      "detected_fields": [],
+      "reported_error": null
+    },
+    {
+      "name": "detect-content-with-preserved-mtime",
+      "passed": true,
+      "comparison_passed": false,
+      "detected_fields": [
+        "sha256"
+      ],
+      "reported_error": null
+    },
+    {
+      "name": "detect-symlink-target",
+      "passed": true,
+      "comparison_passed": false,
+      "detected_fields": [
+        "mtime_ns",
+        "target"
+      ],
+      "reported_error": null
+    },
+    {
+      "name": "detect-broken-hardlink",
+      "passed": true,
+      "comparison_passed": false,
+      "detected_fields": [
+        "hardlink_group"
+      ],
+      "reported_error": null
+    },
+    {
+      "name": "detect-mode",
+      "passed": true,
+      "comparison_passed": false,
+      "detected_fields": [
+        "mode"
+      ],
+      "reported_error": null
+    },
+    {
+      "name": "detect-xattr",
+      "passed": true,
+      "comparison_passed": false,
+      "detected_fields": [
+        "xattrs_sha256"
+      ],
+      "reported_error": null
+    },
+    {
+      "name": "detect-fifo-type",
+      "passed": true,
+      "comparison_passed": false,
+      "detected_fields": [
+        "hardlink_group",
+        "mtime_ns",
+        "sha256",
+        "size",
+        "type"
+      ],
+      "reported_error": null
+    },
+    {
+      "name": "detect-missing-entry",
+      "passed": true,
+      "comparison_passed": false,
+      "detected_fields": [
+        "entry"
+      ],
+      "reported_error": null
+    },
+    {
+      "name": "detect-extra-entry",
+      "passed": true,
+      "comparison_passed": false,
+      "detected_fields": [
+        "entry"
+      ],
+      "reported_error": null
+    },
+    {
+      "name": "ignore-finder-store",
+      "passed": true,
+      "comparison_passed": true,
+      "detected_fields": [],
+      "reported_error": null
+    },
+    {
+      "name": "reject-symlink-root",
+      "passed": true,
+      "comparison_passed": false,
+      "detected_fields": [],
+      "reported_error": "请选择真实目录，不能使用指向目录的软链接。"
+    }
+  ]
+}

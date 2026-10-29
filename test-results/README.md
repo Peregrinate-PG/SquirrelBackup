@@ -9,6 +9,7 @@
 | gui-selftest.json、gui-events.txt | 53项原生GUI内部断言；未操作鼠标与系统选择器 |
 | signals-020.json、signals-020.log | 20种实际SIGINT／SIGTERM中断组合，另行统计 |
 | fault-injection-020.json、fault-injection-020.log、fault-injection-020.pdf | 24种写入故障、重试和SIGKILL补测，独立于97项；复现见同名Markdown |
+| acceptance-tools-020.json、acceptance-guide-020.json | 验收辅助工具12个正反例及操作单检查；不代表真人GUI验收 |
 | compatibility-020.json | 0.1.0与0.2.0明文、加密双向恢复4种组合 |
 | benchmark.json、benchmark-020.log | 单次本机性能测量及内容哈希检查 |
 | lint-020.json、lint-020.log | cpplint实际运行结果，不包括Objective-C++ |

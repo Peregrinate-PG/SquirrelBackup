@@ -1,0 +1,16 @@
+{
+  "visual_review_passed": true,
+  "pages": 1,
+  "reviewed_pages": [
+    1
+  ],
+  "pdf_sha256": "24de9449c00b5e93b680f38daf5ad1a35908f68b1f5da3e87c111f33f6f368fd",
+  "bounds_warnings": [],
+  "launcher_check": {
+    "passed": true,
+    "headless_execution": true,
+    "paths_with_chinese_and_spaces": true,
+    "human_gui_verified": false
+  },
+  "helper_check": "acceptance-tools-020.json"
+}
