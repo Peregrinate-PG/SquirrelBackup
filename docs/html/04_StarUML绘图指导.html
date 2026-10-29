@@ -1,5 +1,5 @@
 <!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>松鼠备份 StarUML 手工绘图指导</title><style>body{max-width:900px;margin:48px auto;padding:0 32px;font:16px/1.85 -apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif;color:#202833}h1{color:#111;font-size:30px;line-height:1.5;margin-bottom:32px}h2{margin-top:36px;font-size:23px}h3{margin-top:24px;font-size:19px}table{border-collapse:collapse;width:100%;font-size:13px;line-height:1.65;margin:18px 0}th,td{border:1px solid #dde1e4;padding:8px 10px;text-align:left;vertical-align:top;overflow-wrap:anywhere}th{background:#edf0f1}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f4f5f6;padding:16px}code{font-size:.9em}a{color:#914321}nav{margin-bottom:28px;color:#777}footer{margin-top:44px;color:#777;font-size:12px}@media print{body{margin:0;padding:0;font-size:10pt}nav{display:none}h1,h2,h3,h4{break-after:avoid}tr{break-inside:avoid}thead{display:table-header-group}@page{size:A4;margin:18mm}}</style><nav><a href="index.html">文档目录</a></nav><main><h1>松鼠备份 StarUML 手工绘图指导</h1>
-<p>本指导供你在 StarUML 中手工完成课程建模，内容依据松鼠备份 0.1.0 的真实需求与代码。本文不包含生成的 UML 图、PlantUML、Mermaid 或可直接导入的模型。推荐先完成一张用例图、一张核心类图、一张构件图、备份与恢复各一张顺序图和一张任务状态图，再插入实验报告对应栏目。</p>
+<p>本指导供你在 StarUML 中手工完成课程建模，内容依据松鼠备份 0.1.1 的需求与公开接口。先冻结当前接口和行为，再开始绘图；所有用例编号与01需求说明书一致。本文不包含生成的 UML 图、PlantUML、Mermaid 或可直接导入的模型。本轮仅更新绘图指导，模型和图仍待完成；这不表示课程禁止生成可编辑模型。推荐先完成一张用例图、一张核心类图、一张构件图、备份与恢复各一张顺序图和一张任务状态图，再插入实验报告对应栏目。</p>
 <h2>1 建立项目与通用操作</h2>
 <p>安装适用于 Mac 的 StarUML，并按其许可条件使用。新建项目后保存为 SquirrelBackup.mdj。右侧 Model Explorer 保存模型元素，左侧 Toolbox 提供绘图元素，Property Editor 设置名字和属性。先选模型或包，再通过 Model &gt; Add Diagram &gt; 对应图类型创建图；也可使用模型节点右键菜单。该流程依据官方 Managing Diagrams 文档。</p>
 <p>建议用包分组：Requirements、Architecture、Core、Scenarios、States。图名按 UC_总体用例、CD_核心类、CMP_系统构件、SEQ_创建备份、SEQ_安全恢复、STM_自动任务命名。双击模型元素可编辑名字，类图可在 QuickEdit 添加属性和操作。不要把快捷键作为唯一操作方式，Mac 版本的键位可能不同，以菜单和右键可见项为准。</p>
@@ -133,7 +133,7 @@
 </tr>
 <tr>
 <td>Entry</td>
-<td>path、link、type、mode、uid、gid、mtime、mtime_ns、atime、atime_ns、size、xattrs</td>
+<td>path、link、type、mode、uid、gid、mtime、mtime_ns、atime、atime_ns、size、xattrs；扫描专用device/inode/ctime/ctime_ns</td>
 <td>无</td>
 </tr>
 <tr>
@@ -217,7 +217,7 @@
 </tbody>
 </table>
 <p>将 Filter、Entry、Summary 归到值对象一排，业务服务居中，算法和格式类分列。静态工具类的方法标记为 static，BackupService 的业务方法不是 static。没有接口继承层次，不画 Generalization。如果组合已经显示成连线，可在类框中省略重复的对应属性以降低冗余，并在注释中说明。</p>
-<p>检查：名字和源码一致；静态标记正确；拥有关系有基数；不要把两个入口各画成一套 BackupService 业务实现。完成后插入系统设计文档 3.1 系统对象模型。</p>
+<p>检查：名字和源码一致；静态标记正确；拥有关系有基数；不要把两个入口各画成一套 BackupService 业务实现。Entry 的内存扫描字段与归档持久化字段需区分；以冻结后的 backup.h 为准，未写入归档的检测字段不得画成格式已经新增字段。完成后插入系统设计文档 3.1 系统对象模型。</p>
 <h2>4 构件图 CMP_系统构件</h2>
 <p>在 Architecture 包中建立 Component Diagram。摆放 GUI Executable、CLI Executable、Core Static Library 三个项目构件，外部构件为 Cocoa/AppKit、CommonCrypto/Security、macOS File System。GUI 与 CLI 都依赖 Core Static Library；GUI 额外依赖 Cocoa；核心库依赖密码库与文件系统。</p>
 <p>在 Core 的 Note 中列出 Scanner、Archive、Huffman、Envelope、Scheduler 模块即可，不要把类图完全复制过来。接口可标注“C++ backup.h”，因为当前是静态库和 C++ 编译期链接；不要标注成已经实现的 REST、DLL 或稳定 C ABI。GUI 的后台队列与 C++ 方法调用发生在同一进程，不能画成远端服务。</p>
@@ -405,9 +405,9 @@
 </tr>
 </tbody>
 </table>
-<p>状态名是对 Scheduler 控制流的建模抽象，代码没有单独的状态枚举。停止不会立即中断块写入，不能画成点击停止便立刻销毁快照。max_runs 达成也进入 Final。完成后插入系统设计动态建模章节。</p>
+<p>状态名是对 Scheduler 控制流的建模抽象，代码没有单独的状态枚举。GUI还应以注释说明0.1.1的延迟关闭/退出请求：忙碌时记录，操作结束后执行；这不是Scheduler增加了独立后台守护状态。停止不会立即中断块写入，不能画成点击停止便立刻销毁快照。max_runs 达成也进入 Final。完成后插入系统设计动态建模章节。</p>
 <h2>8 插入报告与最终核对</h2>
-<p>将各图放到模板对应位置，保留图题和文字说明。需求文档使用用例图，设计文档使用构件、类、顺序和状态图。字体统一；连线避免穿过类框；一个页面过密则拆图。最终把 mdj 源文件和导出图片一起归档，报告中说明实际使用的 StarUML 版本和绘图人。</p>
+<p>在绘图前记录0.1.1源代码版本/提交号，复核公开接口、UC-01至UC-08及停止语义；涉及接口的修订完成后再冻结模型。将各图放到模板对应位置，保留图题和文字说明。需求文档使用用例图，设计文档使用构件、类、顺序和状态图。字体统一；连线避免穿过类框；一个页面过密则拆图。最终把 mdj 源文件和导出图片一起归档，报告中说明实际使用的 StarUML 版本和绘图人。</p>
 <p>逐项检查：没有未实现网络功能；static 与非 static 区分正确；依赖箭头方向正确；组合关系有基数；方法名能在源码定位；异常和停止路径均有说明；图和报告版本号一致。没有完成绘图时不把“StarUML 模型已完成”填写到实验结论。</p>
 <h2>9 官方操作参考</h2>
 <p>以下仅用于确认 StarUML 的操作入口，项目元素、方法和流程来自本项目源码。菜单会随版本变化，以实际安装版本为准。</p>
@@ -417,4 +417,4 @@
 <li>Class Diagram：https://docs.staruml.io/working-with-uml-diagrams/class-diagram</li>
 <li>Sequence Diagram：https://docs.staruml.io/working-with-uml-diagrams/sequence-diagram</li>
 <li>Statechart Diagram：https://docs.staruml.io/working-with-uml-diagrams/statechart-diagram</li>
-</ul></main><footer>松鼠备份 0.1.0 · 请以源码和测试结果为准</footer></html>
+</ul></main><footer>松鼠备份 0.1.1 · 请以源码和测试结果为准</footer></html>

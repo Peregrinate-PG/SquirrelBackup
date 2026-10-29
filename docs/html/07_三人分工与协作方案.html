@@ -1,5 +1,5 @@
 <!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>松鼠备份三人分工与协作方案</title><style>body{max-width:900px;margin:48px auto;padding:0 32px;font:16px/1.85 -apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif;color:#202833}h1{color:#111;font-size:30px;line-height:1.5;margin-bottom:32px}h2{margin-top:36px;font-size:23px}h3{margin-top:24px;font-size:19px}table{border-collapse:collapse;width:100%;font-size:13px;line-height:1.65;margin:18px 0}th,td{border:1px solid #dde1e4;padding:8px 10px;text-align:left;vertical-align:top;overflow-wrap:anywhere}th{background:#edf0f1}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f4f5f6;padding:16px}code{font-size:.9em}a{color:#914321}nav{margin-bottom:28px;color:#777}footer{margin-top:44px;color:#777;font-size:12px}@media print{body{margin:0;padding:0;font-size:10pt}nav{display:none}h1,h2,h3,h4{break-after:avoid}tr{break-inside:avoid}thead{display:table-header-group}@page{size:A4;margin:18mm}}</style><nav><a href="index.html">文档目录</a></nav><main><h1>松鼠备份三人分工与协作方案</h1>
-<p>本方案按当前初版的实际模块安排三名成员接手、复核和完善项目。成员 A、B、C 是角色代号，提交前替换成姓名、学号；表中为建议承担的职责，不代表三人已经分别完成了现有代码。总体按每人 30 个相对工作量点、共 90 点分配，约各占三分之一。工作量点用于比较任务复杂度和验收责任，不等同于工时或成绩比例。</p>
+<p>本方案按0.1.1的实际模块安排三名成员接手、复核和完善项目。成员 A、B、C 是角色代号，提交前替换成姓名、学号；表中为建议承担的职责，不代表三人已经分别完成了现有代码。总体按每人 30 个相对工作量点、共 90 点分配，约各占三分之一。工作量点用于比较任务复杂度和验收责任，不等同于工时或成绩比例。</p>
 <h2>1 分工总览</h2>
 <table>
 <thead>
@@ -222,7 +222,7 @@
 <p>每完成一轮验证，比较剩余任务，而不是只比较最初计划。若某人遇到权限或平台阻碍超过半天，另一人可接手可独立推进的测试或文档；转交时同时调整任务点，避免名义均分、实际集中。现有代码中发现的新缺陷由主维护人修复，另一人复核，第三人运行集成测试。</p>
 <h2>6 公共接口与协作边界</h2>
 <p>公开接口以 include/squirrel/backup.h 为准。Filter、Entry、Summary 和选项结构的修改必须告知另外两人；归档格式版本变更由 B 提议，A 评估恢复兼容性，C 检查 GUI/CLI 和发布包。密码不得写入共享聊天、截图或代码配置。</p>
-<p>建议使用 main 加 feat/files、feat/archive、feat/ui-schedule 三条功能分支。合入 main 前执行相应模块测试，涉及公共头或格式时执行完整 make test。A 复核 B，B 复核 C，C 复核 A，涉及数据安全时增加另一人的复核。当前仓库只有本地历史；在线仓库由本人账号创建并配置，不把建议工作流当成已经发生的远程协作记录。</p>
+<p>建议使用 main 加 feat/files、feat/archive、feat/ui-schedule 三条功能分支。合入 main 前执行相应模块测试，涉及公共头或格式时执行完整 make test。A 复核 B，B 复核 C，C 复核 A，涉及数据安全时增加另一人的复核。原交付物只有本地历史，尚无已完成在线仓库的证据。第2讲第38页将Github/Gitee在线版本库和git列为项目要求，Teambition或类似看板为鼓励项；由本人账号补齐实际在线仓库和后续记录，不把建议工作流当成已经发生的协作。</p>
 <p>现有 tests/core_test.cpp 由 B 统一维护合并；后续新增测试可按模块分到独立文件，再更新 Makefile，以减少冲突。GUI 和 Scheduler 的日志回调、停止标志及错误语义由 C 维护，A/B 不直接在工作线程操作 AppKit 控件。</p>
 <h2>7 共同里程碑与验收</h2>
 <table>
@@ -266,8 +266,9 @@
 </tr>
 </tbody>
 </table>
-<p>这些是后续计划里程碑，不是伪造的已完成日期。建议把任务录入实际使用的看板，完成后再填写日期、提交号、测试日志与复核人。</p>
+<p>这些是后续计划里程碑，尚不是模板要求的带日期甘特图。应补实际人员、任务起止日期、依赖、完成比例与里程碑；没有证据的过去日期不补造。建议把任务录入实际使用的看板，完成后再填写日期、提交号、测试日志与复核人。</p>
 <h2>8 答辩与现场演示分配</h2>
-<p>三分钟介绍可安排：A 约 60 秒讲平台、目标和基础备份恢复；B 约 60 秒讲格式、压缩、加密及库依赖；C 约 60 秒讲 GUI、自动任务、测试和版本管理。若教师要求一人主讲，可由一人汇总，但另外两人必须准备各自模块的问题。</p>
-<p>七分钟现场演示建议 A 负责前两分钟基础备份还原和不覆盖检查，B 负责两分钟压缩、加密和内容验证，C 负责后三分钟自动任务、保留策略与测试证据。三人都应能替补基础流程，避免某一个人缺席就无法演示。</p>
-<p>最终提交前共同确认：真实姓名学号、分工与实际贡献一致；手工 UML、PPT 和程序版本一致；录屏不含个人密码；未实现的网盘、增量、后台服务和完整元数据不宣称完成。</p></main><footer>松鼠备份 0.1.0 · 请以源码和测试结果为准</footer></html>
+<p>三分钟介绍可安排：A约50秒讲平台、目标与基础功能；B约50秒讲格式、算法和库依赖；C约60秒讲当前版本测试、在线版本管理、甘特图和实际分工，余20秒留给切页。若教师要求一人主讲，可由一人汇总，但另外两人必须准备各自模块的问题。</p>
+<p>第9讲第39页要求老师/助教在同学指导下完成七分钟操作。A指导基础备份还原和不覆盖检查，B解释压缩、加密和内容验证，C指导自动任务、保留策略与测试证据；操作安排见08清单。三人都应能替补基础流程，避免某一个人缺席就无法演示。</p>
+<p>最终提交前共同确认：真实姓名学号、分工与实际贡献一致；手工 UML、PPT 和程序版本一致；录屏不含个人密码；未实现的网盘、增量、后台服务和完整元数据不宣称完成。</p>
+<p>第9讲第40页：2026年11月18日上午上课时答辩；当日23:59前，组长将报告、PPT、源码/程序/构建脚本及≤2分钟视频打包提交成电慕课，AI学习证书每人单独提交；第38页还要求完善在线分组文档。若课程后续通知调整，更新清单后执行。现有0.1.0 PPT仅作历史参考，必须更新真实分工、甘特图与0.1.1测试证据后再正式展示。</p></main><footer>松鼠备份 0.1.1 · 请以源码和测试结果为准</footer></html>

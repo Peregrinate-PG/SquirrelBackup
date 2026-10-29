@@ -1,6 +1,0 @@
-bash scripts/package.sh
-/Library/Developer/CommandLineTools/usr/bin/strip: warning: changes being made to the file will invalidate the code signature in: /Users/guochang/Desktop/codex/software_make/dist/SquirrelBackup-0.1.0-macOS-arm64/SquirrelBackup.app/Contents/MacOS/SquirrelBackup
-dist/SquirrelBackup-0.1.0-macOS-arm64/SquirrelBackup.app: replacing existing signature
-dist/SquirrelBackup-0.1.0-macOS-arm64/squirrel: replacing existing signature
-ZIP CRC and UTF-8 filename flags validated
-Release ready: dist/SquirrelBackup-0.1.0-macOS-arm64.zip

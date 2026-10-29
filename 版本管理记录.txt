@@ -1,0 +1,8 @@
+2e2b4a7 2026-10-29T01:25:56+08:00 Record clean offline rebuild verification for revised release
+f4afb96 2026-10-29T01:24:48+08:00 Fix scheduler recovery and add balanced team plan and demo slides
+d4c865d 2026-10-29T00:45:08+08:00 chore: record final document and archive validation
+7653903 2026-10-29T00:42:28+08:00 fix: preserve UTF-8 filenames in portable release archives
+c2d0f17 2026-10-29T00:40:21+08:00 fix: finalize verified reports and release evidence
+3474ae7 2026-10-29T00:38:22+08:00 docs: deliver course reports, UML guidance and reproducible release workflow
+87b5cb2 2026-10-29T00:32:28+08:00 feat: add native GUI diagnostics and bounded robustness checks
+69a2839 2026-10-29T00:06:38+08:00 feat: establish native macOS backup core, GUI and automated tests

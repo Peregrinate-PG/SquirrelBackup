@@ -39,6 +39,9 @@ struct Entry {
   uint32_t mode = 0, uid = 0, gid = 0;
   int64_t mtime = 0, atime = 0;
   uint32_t mtime_ns = 0, atime_ns = 0;
+  // Scan-only change detection. These fields are not serialized in SQTREE01.
+  int64_t ctime = 0;
+  uint32_t ctime_ns = 0;
   uint64_t size = 0, device = 0, inode = 0;
   std::vector<std::pair<std::string, Bytes>> xattrs;
 };

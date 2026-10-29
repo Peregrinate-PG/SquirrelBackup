@@ -15,7 +15,8 @@ std::string fingerprint(const fs::path& source, const Filter& filter) {
   std::ostringstream out;
   for (const auto& e : entries) {
     out << e.path.size() << ':' << e.path << ':' << int(e.type) << ':' << e.size << ':' << e.inode
-        << ':' << e.mtime << ':' << e.mtime_ns << ':' << e.mode << ':' << e.uid << ':' << e.gid
+        << ':' << e.mtime << ':' << e.mtime_ns << ':' << e.ctime << ':' << e.ctime_ns
+        << ':' << e.device << ':' << e.mode << ':' << e.uid << ':' << e.gid
         << ':' << e.link.size() << ':' << e.link << ':';
     for (const auto& a : e.xattrs) {
       out << a.first.size() << ':' << a.first << ':' << a.second.size() << ':';
@@ -39,6 +40,7 @@ void Scheduler::run(const fs::path& source, const fs::path& repository,
     require(c == 'f' || c == 'l' || c == 'p', "Types must contain only f, l, p");
   }
   auto root = fs::canonical(source), repo = fs::canonical(repository);
+  require(fs::is_directory(root), "Source must be a directory");
   require(fs::is_directory(repo) && !beneath(repo, root),
           "Repository must be an existing directory outside the source");
   // Each invocation owns a fresh isolated job folder. Retention never touches unrelated files.

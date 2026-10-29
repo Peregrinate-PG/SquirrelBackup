@@ -167,6 +167,76 @@ TEST_F(BackupTest, Metadata) {
   EXPECT_EQ(::getxattr((restored / "中文.txt").c_str(), "user.squirrel", attr, 5, 0, 0), 5);
   EXPECT_EQ(std::string(attr, 5), "value");
 }
+TEST_F(BackupTest, ReadOnlyRootRestoresWithOriginalPermissions) {
+  ASSERT_EQ(::chmod(source.c_str(), 0555), 0);
+  service.backup(source, archive);
+  service.restore(archive, restored);
+  EXPECT_EQ(contents(restored / "中文.txt"), "hello\n");
+  struct stat st{};
+  ASSERT_EQ(::lstat(restored.c_str(), &st), 0);
+  EXPECT_EQ(st.st_mode & 0777, 0555);
+}
+TEST_F(BackupTest, RewritePreservingMtimeIsRejected) {
+  const auto file = source / "中文.txt";
+  bool changed = false;
+  Log log = [&](const std::string& line) {
+    if (line.find("Scanned ") == 0) {
+      struct stat before{};
+      ASSERT_EQ(::stat(file.c_str(), &before), 0);
+      ::usleep(1000);  // Ensure distinct ctime even on a fast temporary volume.
+      std::ofstream(file) << "other\n";  // Same length as the original file.
+      struct timespec times[2] = {before.st_atimespec, before.st_mtimespec};
+      ASSERT_EQ(::utimensat(AT_FDCWD, file.c_str(), times, 0), 0);
+      changed = true;
+    }
+  };
+  EXPECT_THROW(service.backup(source, archive, {}, log), Error);
+  EXPECT_TRUE(changed);
+  EXPECT_FALSE(fs::exists(archive));
+}
+TEST_F(BackupTest, PrivateCleanupHandlesUnreadableDirectoriesWithoutFollowingSymlinks) {
+  const auto external = source / "external";
+  fs::create_directory(external);
+  std::ofstream(external / "keep") << "preserve";
+  ASSERT_EQ(::chmod(external.c_str(), 0500), 0);
+  fs::path private_path;
+  {
+    TempDir private_dir(temp.path);
+    private_path = private_dir.path;
+    fs::create_directory(private_path / "locked");
+    std::ofstream(private_path / "locked" / "secret") << "decrypted data";
+    fs::create_symlink(external, private_path / "link");
+    ASSERT_EQ(::chmod((private_path / "locked").c_str(), 0000), 0);
+  }
+  EXPECT_FALSE(fs::exists(private_path));
+  EXPECT_EQ(contents(external / "keep"), "preserve");
+  struct stat st{};
+  ASSERT_EQ(::lstat(external.c_str(), &st), 0);
+  EXPECT_EQ(st.st_mode & 0777, 0500);
+}
+TEST_F(BackupTest, FailedPublicationCleansReadOnlyRestoredDirectories) {
+  ASSERT_EQ(::chmod((source / "nested").c_str(), 0500), 0);
+  auto entries = FileScanner::scan(source, {});
+  // A foreign owner produces a deterministic warning while restoring root metadata.
+  entries.front().uid = static_cast<uint32_t>(::getuid()) + 1;
+  const auto tree = temp.path / "tree";
+  ArchiveWriter::write(source, entries, tree, true, {});
+  CryptoEnvelope::seal(tree, archive, "");
+  bool raced = false;
+  Log log = [&](const std::string& line) {
+    if (line.find("WARNING: owner/group not restored: ") == 0) {
+      fs::create_directory(restored);
+      std::ofstream(restored / "keep") << "concurrent destination";
+      raced = true;
+    }
+  };
+  EXPECT_THROW(service.restore(archive, restored, "", log), Error);
+  EXPECT_TRUE(raced);
+  EXPECT_EQ(contents(restored / "keep"), "concurrent destination");
+  for (const auto& child : fs::directory_iterator(temp.path)) {
+    EXPECT_NE(child.path().filename().string().find(".squirrel-"), 0U);
+  }
+}
 TEST_F(BackupTest, ExcludePrunesDirectory) {
   BackupOptions o;
   o.filter.excludes = {"nested"};

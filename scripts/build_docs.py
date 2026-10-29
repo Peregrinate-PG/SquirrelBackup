@@ -3,6 +3,7 @@
 from pathlib import Path
 from html import escape
 import re
+import sys
 import json
 import markdown
 import fitz
@@ -92,14 +93,16 @@ def story(text,group_cases=True):
 
 def footer(canvas,doc):
     canvas.saveState();canvas.setFont('CJK',8);canvas.setFillColor(colors.HexColor('#777777'))
-    canvas.drawString(50,26,'松鼠备份 0.1.0  软件开发综合实验')
+    canvas.drawString(50,26,'松鼠备份 0.1.1  软件开发综合实验')
     canvas.drawRightString(A4[0]-50,26,str(doc.page));canvas.restoreState()
 
 manifest=[]
 for src in sorted(DOCS.glob('0*.md')):
+    if len(sys.argv) > 1 and not any(src.name.startswith(prefix) for prefix in sys.argv[1:]):
+        continue
     text=src.read_text();name=src.stem;title=text.splitlines()[0].lstrip('# ')
     html=markdown.markdown(text,extensions=['tables','fenced_code'])
-    (HTML/(name+'.html')).write_text('<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>'+escape(title)+'</title><style>'+css+'</style><nav><a href="index.html">文档目录</a></nav><main>'+html+'</main><footer>松鼠备份 0.1.0 · 请以源码和测试结果为准</footer></html>')
+    (HTML/(name+'.html')).write_text('<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>'+escape(title)+'</title><style>'+css+'</style><nav><a href="index.html">文档目录</a></nav><main>'+html+'</main><footer>松鼠备份 0.1.1 · 请以源码和测试结果为准</footer></html>')
     pdf=PDF/(name+'.pdf')
     SimpleDocTemplate(str(pdf),pagesize=A4,rightMargin=50,leftMargin=50,topMargin=45,bottomMargin=45,title=title,author='Squirrel Backup course project').build(story(text),onFirstPage=footer,onLaterPages=footer)
     document=fitz.open(pdf);pages=[];bounds=[]
@@ -117,5 +120,9 @@ for src in sorted(DOCS.glob('0*.md')):
         sheet.save(QA/(name+f'-sheet-{start//4+1:02d}.jpg'),quality=90)
     print(name,len(pages),'pages','bounds warnings',len(bounds))
 links=''.join('<li><a href="'+escape(x['name'])+'.html">'+escape(x['name'])+'</a> · <a href="../pdf/'+escape(x['name'])+'.pdf">PDF</a></li>' for x in manifest)
-(HTML/'index.html').write_text('<!doctype html><meta charset="utf-8"><title>松鼠备份文档</title><style>'+css+'</style><h1>松鼠备份课程文档</h1><p><a href="../../presentations/松鼠备份_三分钟演示.pptx">下载演示 PPT</a> · <a href="../../presentations/松鼠备份_三分钟演示.pdf">演示 PDF</a></p><p>0.1.0 初版。可编辑源文件在上一级目录。</p><ul>'+links+'</ul>')
+if len(sys.argv) == 1: (HTML/'index.html').write_text('<!doctype html><meta charset="utf-8"><title>松鼠备份文档</title><style>'+css+'</style><h1>松鼠备份课程文档</h1><p><a href="../../presentations/松鼠备份_三分钟演示.pptx">原版演示 PPT（待修订）</a> · <a href="../../presentations/松鼠备份_三分钟演示.pdf">原版演示 PDF（待修订）</a></p><p>0.1.1 复核修订版。可编辑源文件在上一级目录。</p><ul>'+links+'</ul>')
+if len(sys.argv) > 1 and (QA/'manifest.json').exists():
+    existing = json.loads((QA/'manifest.json').read_text())
+    updated = {item['name']: item for item in existing + manifest}
+    manifest = [updated[name] for name in sorted(updated)]
 (QA/'manifest.json').write_text(json.dumps(manifest,ensure_ascii=False,indent=2))

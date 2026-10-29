@@ -121,6 +121,8 @@ std::vector<Entry> FileScanner::scan(const fs::path& root, const Filter& filter,
     e.mtime_ns = st.st_mtimespec.tv_nsec;
     e.atime = st.st_atimespec.tv_sec;
     e.atime_ns = st.st_atimespec.tv_nsec;
+    e.ctime = st.st_ctimespec.tv_sec;
+    e.ctime_ns = st.st_ctimespec.tv_nsec;
     e.device = st.st_dev;
     e.inode = st.st_ino;
     e.type = S_ISDIR(st.st_mode)    ? FileType::Directory

@@ -1,0 +1,18 @@
+[
+  {
+    "case": "old_to_new_plain",
+    "passed": true
+  },
+  {
+    "case": "old_to_new_encrypted",
+    "passed": true
+  },
+  {
+    "case": "new_to_old_plain",
+    "passed": true
+  },
+  {
+    "case": "new_to_old_encrypted",
+    "passed": true
+  }
+]

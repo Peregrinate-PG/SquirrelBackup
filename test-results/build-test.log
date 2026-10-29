@@ -1,16 +1,22 @@
+clang++ -Iinclude -Isrc -std=c++17 -O2 -g -Wall -Wextra -Wpedantic -Werror -Wno-deprecated-declarations -MMD -MP -c src/cli.cpp -o build/cli.o
+clang++ -Iinclude -Isrc -std=c++17 -O2 -g -Wall -Wextra -Wpedantic -Werror -Wno-deprecated-declarations -MMD -MP -c src/huffman.cpp -o build/huffman.o
 clang++ -Iinclude -Isrc -std=c++17 -O2 -g -Wall -Wextra -Wpedantic -Werror -Wno-deprecated-declarations -MMD -MP -c src/scanner.cpp -o build/scanner.o
+clang++ -Iinclude -Isrc -std=c++17 -O2 -g -Wall -Wextra -Wpedantic -Werror -Wno-deprecated-declarations -MMD -MP -c src/crypto.cpp -o build/crypto.o
+clang++ -Iinclude -Isrc -std=c++17 -O2 -g -Wall -Wextra -Wpedantic -Werror -Wno-deprecated-declarations -MMD -MP -c src/archive.cpp -o build/archive.o
+clang++ -Iinclude -Isrc -std=c++17 -O2 -g -Wall -Wextra -Wpedantic -Werror -Wno-deprecated-declarations -MMD -MP -c src/service.cpp -o build/service.o
+clang++ -Iinclude -Isrc -std=c++17 -O2 -g -Wall -Wextra -Wpedantic -Werror -Wno-deprecated-declarations -MMD -MP -c src/scheduler.cpp -o build/scheduler.o
 ar rcs build/libsquirrel.a build/huffman.o build/scanner.o build/crypto.o build/archive.o build/service.o build/scheduler.o
 clang++ -std=c++17 -O2 -g -Wall -Wextra -Wpedantic -Werror -Wno-deprecated-declarations build/cli.o build/libsquirrel.a -framework Security -o build/squirrel
 mkdir -p build/SquirrelBackup.app/Contents/MacOS build/SquirrelBackup.app/Contents/Resources
-clang++ -Iinclude -Isrc -std=c++17 -O2 -g -Wall -Wextra -Wpedantic -Werror -Wno-deprecated-declarations -isystem .tools/src/googletest/googletest/include tests/core_test.cpp build/libsquirrel.a build/gtest-all.o .tools/src/googletest/googletest/src/gtest_main.cc -framework Security -o build/tests
+clang++ -Iinclude -Isrc -std=c++17 -O2 -g -Wall -Wextra -Wpedantic -Werror -Wno-deprecated-declarations -isystem vendor/googletest/googletest/include tests/core_test.cpp build/libsquirrel.a build/gtest-all.o vendor/googletest/googletest/src/gtest_main.cc -framework Security -o build/tests
 clang++ -Iinclude -Isrc -std=c++17 -O2 -g -Wall -Wextra -Wpedantic -Werror -Wno-deprecated-declarations -fobjc-arc src/gui.mm build/libsquirrel.a -framework Cocoa -framework Security -o build/SquirrelBackup.app/Contents/MacOS/SquirrelBackup
 cp resources/Info.plist build/SquirrelBackup.app/Contents/Info.plist
 codesign --force --sign - build/SquirrelBackup.app
 build/SquirrelBackup.app: replacing existing signature
 mkdir -p test-results
 build/tests --gtest_output=xml:test-results/unit.xml
-Running main() from .tools/src/googletest/googletest/src/gtest_main.cc
-[==========] Running 32 tests from 2 test suites.
+Running main() from vendor/googletest/googletest/src/gtest_main.cc
+[==========] Running 37 tests from 2 test suites.
 [----------] Global test environment set-up.
 [----------] 9 tests from Huffman
 [ RUN      ] Huffman.Empty
@@ -20,7 +26,7 @@ Running main() from .tools/src/googletest/googletest/src/gtest_main.cc
 [ RUN      ] Huffman.AllSymbols
 [       OK ] Huffman.AllSymbols (0 ms)
 [ RUN      ] Huffman.RandomRoundtrip
-[       OK ] Huffman.RandomRoundtrip (40 ms)
+[       OK ] Huffman.RandomRoundtrip (49 ms)
 [ RUN      ] Huffman.Compression
 [       OK ] Huffman.Compression (0 ms)
 [ RUN      ] Huffman.RejectTruncation
@@ -31,60 +37,70 @@ Running main() from .tools/src/googletest/googletest/src/gtest_main.cc
 [       OK ] Huffman.RejectOversize (0 ms)
 [ RUN      ] Huffman.RejectTrailing
 [       OK ] Huffman.RejectTrailing (0 ms)
-[----------] 9 tests from Huffman (41 ms total)
+[----------] 9 tests from Huffman (51 ms total)
 
-[----------] 23 tests from BackupTest
+[----------] 28 tests from BackupTest
 [ RUN      ] BackupTest.Roundtrip
-[       OK ] BackupTest.Roundtrip (32 ms)
+[       OK ] BackupTest.Roundtrip (53 ms)
 [ RUN      ] BackupTest.RawRoundtrip
-[       OK ] BackupTest.RawRoundtrip (23 ms)
+[       OK ] BackupTest.RawRoundtrip (57 ms)
 [ RUN      ] BackupTest.EncryptedRoundtrip
-[       OK ] BackupTest.EncryptedRoundtrip (118 ms)
+[       OK ] BackupTest.EncryptedRoundtrip (306 ms)
 [ RUN      ] BackupTest.WrongPasswordLeavesNoOutput
-[       OK ] BackupTest.WrongPasswordLeavesNoOutput (118 ms)
+[       OK ] BackupTest.WrongPasswordLeavesNoOutput (298 ms)
 [ RUN      ] BackupTest.RejectShortPassword
-[       OK ] BackupTest.RejectShortPassword (2 ms)
+[       OK ] BackupTest.RejectShortPassword (6 ms)
 [ RUN      ] BackupTest.TamperDetection
-[       OK ] BackupTest.TamperDetection (9 ms)
+[       OK ] BackupTest.TamperDetection (27 ms)
 [ RUN      ] BackupTest.RejectTruncated
-[       OK ] BackupTest.RejectTruncated (8 ms)
+[       OK ] BackupTest.RejectTruncated (26 ms)
 [ RUN      ] BackupTest.NoOverwriteBackup
-[       OK ] BackupTest.NoOverwriteBackup (8 ms)
+[       OK ] BackupTest.NoOverwriteBackup (26 ms)
 [ RUN      ] BackupTest.NoOverwriteRestore
-[       OK ] BackupTest.NoOverwriteRestore (8 ms)
+[       OK ] BackupTest.NoOverwriteRestore (26 ms)
 [ RUN      ] BackupTest.RejectOutputInSource
-[       OK ] BackupTest.RejectOutputInSource (2 ms)
+[       OK ] BackupTest.RejectOutputInSource (6 ms)
 [ RUN      ] BackupTest.MissingSource
-[       OK ] BackupTest.MissingSource (2 ms)
+[       OK ] BackupTest.MissingSource (6 ms)
 [ RUN      ] BackupTest.SymlinkHardlinkFifo
-[       OK ] BackupTest.SymlinkHardlinkFifo (11 ms)
+[       OK ] BackupTest.SymlinkHardlinkFifo (32 ms)
 [ RUN      ] BackupTest.Metadata
-[       OK ] BackupTest.Metadata (10 ms)
+[       OK ] BackupTest.Metadata (28 ms)
+[ RUN      ] BackupTest.ReadOnlyRootRestoresWithOriginalPermissions
+[       OK ] BackupTest.ReadOnlyRootRestoresWithOriginalPermissions (29 ms)
+[ RUN      ] BackupTest.RewritePreservingMtimeIsRejected
+[       OK ] BackupTest.RewritePreservingMtimeIsRejected (26 ms)
+[ RUN      ] BackupTest.PrivateCleanupHandlesUnreadableDirectoriesWithoutFollowingSymlinks
+[       OK ] BackupTest.PrivateCleanupHandlesUnreadableDirectoriesWithoutFollowingSymlinks (8 ms)
+[ RUN      ] BackupTest.FailedPublicationCleansReadOnlyRestoredDirectories
+[       OK ] BackupTest.FailedPublicationCleansReadOnlyRestoredDirectories (30 ms)
 [ RUN      ] BackupTest.ExcludePrunesDirectory
-[       OK ] BackupTest.ExcludePrunesDirectory (4 ms)
+[       OK ] BackupTest.ExcludePrunesDirectory (11 ms)
 [ RUN      ] BackupTest.NameFilter
-[       OK ] BackupTest.NameFilter (2 ms)
+[       OK ] BackupTest.NameFilter (10 ms)
 [ RUN      ] BackupTest.PathFilter
-[       OK ] BackupTest.PathFilter (8 ms)
+[       OK ] BackupTest.PathFilter (26 ms)
 [ RUN      ] BackupTest.SizeFilter
-[       OK ] BackupTest.SizeFilter (3 ms)
+[       OK ] BackupTest.SizeFilter (8 ms)
 [ RUN      ] BackupTest.TimeFilter
-[       OK ] BackupTest.TimeFilter (3 ms)
+[       OK ] BackupTest.TimeFilter (8 ms)
 [ RUN      ] BackupTest.OwnerFilter
-[       OK ] BackupTest.OwnerFilter (9 ms)
+[       OK ] BackupTest.OwnerFilter (26 ms)
 [ RUN      ] BackupTest.TypeFilter
-[       OK ] BackupTest.TypeFilter (3 ms)
+[       OK ] BackupTest.TypeFilter (9 ms)
 [ RUN      ] BackupTest.InvalidFilter
-[       OK ] BackupTest.InvalidFilter (2 ms)
+[       OK ] BackupTest.InvalidFilter (6 ms)
 [ RUN      ] BackupTest.EmptyTree
-[       OK ] BackupTest.EmptyTree (3 ms)
+[       OK ] BackupTest.EmptyTree (10 ms)
 [ RUN      ] BackupTest.UncompressedEncrypted
-[       OK ] BackupTest.UncompressedEncrypted (131 ms)
-[----------] 23 tests from BackupTest (531 ms total)
+[       OK ] BackupTest.UncompressedEncrypted (331 ms)
+[ RUN      ] BackupTest.RetentionFailureDoesNotRepeatSnapshot
+[       OK ] BackupTest.RetentionFailureDoesNotRepeatSnapshot (1090 ms)
+[----------] 28 tests from BackupTest (2538 ms total)
 
 [----------] Global test environment tear-down
-[==========] 32 tests from 2 test suites ran. (572 ms total)
-[  PASSED  ] 32 tests.
+[==========] 37 tests from 2 test suites ran. (2589 ms total)
+[  PASSED  ] 37 tests.
 python3 tests/integration.py build/squirrel
 PASS CLI-01 help
 PASS CLI-02 backup
@@ -105,7 +121,9 @@ PASS CLI-16 graceful stop
 PASS CLI-17 invalid type filter
 PASS CLI-18 missing password env
 PASS CLI-19 do not overwrite dangling symlink
-19/19 integration tests passed
+PASS CLI-20 schedule rejects short password before starting
+PASS CLI-21 schedule rejects invalid filters before starting
+21/21 integration tests passed
 python3 tests/adversarial.py build/squirrel
 PASS SEC-01 parent traversal
 PASS SEC-02 absolute path
@@ -125,3 +143,11 @@ PASS SEC-15 missing parent directory
 PASS SEC-16 bad Huffman block
 PASS SEC-17 short raw block
 PASS SEC-18 concurrent publication
+python3 tests/workflow_regression.py build/squirrel
+PASS FLOW-01 schedule rejects a file source immediately
+PASS FLOW-02 watch rejects a file source immediately
+PASS FLOW-03 schedule rejects ineffective --poll
+PASS FLOW-04 watch rejects ineffective --every
+PASS FLOW-05 watch detects same-size edits with preserved mtime
+PASS FLOW-06 watch does not generate snapshots for unchanged sources
+6/6 workflow tests passed

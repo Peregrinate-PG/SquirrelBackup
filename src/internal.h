@@ -52,6 +52,30 @@ struct TempDir {
   ~TempDir() {
     std::error_code ec;
     fs::remove_all(path, ec);
+    if (ec) {
+      // A failed restore may already have applied read-only directory modes.
+      // Repair only directories in our private tree, never symlink targets.
+      writableDirectories(path);
+      fs::remove_all(path, ec);
+    }
+  }
+
+ private:
+  static void writableDirectories(const fs::path& directory) {
+    std::error_code ec;
+    if (!fs::is_directory(fs::symlink_status(directory, ec))) {
+      return;
+    }
+    fs::permissions(directory, fs::perms::owner_all,
+                    fs::perm_options::add | fs::perm_options::nofollow, ec);
+    if (ec) {
+      return;
+    }
+    fs::directory_iterator end, it(directory, ec);
+    while (!ec && it != end) {
+      writableDirectories(it->path());
+      it.increment(ec);
+    }
   }
 };
 inline fs::path outputPath(const fs::path& p) {

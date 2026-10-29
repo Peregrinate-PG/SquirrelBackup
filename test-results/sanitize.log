@@ -1,12 +1,20 @@
 /Library/Developer/CommandLineTools/usr/bin/make BUILD=build/sanitize CXXFLAGS='-std=c++17 -O1 -g -Wall -Wextra -Werror -Wno-deprecated-declarations -fsanitize=address,undefined -fno-omit-frame-pointer' test
+mkdir -p build/sanitize
+clang++ -Iinclude -Isrc -std=c++17 -O1 -g -Wall -Wextra -Werror -Wno-deprecated-declarations -fsanitize=address,undefined -fno-omit-frame-pointer -MMD -MP -c src/huffman.cpp -o build/sanitize/huffman.o
+clang++ -Iinclude -Isrc -std=c++17 -O1 -g -Wall -Wextra -Werror -Wno-deprecated-declarations -fsanitize=address,undefined -fno-omit-frame-pointer -MMD -MP -c src/scanner.cpp -o build/sanitize/scanner.o
+clang++ -Iinclude -Isrc -std=c++17 -O1 -g -Wall -Wextra -Werror -Wno-deprecated-declarations -fsanitize=address,undefined -fno-omit-frame-pointer -MMD -MP -c src/crypto.cpp -o build/sanitize/crypto.o
+clang++ -Iinclude -Isrc -std=c++17 -O1 -g -Wall -Wextra -Werror -Wno-deprecated-declarations -fsanitize=address,undefined -fno-omit-frame-pointer -MMD -MP -c src/archive.cpp -o build/sanitize/archive.o
+clang++ -Iinclude -Isrc -std=c++17 -O1 -g -Wall -Wextra -Werror -Wno-deprecated-declarations -fsanitize=address,undefined -fno-omit-frame-pointer -MMD -MP -c src/service.cpp -o build/sanitize/service.o
 clang++ -Iinclude -Isrc -std=c++17 -O1 -g -Wall -Wextra -Werror -Wno-deprecated-declarations -fsanitize=address,undefined -fno-omit-frame-pointer -MMD -MP -c src/scheduler.cpp -o build/sanitize/scheduler.o
 ar rcs build/sanitize/libsquirrel.a build/sanitize/huffman.o build/sanitize/scanner.o build/sanitize/crypto.o build/sanitize/archive.o build/sanitize/service.o build/sanitize/scheduler.o
-clang++ -Iinclude -Isrc -std=c++17 -O1 -g -Wall -Wextra -Werror -Wno-deprecated-declarations -fsanitize=address,undefined -fno-omit-frame-pointer -isystem .tools/src/googletest/googletest/include tests/core_test.cpp build/sanitize/libsquirrel.a build/sanitize/gtest-all.o .tools/src/googletest/googletest/src/gtest_main.cc -framework Security -o build/sanitize/tests
+clang++ -std=c++17 -O1 -g -Ivendor/googletest/googletest/include -Ivendor/googletest/googletest -c vendor/googletest/googletest/src/gtest-all.cc -o build/sanitize/gtest-all.o
+clang++ -Iinclude -Isrc -std=c++17 -O1 -g -Wall -Wextra -Werror -Wno-deprecated-declarations -fsanitize=address,undefined -fno-omit-frame-pointer -isystem vendor/googletest/googletest/include tests/core_test.cpp build/sanitize/libsquirrel.a build/sanitize/gtest-all.o vendor/googletest/googletest/src/gtest_main.cc -framework Security -o build/sanitize/tests
+clang++ -Iinclude -Isrc -std=c++17 -O1 -g -Wall -Wextra -Werror -Wno-deprecated-declarations -fsanitize=address,undefined -fno-omit-frame-pointer -MMD -MP -c src/cli.cpp -o build/sanitize/cli.o
 clang++ -std=c++17 -O1 -g -Wall -Wextra -Werror -Wno-deprecated-declarations -fsanitize=address,undefined -fno-omit-frame-pointer build/sanitize/cli.o build/sanitize/libsquirrel.a -framework Security -o build/sanitize/squirrel
 mkdir -p test-results
 build/sanitize/tests --gtest_output=xml:test-results/unit.xml
-Running main() from .tools/src/googletest/googletest/src/gtest_main.cc
-[==========] Running 33 tests from 2 test suites.
+Running main() from vendor/googletest/googletest/src/gtest_main.cc
+[==========] Running 37 tests from 2 test suites.
 [----------] Global test environment set-up.
 [----------] 9 tests from Huffman
 [ RUN      ] Huffman.Empty
@@ -14,75 +22,83 @@ Running main() from .tools/src/googletest/googletest/src/gtest_main.cc
 [ RUN      ] Huffman.SingleSymbol
 [       OK ] Huffman.SingleSymbol (0 ms)
 [ RUN      ] Huffman.AllSymbols
-[       OK ] Huffman.AllSymbols (0 ms)
+[       OK ] Huffman.AllSymbols (2 ms)
 [ RUN      ] Huffman.RandomRoundtrip
-[       OK ] Huffman.RandomRoundtrip (99 ms)
+[       OK ] Huffman.RandomRoundtrip (534 ms)
 [ RUN      ] Huffman.Compression
-[       OK ] Huffman.Compression (0 ms)
+[       OK ] Huffman.Compression (3 ms)
 [ RUN      ] Huffman.RejectTruncation
 [       OK ] Huffman.RejectTruncation (0 ms)
 [ RUN      ] Huffman.RejectFrequency
 [       OK ] Huffman.RejectFrequency (0 ms)
 [ RUN      ] Huffman.RejectOversize
-[       OK ] Huffman.RejectOversize (1 ms)
+[       OK ] Huffman.RejectOversize (10 ms)
 [ RUN      ] Huffman.RejectTrailing
 [       OK ] Huffman.RejectTrailing (0 ms)
-[----------] 9 tests from Huffman (102 ms total)
+[----------] 9 tests from Huffman (553 ms total)
 
-[----------] 24 tests from BackupTest
+[----------] 28 tests from BackupTest
 [ RUN      ] BackupTest.Roundtrip
-[       OK ] BackupTest.Roundtrip (75 ms)
+[       OK ] BackupTest.Roundtrip (326 ms)
 [ RUN      ] BackupTest.RawRoundtrip
-[       OK ] BackupTest.RawRoundtrip (78 ms)
+[       OK ] BackupTest.RawRoundtrip (300 ms)
 [ RUN      ] BackupTest.EncryptedRoundtrip
-[       OK ] BackupTest.EncryptedRoundtrip (164 ms)
+[       OK ] BackupTest.EncryptedRoundtrip (536 ms)
 [ RUN      ] BackupTest.WrongPasswordLeavesNoOutput
-[       OK ] BackupTest.WrongPasswordLeavesNoOutput (161 ms)
+[       OK ] BackupTest.WrongPasswordLeavesNoOutput (506 ms)
 [ RUN      ] BackupTest.RejectShortPassword
-[       OK ] BackupTest.RejectShortPassword (3 ms)
+[       OK ] BackupTest.RejectShortPassword (7 ms)
 [ RUN      ] BackupTest.TamperDetection
-[       OK ] BackupTest.TamperDetection (15 ms)
+[       OK ] BackupTest.TamperDetection (125 ms)
 [ RUN      ] BackupTest.RejectTruncated
-[       OK ] BackupTest.RejectTruncated (12 ms)
+[       OK ] BackupTest.RejectTruncated (101 ms)
 [ RUN      ] BackupTest.NoOverwriteBackup
-[       OK ] BackupTest.NoOverwriteBackup (13 ms)
+[       OK ] BackupTest.NoOverwriteBackup (103 ms)
 [ RUN      ] BackupTest.NoOverwriteRestore
-[       OK ] BackupTest.NoOverwriteRestore (12 ms)
+[       OK ] BackupTest.NoOverwriteRestore (103 ms)
 [ RUN      ] BackupTest.RejectOutputInSource
-[       OK ] BackupTest.RejectOutputInSource (2 ms)
+[       OK ] BackupTest.RejectOutputInSource (8 ms)
 [ RUN      ] BackupTest.MissingSource
-[       OK ] BackupTest.MissingSource (2 ms)
+[       OK ] BackupTest.MissingSource (7 ms)
 [ RUN      ] BackupTest.SymlinkHardlinkFifo
-[       OK ] BackupTest.SymlinkHardlinkFifo (21 ms)
+[       OK ] BackupTest.SymlinkHardlinkFifo (152 ms)
 [ RUN      ] BackupTest.Metadata
-[       OK ] BackupTest.Metadata (20 ms)
+[       OK ] BackupTest.Metadata (150 ms)
+[ RUN      ] BackupTest.ReadOnlyRootRestoresWithOriginalPermissions
+[       OK ] BackupTest.ReadOnlyRootRestoresWithOriginalPermissions (148 ms)
+[ RUN      ] BackupTest.RewritePreservingMtimeIsRejected
+[       OK ] BackupTest.RewritePreservingMtimeIsRejected (80 ms)
+[ RUN      ] BackupTest.PrivateCleanupHandlesUnreadableDirectoriesWithoutFollowingSymlinks
+[       OK ] BackupTest.PrivateCleanupHandlesUnreadableDirectoriesWithoutFollowingSymlinks (10 ms)
+[ RUN      ] BackupTest.FailedPublicationCleansReadOnlyRestoredDirectories
+[       OK ] BackupTest.FailedPublicationCleansReadOnlyRestoredDirectories (145 ms)
 [ RUN      ] BackupTest.ExcludePrunesDirectory
-[       OK ] BackupTest.ExcludePrunesDirectory (10 ms)
+[       OK ] BackupTest.ExcludePrunesDirectory (53 ms)
 [ RUN      ] BackupTest.NameFilter
-[       OK ] BackupTest.NameFilter (6 ms)
+[       OK ] BackupTest.NameFilter (35 ms)
 [ RUN      ] BackupTest.PathFilter
-[       OK ] BackupTest.PathFilter (13 ms)
+[       OK ] BackupTest.PathFilter (100 ms)
 [ RUN      ] BackupTest.SizeFilter
-[       OK ] BackupTest.SizeFilter (6 ms)
+[       OK ] BackupTest.SizeFilter (30 ms)
 [ RUN      ] BackupTest.TimeFilter
-[       OK ] BackupTest.TimeFilter (6 ms)
+[       OK ] BackupTest.TimeFilter (38 ms)
 [ RUN      ] BackupTest.OwnerFilter
-[       OK ] BackupTest.OwnerFilter (13 ms)
+[       OK ] BackupTest.OwnerFilter (111 ms)
 [ RUN      ] BackupTest.TypeFilter
-[       OK ] BackupTest.TypeFilter (9 ms)
+[       OK ] BackupTest.TypeFilter (56 ms)
 [ RUN      ] BackupTest.InvalidFilter
-[       OK ] BackupTest.InvalidFilter (2 ms)
+[       OK ] BackupTest.InvalidFilter (6 ms)
 [ RUN      ] BackupTest.EmptyTree
-[       OK ] BackupTest.EmptyTree (9 ms)
+[       OK ] BackupTest.EmptyTree (54 ms)
 [ RUN      ] BackupTest.UncompressedEncrypted
-[       OK ] BackupTest.UncompressedEncrypted (235 ms)
+[       OK ] BackupTest.UncompressedEncrypted (688 ms)
 [ RUN      ] BackupTest.RetentionFailureDoesNotRepeatSnapshot
-[       OK ] BackupTest.RetentionFailureDoesNotRepeatSnapshot (1124 ms)
-[----------] 24 tests from BackupTest (2023 ms total)
+[       OK ] BackupTest.RetentionFailureDoesNotRepeatSnapshot (1292 ms)
+[----------] 28 tests from BackupTest (5288 ms total)
 
 [----------] Global test environment tear-down
-[==========] 33 tests from 2 test suites ran. (2126 ms total)
-[  PASSED  ] 33 tests.
+[==========] 37 tests from 2 test suites ran. (5842 ms total)
+[  PASSED  ] 37 tests.
 python3 tests/integration.py build/sanitize/squirrel
 PASS CLI-01 help
 PASS CLI-02 backup
@@ -125,3 +141,11 @@ PASS SEC-15 missing parent directory
 PASS SEC-16 bad Huffman block
 PASS SEC-17 short raw block
 PASS SEC-18 concurrent publication
+python3 tests/workflow_regression.py build/sanitize/squirrel
+PASS FLOW-01 schedule rejects a file source immediately
+PASS FLOW-02 watch rejects a file source immediately
+PASS FLOW-03 schedule rejects ineffective --poll
+PASS FLOW-04 watch rejects ineffective --every
+PASS FLOW-05 watch detects same-size edits with preserved mtime
+PASS FLOW-06 watch does not generate snapshots for unchanged sources
+6/6 workflow tests passed

@@ -12,7 +12,7 @@ namespace {
 std::atomic<bool> stopped{false};
 void onSignal(int) { stopped.store(true); }
 void help() {
-  std::cout << R"(Squirrel Backup 0.1.0 - macOS C++ backup software
+  std::cout << R"(Squirrel Backup 0.1.1 - macOS C++ backup software
 Usage:
   squirrel backup SOURCE ARCHIVE [options]
   squirrel restore ARCHIVE NEW_FOLDER [--password-env ENV_NAME]
@@ -32,8 +32,8 @@ Options:
   --since EPOCH          Minimum modification time (Unix seconds)
   --until EPOCH          Maximum modification time (Unix seconds)
   --owner UID            Only entries belonging to this numeric user ID
-  --every SECONDS        Schedule interval, default 300
-  --poll SECONDS         Watch metadata polling interval, default 2 (debounced)
+  --every SECONDS        Schedule interval (schedule only), default 300
+  --poll SECONDS         Watch polling interval (watch only), default 2 (debounced)
   --keep N               Retain latest N snapshots in this job, default 5
   --runs N               Stop after N successful snapshots; default unlimited
   --quiet               Suppress progress messages
@@ -61,7 +61,7 @@ int main(int argc, char** argv) {
       return 0;
     }
     if (std::string(argv[1]) == "--version") {
-      std::cout << "0.1.0\n";
+      std::cout << "0.1.1\n";
       return 0;
     }
     std::string command = argv[1];
@@ -142,6 +142,10 @@ int main(int argc, char** argv) {
         } else if (arg == "--every" || arg == "--keep" || arg == "--poll" || arg == "--runs") {
           if (command == "backup") {
             throw Error("Schedule option not valid for backup");
+          }
+          if ((arg == "--every" && command != "schedule") ||
+              (arg == "--poll" && command != "watch")) {
+            throw Error("Option not valid for this command: " + arg);
           }
           auto n = number(value);
           if (n > 8640000 || !n) {

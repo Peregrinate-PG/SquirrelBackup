@@ -52,10 +52,20 @@ Summary BackupService::restore(const fs::path& archive, const fs::path& destinat
   auto plain = temp.path / "tree", stage = temp.path / "restored";
   CryptoEnvelope::open(archive, plain, password);
   syscheck(::mkdir(stage.c_str(), 0700) == 0, "Cannot create staging directory");
+  Fd stage_fd(::open(stage.c_str(), O_RDONLY | O_DIRECTORY | O_NOFOLLOW));
+  syscheck(stage_fd.value >= 0, "Cannot open staging directory");
   auto summary = ArchiveReader::read(plain, &stage, log, false);
+  struct stat restored_root{};
+  syscheck(::fstat(stage_fd.value, &restored_root) == 0, "Cannot inspect restored root");
+  // macOS needs owner write/search permission to move a directory to a new parent.
+  // Keep its descriptor open so final permissions can be set even for mode 000.
+  const mode_t final_mode = restored_root.st_mode & 0777;
+  syscheck(::fchmod(stage_fd.value, final_mode | 0700) == 0,
+           "Cannot prepare restored directory for publication");
   // macOS exclusive directory rename prevents clobbering a concurrently created destination.
   syscheck(::renamex_np(stage.c_str(), output.c_str(), RENAME_EXCL) == 0,
            "Cannot publish restored directory without overwriting");
+  syscheck(::fchmod(stage_fd.value, final_mode) == 0, "Cannot finalize restored root permissions");
   summary.archive_bytes = fs::file_size(archive);
   emit(log, "Restore complete: " + output.string());
   return summary;

@@ -1,10 +1,10 @@
 {
   "passed": true,
-  "duration_seconds": 600.342306375,
-  "edits": 1468,
-  "completed_snapshots": 275,
+  "duration_seconds": 60.47225895799056,
+  "edits": 149,
+  "completed_snapshots": 29,
   "retained": 3,
   "all_retained_verified": true,
-  "latest_content": "version 1467",
+  "latest_content": "version 146",
   "constant_file_hash_equal": true
 }

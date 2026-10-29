@@ -1,13 +1,47 @@
-{
-  "documents": 7,
-  "pages": 49,
-  "bounds_warnings": 0,
-  "rendered_page_images_reviewed": true,
-  "formats": [
-    "Markdown",
-    "HTML",
-    "PDF"
-  ],
-  "presentation_slides": 8,
-  "presentation_validation": "test-results/pptx-integrity.json, pptx-geometry.json, pptx-preview.json"
-}
+[
+  {
+    "name": "01_需求分析说明书",
+    "pages": 5,
+    "bounds_warnings": []
+  },
+  {
+    "name": "02_系统设计文档",
+    "pages": 5,
+    "bounds_warnings": []
+  },
+  {
+    "name": "03_软件测试报告",
+    "pages": 9,
+    "bounds_warnings": []
+  },
+  {
+    "name": "04_StarUML绘图指导",
+    "pages": 6,
+    "bounds_warnings": []
+  },
+  {
+    "name": "05_实验报告",
+    "pages": 20,
+    "bounds_warnings": []
+  },
+  {
+    "name": "06_演示与答辩指南",
+    "pages": 3,
+    "bounds_warnings": []
+  },
+  {
+    "name": "07_三人分工与协作方案",
+    "pages": 4,
+    "bounds_warnings": []
+  },
+  {
+    "name": "08_提交前验收清单",
+    "pages": 3,
+    "bounds_warnings": []
+  },
+  {
+    "name": "09_复核结论与后续安排",
+    "pages": 3,
+    "bounds_warnings": []
+  }
+]

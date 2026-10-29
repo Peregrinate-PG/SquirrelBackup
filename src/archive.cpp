@@ -159,7 +159,8 @@ void ArchiveWriter::write(const fs::path& source, const std::vector<Entry>& entr
       return S_ISREG(st.st_mode) && static_cast<uint64_t>(st.st_dev) == e.device &&
              static_cast<uint64_t>(st.st_ino) == e.inode &&
              static_cast<uint64_t>(st.st_size) == e.size && st.st_mtimespec.tv_sec == e.mtime &&
-             st.st_mtimespec.tv_nsec == e.mtime_ns;
+             st.st_mtimespec.tv_nsec == e.mtime_ns && st.st_ctimespec.tv_sec == e.ctime &&
+             st.st_ctimespec.tv_nsec == e.ctime_ns;
     };
     require(unchanged(), "Source changed before backup: " + e.path);
     uint64_t remaining = e.size;

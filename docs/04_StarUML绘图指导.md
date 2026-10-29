@@ -1,6 +1,6 @@
 # 松鼠备份 StarUML 手工绘图指导
 
-本指导供你在 StarUML 中手工完成课程建模，内容依据松鼠备份 0.1.0 的真实需求与代码。本文不包含生成的 UML 图、PlantUML、Mermaid 或可直接导入的模型。推荐先完成一张用例图、一张核心类图、一张构件图、备份与恢复各一张顺序图和一张任务状态图，再插入实验报告对应栏目。
+本指导供你在 StarUML 中手工完成课程建模，内容依据松鼠备份 0.1.1 的需求与公开接口。先冻结当前接口和行为，再开始绘图；所有用例编号与01需求说明书一致。本文不包含生成的 UML 图、PlantUML、Mermaid 或可直接导入的模型。本轮仅更新绘图指导，模型和图仍待完成；这不表示课程禁止生成可编辑模型。推荐先完成一张用例图、一张核心类图、一张构件图、备份与恢复各一张顺序图和一张任务状态图，再插入实验报告对应栏目。
 
 ## 1 建立项目与通用操作
 
@@ -49,7 +49,7 @@
 | BackupOptions | filter、compress、password | 无 |
 | ScheduleOptions | interval_seconds、keep、poll_seconds、watch、max_runs | 无 |
 | Filter | excludes、path_pattern、name_pattern、types、min_size、max_size、since、until、owner | excluded、accepts |
-| Entry | path、link、type、mode、uid、gid、mtime、mtime_ns、atime、atime_ns、size、xattrs | 无 |
+| Entry | path、link、type、mode、uid、gid、mtime、mtime_ns、atime、atime_ns、size、xattrs；扫描专用device/inode/ctime/ctime_ns | 无 |
 | Summary | entries、files、bytes、archive_bytes、items | 无 |
 
 关系按下表连接。静态调用使用 Dependency，箭头指向被依赖者；不要用实体 Association 冒充长期拥有关系。组合关系实心菱形位于拥有者一侧。
@@ -69,7 +69,7 @@
 
 将 Filter、Entry、Summary 归到值对象一排，业务服务居中，算法和格式类分列。静态工具类的方法标记为 static，BackupService 的业务方法不是 static。没有接口继承层次，不画 Generalization。如果组合已经显示成连线，可在类框中省略重复的对应属性以降低冗余，并在注释中说明。
 
-检查：名字和源码一致；静态标记正确；拥有关系有基数；不要把两个入口各画成一套 BackupService 业务实现。完成后插入系统设计文档 3.1 系统对象模型。
+检查：名字和源码一致；静态标记正确；拥有关系有基数；不要把两个入口各画成一套 BackupService 业务实现。Entry 的内存扫描字段与归档持久化字段需区分；以冻结后的 backup.h 为准，未写入归档的检测字段不得画成格式已经新增字段。完成后插入系统设计文档 3.1 系统对象模型。
 
 ## 4 构件图 CMP_系统构件
 
@@ -142,11 +142,11 @@
 | BackingUp | Stopping | 当前快照完成且 stop 已请求 |
 | Stopping | Final | 输出统计并退出循环 |
 
-状态名是对 Scheduler 控制流的建模抽象，代码没有单独的状态枚举。停止不会立即中断块写入，不能画成点击停止便立刻销毁快照。max_runs 达成也进入 Final。完成后插入系统设计动态建模章节。
+状态名是对 Scheduler 控制流的建模抽象，代码没有单独的状态枚举。GUI还应以注释说明0.1.1的延迟关闭/退出请求：忙碌时记录，操作结束后执行；这不是Scheduler增加了独立后台守护状态。停止不会立即中断块写入，不能画成点击停止便立刻销毁快照。max_runs 达成也进入 Final。完成后插入系统设计动态建模章节。
 
 ## 8 插入报告与最终核对
 
-将各图放到模板对应位置，保留图题和文字说明。需求文档使用用例图，设计文档使用构件、类、顺序和状态图。字体统一；连线避免穿过类框；一个页面过密则拆图。最终把 mdj 源文件和导出图片一起归档，报告中说明实际使用的 StarUML 版本和绘图人。
+在绘图前记录0.1.1源代码版本/提交号，复核公开接口、UC-01至UC-08及停止语义；涉及接口的修订完成后再冻结模型。将各图放到模板对应位置，保留图题和文字说明。需求文档使用用例图，设计文档使用构件、类、顺序和状态图。字体统一；连线避免穿过类框；一个页面过密则拆图。最终把 mdj 源文件和导出图片一起归档，报告中说明实际使用的 StarUML 版本和绘图人。
 
 逐项检查：没有未实现网络功能；static 与非 static 区分正确；依赖箭头方向正确；组合关系有基数；方法名能在源码定位；异常和停止路径均有说明；图和报告版本号一致。没有完成绘图时不把“StarUML 模型已完成”填写到实验结论。
 

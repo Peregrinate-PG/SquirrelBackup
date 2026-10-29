@@ -4,6 +4,9 @@ from pathlib import Path
 import json
 import xml.etree.ElementTree as ET
 from datetime import datetime
+from zoneinfo import ZoneInfo
+import platform
+import subprocess
 root=Path(__file__).resolve().parents[1]
 xml=ET.parse(root/'test-results/unit.xml').getroot()
 unit=[]
@@ -12,32 +15,33 @@ for c in xml.iter('testcase'):
 integration=json.loads((root/'test-results/integration.json').read_text())
 security=json.loads((root/'test-results/security.json').read_text())
 benchmark=json.loads((root/'test-results/benchmark.json').read_text())
-alltests=unit+integration+security
-now=datetime.now().astimezone().isoformat(timespec='seconds')
+workflow=json.loads((root/'test-results/workflow-regression.json').read_text())
+alltests=unit+integration+security+workflow
+now=datetime.now(ZoneInfo('Asia/Shanghai')).isoformat(timespec='seconds')
 text=f'''# 松鼠备份软件测试报告
 
-版本 0.1.0。结果生成时间 {now}。本报告依据 test-results 中的 GoogleTest XML、集成与安全测试 JSON、Sanitizer 日志和性能实测生成。测试对象为本机编译的 C++ 核心与 CLI；另有 GUI 离屏渲染和内部动作测试，真实自动点击权限未获准，不能将这些结果等同于完整 GUI 验收。
+版本 0.1.1。结果生成时间 {now}。本报告依据 test-results 中的 GoogleTest XML、集成与安全测试 JSON、Sanitizer 日志和性能实测生成。测试对象为本机编译的 C++ 核心与 CLI；另有 GUI 离屏渲染和内部动作测试，本轮未进行文件选择器与鼠标点击验收，不能将内部动作测试等同于完整 GUI 验收。
 
 ## 1 引言
 
-目标是验证备份内容、目录结构、扩展功能及异常情况下的原文件保护，满足讲义至少两种测试类型、15 个以上用例的要求。平台为 macOS 15.7.9 arm64、Apple Clang 17、C++17。测试数据通过临时目录隔离，普通文件恢复后用 SHA256 或完整字节比较，特殊文件用 lstat、read_symlink 和 inode 关系验证。测试人员栏请由执行并复核的学生填写；本轮由 AI 编程会话自动执行，不冒填真人。
+目标是验证备份内容、目录结构、扩展功能及异常情况下的原文件保护，满足讲义至少两种测试类型、15 个以上用例的要求。平台为 macOS {platform.mac_ver()[0]} {platform.machine()}、{subprocess.check_output(["clang++", "--version"],text=True).splitlines()[0]}、C++17。测试数据通过临时目录隔离，普通文件恢复后用 SHA256 或完整字节比较，特殊文件用 lstat、read_symlink 和 inode 关系验证。测试人员栏请由执行并复核的学生填写；本轮由 AI 编程会话自动执行，不冒填真人。
 
 ## 2 功能测试
 
-本轮共有 {len(unit)} 项 GoogleTest 测试、{len(integration)} 项 CLI 黑盒测试和 {len(security)} 项异常归档与并发测试，合计 {len(alltests)} 项，通过 {sum(x['passed'] for x in alltests)} 项。单元和黑盒集成两种类型均有源码和可复现命令。安全测试是附加异常验证，不代替渗透测试或安全审计。
+本轮共有 {len(unit)} 项 GoogleTest 测试、{len(integration)} 项 CLI 黑盒测试和 {len(security)} 项异常归档与并发测试，另有 {len(workflow)} 项调度回归，合计 {len(alltests)} 项，通过 {sum(x['passed'] for x in alltests)} 项。单元和黑盒集成两种类型均有源码和可复现命令。安全测试是附加异常验证，不代替渗透测试或安全审计。
 
 ### 2.1 全部用例结果
 
 | 编号 | 层次与名称 | 实际结果 |
 | --- | --- | --- |
 '''
-for prefix,data in [('UT',unit),('IT',integration),('SEC',security)]:
+for prefix,data in [('UT',unit),('IT',integration),('SEC',security),('REG',workflow)]:
     for i,r in enumerate(data,1):
         text+=f'| {prefix}-{i:02d} | {r["name"]} | {"通过" if r["passed"] else "失败"} |\n'
 text+='''
 ### 2.2 关键用例详细说明
 
-以下全部用例程序版本为 0.1.0，级别为重要，执行日期见本报告生成时间，执行方式为自动化。预置条件为本机编译成功且测试临时目录可写，测试人员待学生复核填写。每一项实际结果以对应 XML／JSON 为证据。
+以下全部用例程序版本为 0.1.1，级别为重要，执行日期见本报告生成时间，执行方式为自动化。预置条件为本机编译成功且测试临时目录可写，测试人员待学生复核填写。每一项实际结果以对应 XML／JSON 为证据。
 
 '''
 cases=[
@@ -69,13 +73,13 @@ if gui_path.exists():
     text+=f"### 2.3 原生界面内部验证\n\n应用启动及三个页面离屏渲染已验证，预览位于 docs/screenshots。内部业务动作测试通过 {gui['assertions']} 项断言，覆盖空输入、加密开关、忙碌与按钮状态、备份、错误密码提示、恢复、列表、验证和自动任务停止。该结果与前述 {len(alltests)} 项自动用例分开统计，不把断言数量当成独立测试用例。文件选择器、真实点击和完整 GUI 人工验收仍待完成。见 gui-selftest.json 与 gui-validation.md。\n\n"
 text+='''## 3 代码测试
 
-业务源码使用编译器严格告警，已执行 clang-format 与 cpplint。cpplint 使用 100 列规范，明确关闭六个与项目约定不一致的检查：build/c++17（本项目要求 C++17）、build/header_guard（使用项目稳定命名）、build/namespaces（CLI 局部 using）、build/include_order 和 build/include_subdir（本项目包含路径约定）、runtime/references（公开 API 使用 const 引用）。其它检查保留。输出见 lint.log；零剩余告警不能说明不存在逻辑缺陷。
+本轮业务源码使用 -Wall -Wextra -Wpedantic -Werror 编译检查。原版曾记录 cpplint 与 clang-format，本轮没有重新运行它们，不能沿用旧版零告警作为新证据。
 
 AddressSanitizer 和 UndefinedBehaviorSanitizer 通过 make sanitize 对核心与 CLI 测试运行，结果见 sanitize.log。它们不替代多线程竞态检查、全系统泄漏审计或强制掉电测试。本机没有把 Linux 的 perf、valgrind 安装记录虚构进报告。
 
 ## 4 性能测试
 
-方法为临时生成数据，使用单调高精度时钟统计 CLI 完整备份和恢复耗时，再比较恢复 SHA256。单次运行、同机本地卷、可能受文件系统缓存和负载影响，不作多次统计结论。系统 time -l 获取资源指标因 sysctl 权限受限失败，已改为无额外权限的墙钟测量，未取得可靠峰值 RSS，表中不报告该项。
+方法为临时生成数据，使用单调高精度时钟统计 CLI 完整备份和恢复耗时，再比较恢复 SHA256。单次运行、同机本地卷、可能受文件系统缓存和负载影响，不作多次统计结论。本轮仅测墙钟时间，没有测峰值 RSS。
 
 | 数据集 | 原始字节 | 备份字节 | 备份秒 | 恢复秒 | 哈希 |
 | --- | --- | --- | --- | --- | --- |
@@ -93,22 +97,23 @@ text+='''
 
 ## 6 测试结果分析
 
-已验证的核心路径形成从备份到验证、内容查看、安全恢复和自动任务的闭环。当前自动用例全部通过，初版可用于受控演示和后续迭代。GUI 已完成编译、签名、离屏渲染与内部动作验证；因自动点击操作未获准，GUI 端到端人工验收仍属于待办，不填写为通过。
+已验证的核心路径形成从备份到验证、内容查看、安全恢复和自动任务的闭环。当前自动用例全部通过，修订版可进入人工验收与受控演示。GUI 已完成编译、签名、离屏渲染与内部动作验证；本轮未操作系统文件选择器，GUI 端到端人工验收仍属于待办，不填写为通过。
 
-重现命令：make test、make sanitize、make lint、python3 tests/benchmark.py build/squirrel。测试源码与 XML／JSON／日志随源码和发布包交付。后续修改格式或核心逻辑后需重新运行并重新生成报告。
+重现命令：make test、make sanitize、python3 tests/benchmark.py build/squirrel。测试源码与 XML／JSON／日志随源码和发布包交付。后续修改格式或核心逻辑后需重新运行并重新生成报告。
 '''
-for filename,heading in [('fuzz.json','7 种子变异与随机输入测试'),('stability.json','8 持续运行与反复修改测试')]:
+for filename,heading in [('fuzz.json','7 种子变异与随机输入测试'),('stability.json','7 持续运行与反复修改测试')]:
     p=root/'test-results'/filename
     if p.exists():
         data=json.loads(p.read_text())
         text+='\n## '+heading+'\n\n'
         if filename=='fuzz.json':
-            text+=f"固定种子 {data['seed']}，运行 {data['seconds']:.1f} 秒，执行 {data['iterations']} 次输入处理，Sanitizer 下未发现失败。该驱动混合有效 Huffman 编码、位变异和随机字节，且包含编码往返断言。系统 SDK 缺少 libFuzzer 运行库，因此采用项目自有的有界驱动；不是覆盖率引导模糊测试，不代表穷尽输入空间。\n"
+            text+=f"固定种子 {data['seed']}，运行 {data['seconds']:.1f} 秒，执行 {data['iterations']} 次输入处理，Sanitizer 下未发现失败。该驱动混合有效 Huffman 编码、位变异和随机字节，且包含编码往返断言。采用项目自有的有界驱动，不是覆盖率引导模糊测试，不代表穷尽输入空间。\n"
         else:
             text+=f"运行 {data['duration_seconds']:.1f} 秒，原子替换源文件 {data['edits']} 次，完成 {data['completed_snapshots']} 份快照。停止后保留 {data['retained']} 份，全部通过 verify，恢复固定文件 SHA256 一致。该结果是有界持续运行检查，不是整夜或长期可靠性证明。\n"
 review_path=root/'test-results/review-stability.json'
 if review_path.exists():
     data=json.loads(review_path.read_text())
     text+=f"\n## 9 本轮复核与修正\n\n本轮新增淘汰失败与启动参数回归检查。成功快照先提交计时和监测状态，再尽力执行淘汰；淘汰失败不会重复生成备份，也不会绕过 max_runs。短密码、非法范围或类型在创建任务前拒绝。更新后的程序另连续运行 {data['duration_seconds']:.1f} 秒，生成 {data['completed_snapshots']} 份快照，保留 {data['retained']} 份且全部验证通过。第 8 节十分钟记录来自初版正常路径，作为历史测试保留，不等同于本轮重新运行十分钟。\n"
+text += "\n## 8 修订版验收边界\n\n原始压缩包的 72 项用例已在本轮修复前复跑通过。新版总数来自上表，GUI 断言、Sanitizer 重复运行和稳定性循环不叠加进命名用例总数。新版测试用于证明已覆盖场景，不能据此声称所有文件系统状态、磁盘故障和用户交互都已验收。\n\n本轮重点覆盖只读目录恢复、异常清理、扫描后源内容变化、自动任务源路径拒绝、无效模式选项、保留 mtime 的变化检测与无变化时不重复快照。完整命名和断言以源码及结果为准。另有新旧版本双向恢复的4个兼容场景（明文与加密）通过，见 compatibility.json；这4项未计入82项命名用例。\n"
 (root/'docs/03_软件测试报告.md').write_text(text)
-(root/'test-results/summary.json').write_text(json.dumps(dict(generated_at=now,unit=len(unit),integration=len(integration),security=len(security),total=len(alltests),passed=sum(x['passed'] for x in alltests)),ensure_ascii=False,indent=2))
+(root/'test-results/summary.json').write_text(json.dumps(dict(generated_at=now,unit=len(unit),integration=len(integration),security=len(security),workflow=len(workflow),version='0.1.1',total=len(alltests),passed=sum(x['passed'] for x in alltests)),ensure_ascii=False,indent=2))

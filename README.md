@@ -1,10 +1,10 @@
 # 松鼠备份 Squirrel Backup
 
-面向 macOS Apple Silicon 的数据备份课程设计初版。C++17 实现业务核心，Objective-C++ 与 Cocoa 实现原生 GUI，提供可独立使用的命令行。
+面向 macOS Apple Silicon 的数据备份课程设计复核修订版。C++17 实现业务核心，Objective-C++ 与 Cocoa 实现原生 GUI，提供可独立使用的命令行。
 
 ## 先运行
 
-双击 `build/SquirrelBackup.app`。发布版本位于 `dist/SquirrelBackup-0.1.0-macOS-arm64/`，其中的 `.app` 可直接在本机打开。
+双击 `build/SquirrelBackup.app`。发布版本位于 `dist/SquirrelBackup-0.1.1-macOS-arm64/`，其中的 `.app` 可直接在本机打开。
 
 ```sh
 make -j4 all
@@ -12,7 +12,7 @@ open build/SquirrelBackup.app
 bash scripts/demo.sh
 ```
 
-只需 macOS Command Line Tools。若尚未安装，系统可能要求用户运行 `xcode-select --install`；本机已经具备。无需 Homebrew、Qt、Python 后端或云账号。GUI 需要图形登录会话，命令行可独立使用。
+构建目标为 macOS 13.0 及以上的 Apple Silicon；本轮在 macOS 13.0 arm64 / Apple Clang 14.0.3 复核，其他系统版本仍需实际验收。只需 macOS Command Line Tools。若尚未安装，系统可能要求用户运行 `xcode-select --install`；测试环境已具备。无需 Homebrew、Qt、Python 后端或云账号。GUI 需要图形登录会话，命令行可独立使用。
 
 ## 命令行
 
@@ -57,20 +57,28 @@ make package
 - `docs/05_实验报告.md`：按给定模板栏目整合；姓名学号等保留待填写。
 - `docs/06_演示与答辩指南.md`：演示步骤、讲稿、提交清单。
 - `docs/07_三人分工与协作方案.md`：三人各 30 点的模块、测试、文档与演示安排。
-- `presentations/松鼠备份_三分钟演示.pptx`：八页可编辑演示，含讲者备注；同目录附 PDF 和讲稿。
+- `presentations/松鼠备份_三分钟演示.pptx`：保留的 0.1.0 八页原始草稿，尚需更新测试数据、甘特图、人员信息。
+- `docs/08_提交前验收清单.md`：逐项人工验收、录屏与提交清单。
+- `docs/09_复核结论与后续安排.md`：本轮发现、修复与后续优先级。
 - 同目录 `html/`、`pdf/` 为阅读及打印版本；测试证据位于 `test-results/`。
 
 ## 初版边界
 
 支持普通文件、空目录、软链接、硬链接、FIFO，以及权限、atime/mtime 纳秒时间、UID/GID 记录和 xattrs。不同属主恢复可能无权限，会记录警告；不支持设备节点、socket、ACL、文件 flags 和创建时间。去掉 setuid/setgid/sticky 位以避免恢复特权权限。
 
-定时与实时任务只在应用或进程运行期间有效，轮询按元数据判断变化，连续变化会延迟；不保证捕获保留相同元数据的内容替换。每个任务独立目录，淘汰只作用于本次任务已生成的快照。网络、增量、断点续传与开机自启没有实现。
+定时与实时任务只在应用或进程运行期间有效，轮询按元数据判断变化，连续变化会延迟；使用纳秒 ctime 补充检测保留 mtime 的原地内容替换；这仍是轮询，不保证捕获两次采样之间产生又消失的变化。每个任务独立目录，淘汰只作用于本次任务已生成的快照。网络、增量、断点续传与开机自启没有实现。
 
 临时数据写在 0700 私有目录，文件为 0600，正常异常路径会清理；不承诺 APFS 上的安全擦除。备份文件是完整性校验和加密后的格式，未加密的 SHA256 只检测损坏，不抵抗主动篡改者重新计算摘要。
 
-GUI 已编译和签名，三个页面通过离屏渲染检查，内部业务动作测试通过 12 项断言；自动点击权限未获准，因此文件选择器及实际点击操作需人工复核。当前通过的核心自动测试不代表已完成所有产品验收。详细限制见测试报告。
+新版测试与GUI内部动作断言以 docs/03_软件测试报告.md 为准。文件选择器、实际点击、跨机器启动及完整退出操作仍需人工验收。界面保存非密码选项，密码不写入偏好设置；诊断模式不读写用户配置。停止自动任务会等待当前快照完成，关闭/退出请求将在操作结束后完成。
 
 
 ## GUI 内部验证
 
 `SquirrelBackup.app/Contents/MacOS/SquirrelBackup --render-preview 输出目录 页面编号` 可在图形登录环境导出指定页面的 PDF（页面 0、1、2）。`--self-test 新测试目录` 可运行不显示窗口的业务动作测试，结果输出为 gui-selftest.json。该测试不操作其他应用，不验证真实文件选择器与鼠标点击；沙箱限制 AppKit 初始化时需要允许本地测试进程访问图形会话。离屏预览见 docs/screenshots。
+
+## 人工验收数据
+
+在源码目录执行 `python3 scripts/prepare_acceptance.py /已存在父目录/新的演示目录`。脚本拒绝覆盖已有目录，生成中文文件、空目录、软硬链接、FIFO、只读子目录及 SHA256 清单。然后按照 docs/08_提交前验收清单.md 操作 GUI 并记录真实结果。
+
+包内第9讲规定：PPT 3分钟、现场操作7分钟、视频不超过2分钟；材料截止为2026年11月18日23:59。若课程另有更新通知，以新通知为准。在线Git仓库、UML模型、真实成员资料及本人证书仍待补齐。

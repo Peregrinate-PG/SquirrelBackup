@@ -1,4 +1,5 @@
 CXX := clang++
+export MACOSX_DEPLOYMENT_TARGET := 13.0
 BUILD ?= build
 CPPFLAGS := -Iinclude -Isrc
 CXXFLAGS := -std=c++17 -O2 -g -Wall -Wextra -Wpedantic -Werror -Wno-deprecated-declarations
@@ -32,6 +33,7 @@ test: $(BUILD)/tests $(BUILD)/squirrel
 	$(BUILD)/tests --gtest_output=xml:test-results/unit.xml
 	python3 tests/integration.py $(BUILD)/squirrel
 	python3 tests/adversarial.py $(BUILD)/squirrel
+	python3 tests/workflow_regression.py $(BUILD)/squirrel
 sanitize:
 	$(MAKE) BUILD=build/sanitize CXXFLAGS='-std=c++17 -O1 -g -Wall -Wextra -Werror -Wno-deprecated-declarations -fsanitize=address,undefined -fno-omit-frame-pointer' test
 $(BUILD)/huffman_fuzz: tests/huffman_fuzz.cpp tests/fuzz_driver.cpp src/huffman.cpp include/squirrel/backup.h | $(BUILD)

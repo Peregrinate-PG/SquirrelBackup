@@ -50,6 +50,24 @@ NSButton* button(NSView* parent, NSString* title, NSRect frame, id target, SEL a
   [parent addSubview:b];
   return b;
 }
+bool positiveInteger(NSString* text, uint32_t maximum, uint32_t& result) {
+  auto value = cpp(text);
+  if (value.empty()) {
+    return false;
+  }
+  uint32_t number = 0;
+  for (char c : value) {
+    if (c < '0' || c > '9' || number > (maximum - uint32_t(c - '0')) / 10) {
+      return false;
+    }
+    number = number * 10 + uint32_t(c - '0');
+  }
+  if (!number || number > maximum) {
+    return false;
+  }
+  result = number;
+  return true;
+}
 std::string stats(const Summary& s) {
   std::ostringstream out;
   out << "条目 " << s.entries << "  ·  文件 " << s.files << "  ·  原始数据 " << s.bytes
@@ -80,12 +98,12 @@ std::string stats(const Summary& s) {
   NSTextField *_source, *_archive, *_password, *_exclude, *_name;
   NSTextField *_readArchive, *_destination, *_readPassword;
   NSTextField *_jobSource, *_repository, *_interval, *_retention, *_status;
-  NSButton *_compress, *_encrypt, *_watch, *_jobEncrypt;
+  NSButton *_compress, *_encrypt, *_watch, *_jobEncrypt, *_stopButton;
   NSTextField* _jobPassword;
   NSTextView* _logView;
   NSProgressIndicator* _progress;
   NSMutableArray<NSButton*>* _actions;
-  BOOL _busy;
+  BOOL _busy, _jobRunning, _closeWhenFinished, _quitWhenFinished;
   std::atomic<bool> _stop;
   int _testPhase;
   int _testAssertions;
@@ -127,7 +145,7 @@ std::string stats(const Summary& s) {
     _nav[i].tag = i;
     [_nav[i] setButtonType:NSButtonTypePushOnPushOff];
   }
-  NSTextField* foot = label(sidebar, @"本机存储 · 自主掌控\nmacOS 原生课程设计\nv0.1.0 初版",
+  NSTextField* foot = label(sidebar, @"本机存储 · 自主掌控\nmacOS 原生课程设计\nv0.1.1 改进版",
                             NSMakeRect(25, 32, 155, 66), 11);
   foot.textColor = NSColor.lightGrayColor;
   foot.maximumNumberOfLines = 3;
@@ -142,6 +160,7 @@ std::string stats(const Summary& s) {
   [self buildBackup];
   [self buildRestore];
   [self buildJobs];
+  [self loadSettings];
   _status = label(root, @"就绪  ·  选择源目录即可开始", NSMakeRect(238, 251, 750, 25), 13, YES);
   _progress = [[NSProgressIndicator alloc] initWithFrame:NSMakeRect(1010, 253, 22, 22)];
   _progress.style = NSProgressIndicatorStyleSpinning;
@@ -206,7 +225,24 @@ std::string stats(const Summary& s) {
       return;
     }
     switch (_testPhase) {
-      case 0:
+      case 0: {
+        uint32_t parsed = 0;
+        [self testCheck:positiveInteger(@"8640000", 8640000, parsed) && parsed == 8640000
+                message:"Maximum interval should be accepted"];
+        for (NSString* invalid in @[ @"", @"0", @"-1", @"1.5", @"1abc", @"1e3",
+                                     @"8640001", @"99999999999999999999999999" ]) {
+          [self testCheck:!positiveInteger(invalid, 8640000, parsed)
+                  message:"Invalid integer accepted"];
+        }
+        [self testCheck:!_stopButton.enabled message:"Stop should be disabled while idle"];
+        [self stopJob:nil];
+        [self testCheck:!_stop.load() message:"Idle stop should not alter state"];
+        _jobSource.stringValue = ns((_testRoot / "source").string());
+        _repository.stringValue = ns((_testRoot / "repository").string());
+        _interval.stringValue = @"1.5";
+        [self startJob:nil];
+        [self testCheck:!_busy message:"Fractional interval must not start a job"];
+        _interval.stringValue = @"300";
         [self backup:nil];
         [self testCheck:!_busy message:"Empty GUI inputs should not start a task"];
         _source.stringValue = ns((_testRoot / "source").string());
@@ -215,12 +251,24 @@ std::string stats(const Summary& s) {
         [self encryptionChanged:nil];
         [self testCheck:_password.enabled message:"Encryption switch should enable password field"];
         _password.stringValue = @"gui-test-password";
+        _jobPassword.stringValue = @"job-secret-must-not-save";
+        _readPassword.stringValue = @"restore-secret-must-not-save";
+        NSDictionary* settings = [self settings];
+        [self testCheck:settings.count == 14 message:"Only whitelisted settings may be saved"];
+        for (NSString* secret in @[ _password.stringValue, _jobPassword.stringValue,
+                                    _readPassword.stringValue ]) {
+          [self testCheck:![settings.allValues containsObject:secret]
+                  message:"Password leaked into saved settings"];
+        }
         [self backup:nil];
         [self testCheck:_busy message:"Backup should set busy state"];
         [self testCheck:!_actions.firstObject.enabled
                 message:"Busy state should disable backup action"];
+        [self testCheck:!_stopButton.enabled
+                message:"Stop must be disabled for a one-off backup"];
         _testPhase = 1;
         break;
+      }
       case 1:
         [self testCheck:fs::exists(_testRoot / "backup.sqbk")
                 message:"GUI backup did not publish a file"];
@@ -261,6 +309,7 @@ std::string stats(const Summary& s) {
         _interval.stringValue = @"1";
         _retention.stringValue = @"2";
         [self startJob:nil];
+        [self testCheck:_stopButton.enabled message:"Active job must enable stop"];
         _testPhase = 6;
         break;
       case 6: {
@@ -282,10 +331,13 @@ std::string stats(const Summary& s) {
           return;
         }
         [self stopJob:nil];
+        [self testCheck:!_stopButton.enabled message:"Pending stop must disable stop button"];
         _testPhase = 7;
         break;
       }
       case 7:
+        [self testCheck:!_jobRunning && !_stopButton.enabled
+                message:"Completed job must clear job state"];
         [self testCheck:_actions.firstObject.enabled message:"Actions not re-enabled after stop"];
         [self testCheck:[_logView.string containsString:@"自动任务已停止"]
                 message:"Stop completion missing"];
@@ -391,7 +443,58 @@ std::string stats(const Summary& s) {
         NSMakeRect(100, 67, 700, 20), 11);
   [_actions addObject:button(p, @"启动任务", NSMakeRect(100, 8, 160, 36), self,
                              @selector(startJob:), YES)];
-  button(p, @"停止任务", NSMakeRect(280, 8, 150, 36), self, @selector(stopJob:));
+  _stopButton = button(p, @"停止任务", NSMakeRect(280, 8, 150, 36), self, @selector(stopJob:));
+  _stopButton.enabled = NO;
+}
+// Only these explicit non-sensitive fields are persisted. Passwords never enter defaults.
+- (NSDictionary*)settings {
+  return @{
+    @"source" : _source.stringValue, @"archive" : _archive.stringValue,
+    @"exclude" : _exclude.stringValue, @"name" : _name.stringValue,
+    @"readArchive" : _readArchive.stringValue, @"destination" : _destination.stringValue,
+    @"jobSource" : _jobSource.stringValue, @"repository" : _repository.stringValue,
+    @"interval" : _interval.stringValue, @"retention" : _retention.stringValue,
+    @"compress" : @(_compress.state == NSControlStateValueOn),
+    @"encrypt" : @(_encrypt.state == NSControlStateValueOn),
+    @"watch" : @(_watch.state == NSControlStateValueOn),
+    @"jobEncrypt" : @(_jobEncrypt.state == NSControlStateValueOn)
+  };
+}
+- (void)saveSettings {
+  if (!previewDirectory.empty() || !selfTestDirectory.empty()) {
+    return;
+  }
+  [NSUserDefaults.standardUserDefaults setObject:[self settings]
+                                          forKey:@"SquirrelBackup.FormSettings.v1"];
+}
+- (void)loadSettings {
+  if (!previewDirectory.empty() || !selfTestDirectory.empty()) {
+    return;
+  }
+  NSDictionary* settings = [NSUserDefaults.standardUserDefaults
+      dictionaryForKey:@"SquirrelBackup.FormSettings.v1"];
+  NSDictionary* fields = @{
+    @"source" : _source, @"archive" : _archive, @"exclude" : _exclude, @"name" : _name,
+    @"readArchive" : _readArchive, @"destination" : _destination,
+    @"jobSource" : _jobSource, @"repository" : _repository,
+    @"interval" : _interval, @"retention" : _retention
+  };
+  for (NSString* key in fields) {
+    if ([settings[key] isKindOfClass:NSString.class]) {
+      ((NSTextField*)fields[key]).stringValue = settings[key];
+    }
+  }
+  NSDictionary* switches = @{
+    @"compress" : _compress, @"encrypt" : _encrypt,
+    @"watch" : _watch, @"jobEncrypt" : _jobEncrypt
+  };
+  for (NSString* key in switches) {
+    if ([settings[key] isKindOfClass:NSNumber.class]) {
+      ((NSButton*)switches[key]).state = [settings[key] boolValue]
+                                          ? NSControlStateValueOn : NSControlStateValueOff;
+    }
+  }
+  [self encryptionChanged:nil];
 }
 - (void)appendLog:(NSString*)line {
   NSString* stamp = [NSDateFormatter localizedStringFromDate:NSDate.date
@@ -499,6 +602,8 @@ std::string stats(const Summary& s) {
     return;
   }
   _busy = YES;
+  [self saveSettings];
+  _stopButton.enabled = _jobRunning;
   _stop.store(false);
   _status.stringValue = title;
   [_progress startAnimation:nil];
@@ -517,12 +622,19 @@ std::string stats(const Summary& s) {
     }
     dispatch_async(dispatch_get_main_queue(), ^{
       self->_busy = NO;
+      self->_jobRunning = NO;
+      self->_stopButton.enabled = NO;
       [self->_progress stopAnimation:nil];
       for (NSButton* b in self->_actions) {
         b.enabled = YES;
       }
       self->_status.stringValue = success ? @"已完成" : @"未完成 · 请查看下方原因";
       [self appendLog:result];
+      if (self->_quitWhenFinished) {
+        [NSApp terminate:nil];
+      } else if (self->_closeWhenFinished) {
+        [self->_window performClose:nil];
+      }
     });
   });
 }
@@ -593,11 +705,14 @@ std::string stats(const Summary& s) {
 }
 - (void)startJob:(id)sender {
   (void)sender;
+  if (_busy) {
+    return;
+  }
   auto source = cpp(_jobSource.stringValue), repo = cpp(_repository.stringValue);
-  NSInteger interval = _interval.integerValue, keep = _retention.integerValue;
-  if (source.empty() || repo.empty() || interval < 1 || interval > 8640000 || keep < 1 ||
-      keep > 10000) {
-    [self appendLog:@"请检查目录、间隔（1–8640000 秒）和保留份数（1–10000）。"];
+  uint32_t interval = 0, keep = 0;
+  if (source.empty() || repo.empty() || !positiveInteger(_interval.stringValue, 8640000, interval) ||
+      !positiveInteger(_retention.stringValue, 10000, keep)) {
+    [self appendLog:@"请检查目录；间隔须为 1–8640000 的整数，保留份数须为 1–10000 的整数。"];
     return;
   }
   BackupOptions options;
@@ -613,6 +728,7 @@ std::string stats(const Summary& s) {
   schedule.keep = keep;
   schedule.watch = _watch.state == NSControlStateValueOn;
   Log log = [self logger];
+  _jobRunning = YES;
   [self perform:@"自动任务运行中 · 可点击停止任务"
            work:[=] {
              Scheduler::run(source, repo, options, schedule, self->_stop, log);
@@ -621,8 +737,12 @@ std::string stats(const Summary& s) {
 }
 - (void)stopJob:(id)sender {
   (void)sender;
-  _stop.store(true);
-  [self appendLog:@"已请求停止；当前正在写入的快照将先完成。"];
+  if (!_busy || !_jobRunning || _stop.exchange(true)) {
+    return;
+  }
+  _stopButton.enabled = NO;
+  _status.stringValue = @"正在停止 · 等待当前快照完成";
+  [self appendLog:@"已请求停止；当前快照完成后自动结束任务，已有备份会保留。"];
 }
 - (BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication*)sender {
   (void)sender;
@@ -630,18 +750,24 @@ std::string stats(const Summary& s) {
 }
 - (BOOL)windowShouldClose:(NSWindow*)sender {
   (void)sender;
+  [self saveSettings];
   if (_busy) {
+    _closeWhenFinished = YES;
     [self stopJob:nil];
-    [self appendLog:@"请等待当前操作结束后再关闭窗口。"];
+    _status.stringValue = @"等待当前操作完成后自动关闭";
+    [self appendLog:@"已记住关闭请求；当前操作结束后将自动关闭窗口。"];
     return NO;
   }
   return YES;
 }
 - (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication*)sender {
   (void)sender;
+  [self saveSettings];
   if (_busy) {
+    _quitWhenFinished = YES;
     [self stopJob:nil];
-    [self appendLog:@"请等待操作完成后再退出。"];
+    _status.stringValue = @"等待当前操作完成后自动退出";
+    [self appendLog:@"已记住退出请求；当前操作结束后将自动退出应用。"];
     return NSTerminateCancel;
   }
   return NSTerminateNow;
