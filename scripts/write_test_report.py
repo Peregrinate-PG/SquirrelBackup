@@ -126,6 +126,21 @@ if (results/'lint-020.json').exists():
 if (results/'fuzz.json').exists():
     fuzz=json.loads((results/'fuzz.json').read_text())
     extra+=f"Huffman随机输入测试运行{fuzz['seconds']:.1f}秒、{fuzz['iterations']}次，结果{'通过' if fuzz['passed'] else '未通过'}，固定种子{fuzz['seed']}。它是随机输入驱动，并非覆盖率引导的libFuzzer；使用ASan/UBSan，次数不计入命名用例总数。证据为fuzz.json及fuzz.log。\n\n"
+if (results/'archive-fuzz-020.json').exists():
+    parser_fuzz=json.loads((results/'archive-fuzz-020.json').read_text())
+    valid=(parser_fuzz.get('passed') is True and parser_fuzz.get('status')=='passed'
+           and parser_fuzz.get('exit_code')==0 and parser_fuzz.get('elapsed_seconds',0)>=600
+           and parser_fuzz.get('last_done') and not parser_fuzz.get('artifacts')
+           and parser_fuzz.get('sanitizer_error_markers') is False)
+    runs=parser_fuzz.get('stats',{}).get('number_of_executed_units',0)
+    extra+=f"归档解析器另用LLVM libFuzzer 14.0.6进行覆盖率引导测试，运行{parser_fuzz['elapsed_seconds']:.3f}秒、{runs:,}次输入，记录{'满足本轮通过条件' if valid else '未满足本轮通过条件'}。"
+    if valid:
+        extra+='进程正常退出，没有崩溃工件或ASan/UBSan错误标记。'
+    matches=all((root/name).is_file() and hashlib.sha256((root/name).read_bytes()).hexdigest()==digest
+                for name,digest in parser_fuzz['source_sha256'].items())
+    extra+=('归档与Huffman相关源码哈希与本次源码一致。' if matches else
+            '补测记录中的源码哈希与当前源码不完全一致，结论只适用于记录版本。')
+    extra+='测试使用空恢复目标，仅覆盖内部SQTREE解析及Huffman解码，不包括恢复文件写入、加密封装和GUI。执行次数和覆盖计数不等于独立功能用例数或覆盖百分比，不并入97项。复现与边界见test-results/archive-fuzz-020.md，原始JSON和日志同名保存。\n\n'
 text=text.replace('## 5 性能与兼容性',extra+'## 5 性能与兼容性')
 
 for b in json.loads((results/'benchmark.json').read_text()):
@@ -149,12 +164,21 @@ if fault_path.exists():
         text+='这份补测使用的冻结CLI与本次构建哈希不同，不作为本次重建后的复测结果。'
     text+='详细范围、源码和原始记录见test-results/fault-injection-020.md及对应JSON；没有实际占满磁盘或断电，不并入97项核心用例。\n\n'
 text+='## 6 持续运行测试\n\n'
+interrupted=results/'soak-interrupted-20261029.json'
+if interrupted.exists():
+    prior=json.loads(interrupted.read_text())
+    text+=f"第一次持续运行在{prior['verified_checkpoints']}次正常检查后中断，最后记录时长为{prior['verified_elapsed_seconds']/3600:.2f}小时。核对时原进程已不存在，退出原因尚未确定。该次不认定20小时通过，也不与后续运行时长相加；观察记录见soak-interrupted-20261029.json。\n\n"
 soak_path=results/'soak-20h.json'
-if not soak_path.exists():soak_path=root.parent/'soak-20h-020/status.json'
+if not soak_path.exists():
+    candidates=[root.parent/'soak-20h-020-restart-20261029/status.json',
+                root.parent/'soak-20h-020/status.json']
+    soak_path=next((path for path in candidates if path.exists()),candidates[0])
 if soak_path.exists():
     soak=json.loads(soak_path.read_text());elapsed=soak.get('elapsed_seconds',0);cp=soak.get('checkpoints',[])
     text+=f"计划连续运行20小时，同时执行定时任务和加密watch任务，每5分钟检查保留份数、verify、恢复哈希、软硬链接、FIFO及只读目录。记录开始时间为{readable_time(soak['started_at'])}（北京时间）；报告读取时已运行{elapsed/3600:.2f}小时，完成{len(cp)}次检查。当前状态为{soak['status']}。\n\n"
-    if soak['status']=='passed':text+='本次持续运行测试已结束并通过，完成时间和原始检查记录随test-results/soak-20h.json交付。\n\n'
+    finished=(soak['status']=='passed' and soak.get('requested_seconds')==72000
+              and elapsed>=72000 and not soak.get('errors') and cp and cp[-1].get('final'))
+    if finished:text+='本次持续运行测试已结束并通过，完成时间和原始检查记录随test-results/soak-20h.json交付。\n\n'
     else:text+='尚未达到结束条件，当前不能写为“20小时通过”。最终报告应在进程结束后重新生成。\n\n'
     text+=f"长期测试冻结的CLI与本报告构建的CLI哈希{'相同' if sha==soak['binary_sha256'] else '不同，结论只适用于各自记录的二进制'}。完整SHA256分别保存在长期测试记录和test-results/summary.json中。\n\n"
     comparison=results/'lint-rebuild-comparison.json'
@@ -168,7 +192,7 @@ text+='''## 7 结论和验收边界
 
 已覆盖的备份、验证、恢复、取消和自动任务路径均满足对应断言。发布前复查能发现已测的源树变化，但不能提供多文件事务一致性；应用不支持网络备份、增量备份、系统守护和重启后自动续跑。
 
-仍需真实环境检查的项目包括系统文件选择器、跨机器运行、外置卷和网络卷、磁盘耗尽、强制终止、掉电持久性、异属主恢复、ACL与文件flags。未实现的功能不作为本轮通过项。
+仍需真实环境检查的项目包括系统文件选择器、跨机器运行、外置卷和网络卷、真实磁盘耗尽、掉电持久性、异属主恢复、ACL与文件flags。强制终止只验证了补测中列出的时机和输入；未实现的功能不作为本轮通过项。
 
 复现方式：make test；make sanitize；python3 tests/benchmark.py build/squirrel；应用可执行文件加--self-test与一个新的测试目录路径。长期测试使用tests/soak.py，运行目录必须为新目录；不要将工作用文件夹作为压力测试数据。
 '''

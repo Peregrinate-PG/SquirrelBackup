@@ -14,6 +14,10 @@
 | benchmark.json、benchmark-020.log | 单次本机性能测量及内容哈希检查 |
 | lint-020.json、lint-020.log | cpplint实际运行结果，不包括Objective-C++ |
 | fuzz.json、fuzz.log | 60秒Huffman随机输入测试；不是覆盖率引导的fuzzer |
+| archive-fuzz-020.json、archive-fuzz-020.log、archive-fuzz-020.pdf | 10分钟libFuzzer覆盖率引导测试，119,844次输入；范围为SQTREE解析与Huffman，次数不并入97项 |
+| archive-fuzz-reproduction-020.json | 随包脚本与LLVM源码重新构建后1000次短检查，独立于十分钟原始结果 |
+| archive-fuzz-corpus-020.json | 结束后实际保存813份语料的逐文件校验；原驱动最后一次轮询计数812保留原样 |
+| soak-interrupted-20261029.json | 第一次长测中断观察；52次正常检查不等于20小时通过，不与重跑时长相加 |
 | lint-rebuild-comparison.json | 长测冻结CLI与最后一次lint重建CLI的映射节逐字节比较 |
 | gui-demo-evidence.json、gui-demo-events.txt、video-validation.json | 实际应用演示事件、完整视频解码与时长 |
 | uml-validation.json | StarUML模型引用、官方CLI导出结果及模型哈希 |

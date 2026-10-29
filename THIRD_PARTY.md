@@ -8,6 +8,7 @@
 | macOS CommonCrypto / Security | AES-256-CBC、PKCS7、HMAC-SHA256、PBKDF2、SHA256、随机数 | 是，加密按库实现如实申报，保守按原扩展分 50% 估计 |
 | POSIX / C++17 标准库 | 文件系统、线程、系统调用 | 系统接口，未将其包装为自研密码或压缩算法 |
 | GoogleTest v1.15.2 | 测试框架，BSD-3-Clause | 否，不链接到正式程序；源码包保留原许可证 |
+| LLVM libFuzzer 14.0.6 | 可选的归档解析器模糊输入测试，Apache-2.0 WITH LLVM-exception | 否，不链接到正式程序；vendor/libfuzzer保留未修改源码、许可和来源校验值 |
 | cpplint 2.0.2 / clang-format 23.1.3 | 代码检查与格式化 | 否，开发工具 |
 | Python 与报告生成包 | 测试驱动、文档生成 | 否，备份后端不依赖 Python |
 | macOS AVFoundation / CoreVideo / CoreMedia | 后台演示视频编码及完整解码检查 | 否，仅演示与验证工具使用 |

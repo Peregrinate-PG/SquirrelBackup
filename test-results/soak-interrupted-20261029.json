@@ -1,0 +1,15 @@
+{
+  "status": "interrupted",
+  "observed_at": "2026-10-29T07:21:45.927207+00:00",
+  "last_checkpoint_at": "2026-10-29T07:14:43.293235+00:00",
+  "verified_elapsed_seconds": 15635.806151416997,
+  "verified_checkpoints": 52,
+  "observed_process_missing": {
+    "soak_pid": 16305,
+    "finalizer_pid": 28738
+  },
+  "process_checks": "Two read-only ps inspections found no soak, squirrel, caffeinate, collector or finalizer process. Tool session handles also absent.",
+  "cause": "unknown",
+  "continuous_20_hours_passed": false,
+  "original_status_preserved": true
+}

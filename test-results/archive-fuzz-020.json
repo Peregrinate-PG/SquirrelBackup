@@ -1,0 +1,65 @@
+{
+  "status": "passed",
+  "started_at": "2026-10-29T06:38:26.866076+00:00",
+  "requested_seconds": 600,
+  "seed": 20261029,
+  "engine": "LLVM libFuzzer 14.0.6",
+  "max_input_bytes": 65536,
+  "rss_limit_mb": 512,
+  "per_input_timeout_seconds": 5,
+  "scope": "SQTREE ArchiveReader parsing with null restoration destination, plus Huffman decode. No GUI, crypto envelope, filesystem restoration, or whole-project coverage claim.",
+  "binary_sha256": "ceb1c47215b06942e2f44830bb765c9c3f2f1b1e587e1bfe02195a6670030fd1",
+  "source_sha256": {
+    "src/archive.cpp": "b92259f1c0c01d0a6a799994d19e7ab4eb9326ac6b377dec8e4f37d3222e1403",
+    "src/huffman.cpp": "2a491aa8daea1f8cff7cfa641937ba5d17e847f942660aafb46a85af38ee818c",
+    "src/internal.h": "a950f4afa40cac31b0cf8bbedcb8811e797bf1c44834bb8fb1f1815de5898b4d",
+    "include/squirrel/backup.h": "21f1604ab23672c8a860b55b0e7bca0027f5e26d4e1c8fb600b83020201c97b5"
+  },
+  "seed_corpus": [
+    {
+      "name": "empty.tree",
+      "bytes": 120,
+      "sha256": "95490f730a2c09d3668156b83299c871e47488b86412e88e1cbb3a446180ff32",
+      "verified_outer_archive": true
+    },
+    {
+      "name": "types-raw.tree",
+      "bytes": 2729,
+      "sha256": "dbb9750a3d525fb812bae4e95acb5690973b725c33a519842d601f14ceb0d1a6",
+      "verified_outer_archive": true
+    },
+    {
+      "name": "types-compressed.tree",
+      "bytes": 2729,
+      "sha256": "4bc0132659561b385c24b417bae4e4b5f26dfdfd423e678d54ba441750fe11ce",
+      "verified_outer_archive": true
+    },
+    {
+      "name": "single-symbol.tree",
+      "bytes": 3625,
+      "sha256": "644ee678f6a00d4a9f6b86b0377de0d33529df1514bb45d8b060e99c29762488",
+      "verified_outer_archive": true
+    }
+  ],
+  "passed": true,
+  "nice": 15,
+  "pid": 31657,
+  "elapsed_seconds": 602.286,
+  "corpus_files": 812,
+  "exit_code": 0,
+  "finished_at": "2026-10-29T06:48:29.178807+00:00",
+  "stats": {
+    "number_of_executed_units": 119844,
+    "average_exec_per_sec": 199,
+    "new_units_added": 3008,
+    "slowest_unit_time_sec": 0,
+    "peak_rss_mb": 339
+  },
+  "last_done": {
+    "runs": 119844,
+    "coverage_counters": 2037,
+    "features": 9940
+  },
+  "artifacts": [],
+  "sanitizer_error_markers": false
+}

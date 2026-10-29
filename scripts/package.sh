@@ -35,6 +35,10 @@ else
   cp -R .tools/src/googletest/googletest "$RELEASE/source/vendor/googletest/"
   cp .tools/src/googletest/LICENSE "$RELEASE/source/vendor/googletest/"
 fi
+# Optional parser fuzzing also builds offline; it never links into the app.
+if [ -d vendor/libfuzzer ]; then
+  cp -R vendor/libfuzzer "$RELEASE/source/vendor/libfuzzer"
+fi
 # Include only this project's history, never a parent workspace's repository.
 if [ "$(git rev-parse --show-toplevel 2>/dev/null || true)" = "$(pwd -P)" ]; then
   git bundle create "$RELEASE/source-history.bundle" --all
