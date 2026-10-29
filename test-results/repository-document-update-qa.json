@@ -1,0 +1,89 @@
+{
+  "checked_at": "2026-10-29T11:30:29.537199+00:00",
+  "visual_review_passed": true,
+  "method": "Bundled DOCX render plus 1.8-scale PDF raster comparison; all eight changed pages inspected individually.",
+  "documents": [
+    {
+      "file": "docs/pdf/03_软件测试报告.pdf",
+      "pages": 4,
+      "changed_pages": [],
+      "sha256": "d29c7960522729bc004c27c6246085d70a6cd47c7537577d3aa22320533d7c80"
+    },
+    {
+      "file": "docs/pdf/06_演示与答辩指南.pdf",
+      "pages": 2,
+      "changed_pages": [
+        1
+      ],
+      "sha256": "ab9b589f7fc8beac3d4d6ca9138d985939f0c1ec4dd5af788da6cceb89c23c79"
+    },
+    {
+      "file": "docs/pdf/01_需求分析说明书.pdf",
+      "pages": 6,
+      "changed_pages": [
+        6
+      ],
+      "sha256": "cbf1f65f702baa5f3ab64e1de631c6921d02c7bdb0194a06bbae99477ab50099"
+    },
+    {
+      "file": "docs/pdf/10_学习证书办理说明.pdf",
+      "pages": 2,
+      "changed_pages": [],
+      "sha256": "f061e8abe8b5da92d0dc2f4455dbe93b4c1633eeb7d57df6c51fd87120581afd"
+    },
+    {
+      "file": "docs/pdf/09_复核结论与后续安排.pdf",
+      "pages": 2,
+      "changed_pages": [
+        2
+      ],
+      "sha256": "1aa968fc0b8fbae362edfd06ffbadc249843418c96768a0431220f3d27ff235f"
+    },
+    {
+      "file": "docs/pdf/02_系统设计文档.pdf",
+      "pages": 9,
+      "changed_pages": [],
+      "sha256": "d0cb37dbd1792d4d471fc003ba8839690124a016b80a7c25118c36faf90bcbb6"
+    },
+    {
+      "file": "docs/pdf/07_三人分工与协作方案.pdf",
+      "pages": 4,
+      "changed_pages": [
+        3
+      ],
+      "sha256": "4605cd22e8685b961e55d3431da62bb22f4481ed8da90acdf40dd9327a5011e2"
+    },
+    {
+      "file": "docs/pdf/04_StarUML绘图指导.pdf",
+      "pages": 2,
+      "changed_pages": [],
+      "sha256": "7613c46fabb154bc3a307a8c807d581fe6b868db343c3aad8435ca387f5ca193"
+    },
+    {
+      "file": "docs/pdf/05_实验报告.pdf",
+      "pages": 21,
+      "changed_pages": [
+        7
+      ],
+      "sha256": "ffa507d0b5d1099dfa3264558a6cc39af5bf6987d0d5bb23caa09f78603b2dae"
+    },
+    {
+      "file": "docs/pdf/08_提交前验收清单.pdf",
+      "pages": 2,
+      "changed_pages": [
+        2
+      ],
+      "sha256": "45405f8fa9b14fa24a2db652d23e40ca3e10e1a5898921146e95b86db66ec38f"
+    },
+    {
+      "file": "docs/第3组_松鼠备份_实验报告.pdf",
+      "pages": 28,
+      "changed_pages": [
+        10,
+        11
+      ],
+      "sha256": "72885c2a3d6edc2cc6694eb75e3cb31be2de294c49ceb5e5e60fe49b73740684"
+    }
+  ],
+  "product_source_changed": false
+}

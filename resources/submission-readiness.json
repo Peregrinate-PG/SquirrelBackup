@@ -2,9 +2,9 @@
   "version": "0.2.0",
   "online_group_confirmed": true,
   "online_group_basis": "User confirmed the group information is already filled in during the 2026-10-29 conversation.",
-  "online_repository_verified": false,
+  "online_repository_verified": true,
   "repository_account": "Peregrinate-PG",
-  "repository_status": "User authorized Codex to create and populate public Peregrinate-PG/SquirrelBackup. The first official device code expired without authorization; a new device login is required when the user is ready. Repository creation and remote verification are not complete.",
+  "repository_status": "Public repository created and initial source/history verified on 2026-10-29 through metadata and a fresh anonymous clone; evidence: test-results/repository-publication.json.",
   "repository_visibility": "public",
   "repository_creation_authorized": true,
   "report_complete": false,
@@ -13,7 +13,6 @@
   "final_visual_review_passed": false,
   "remaining": [
     "final_report_and_evidence",
-    "online_repository",
     "final_visual_and_package_review",
     "local_acceptance",
     "other_two_certificates"
@@ -23,5 +22,6 @@
   "local_acceptance_verified": false,
   "desktop_operations_status": "Paused at user request until they notify Codex; background work remains authorized.",
   "acceptance_computer": "李想的Mac",
-  "acceptance_scope_basis": "User requested all software, screenshot, presentation and model validation on the current Mac; no separate defense-computer check is required."
+  "acceptance_scope_basis": "User requested all software, screenshot, presentation and model validation on the current Mac; no separate defense-computer check is required.",
+  "repository_url": "https://github.com/Peregrinate-PG/SquirrelBackup"
 }

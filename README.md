@@ -80,7 +80,7 @@ GUI内部测试：build/SquirrelBackup.app/Contents/MacOS/SquirrelBackup --self-
 | presentations/第3组_松鼠备份_答辩.pptx | 9页答辩稿及讲者备注，另有PDF和讲稿 |
 | presentations/video/松鼠备份_115秒演示.mp4 | 实际应用后台演示，含中文字幕，无音轨 |
 
-组长杨梦宇2023150901002；郭畅2023040904017；李想2023150901012。实验环境为自主实验环境（macOS个人计算机），在线分组已由成员确认填写。三人按文件恢复、格式算法、界面任务分担主责，具体见07文档。李想的个人学习证书已取得，杨梦宇和郭畅的证书待本人提供；证书单独保存，不纳入软件源码。GitHub按Peregrinate-PG账号准备，尚未创建或上传在线仓库。最终材料的完成状态见resources/submission-readiness.json。
+组长杨梦宇2023150901002；郭畅2023040904017；李想2023150901012。实验环境为自主实验环境（macOS个人计算机），在线分组已由成员确认填写。三人按文件恢复、格式算法、界面任务分担主责，具体见07文档。李想的个人学习证书已取得，杨梦宇和郭畅的证书待本人提供；证书单独保存，不纳入软件源码。公开仓库为[https://github.com/Peregrinate-PG/SquirrelBackup](https://github.com/Peregrinate-PG/SquirrelBackup)，已上传并核对真实Git历史与源码。最终材料的完成状态见resources/submission-readiness.json。
 
 ## 功能边界
 

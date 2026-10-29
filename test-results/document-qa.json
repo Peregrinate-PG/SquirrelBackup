@@ -1,12 +1,12 @@
 {
   "version": "0.2.0",
-  "checked_at": "2026-10-29T10:07:29.986414+00:00",
+  "checked_at": "2026-10-29T11:30:29.537199+00:00",
   "documents": [
     {
       "name": "01_需求分析说明书",
       "pages": 6,
       "bounds_warnings": [],
-      "pdf_sha256": "aa5f640c0291ad37149fbb6a4d6a54c14c7961f172f0aa8c90d136298251aaa0"
+      "pdf_sha256": "cbf1f65f702baa5f3ab64e1de631c6921d02c7bdb0194a06bbae99477ab50099"
     },
     {
       "name": "02_系统设计文档",
@@ -30,31 +30,31 @@
       "name": "05_实验报告",
       "pages": 21,
       "bounds_warnings": [],
-      "pdf_sha256": "12f70b75976c84d9407a537dbffb7cd0699235075dd093e0a31e6dbf79d05e9b"
+      "pdf_sha256": "ffa507d0b5d1099dfa3264558a6cc39af5bf6987d0d5bb23caa09f78603b2dae"
     },
     {
       "name": "06_演示与答辩指南",
       "pages": 2,
       "bounds_warnings": [],
-      "pdf_sha256": "1cb2f1913217b524f46aacd64d52b13535c0dd955b38b0d0dbdd17d76cc454b8"
+      "pdf_sha256": "ab9b589f7fc8beac3d4d6ca9138d985939f0c1ec4dd5af788da6cceb89c23c79"
     },
     {
       "name": "07_三人分工与协作方案",
       "pages": 4,
       "bounds_warnings": [],
-      "pdf_sha256": "deb5234d00a6c6dc0ade067a2ebeea4931bb8f6e4a1666d936f62f278c6b4d6c"
+      "pdf_sha256": "4605cd22e8685b961e55d3431da62bb22f4481ed8da90acdf40dd9327a5011e2"
     },
     {
       "name": "08_提交前验收清单",
       "pages": 2,
       "bounds_warnings": [],
-      "pdf_sha256": "7c4daf8592291d3257215173f415b74f2976726a00e8ed1e5f870cc4be398df1"
+      "pdf_sha256": "45405f8fa9b14fa24a2db652d23e40ca3e10e1a5898921146e95b86db66ec38f"
     },
     {
       "name": "09_复核结论与后续安排",
       "pages": 2,
       "bounds_warnings": [],
-      "pdf_sha256": "52e6b954728e2206df50e7e779f13159280dd776a1ac313dc8968046b490b75d"
+      "pdf_sha256": "1aa968fc0b8fbae362edfd06ffbadc249843418c96768a0431220f3d27ff235f"
     },
     {
       "name": "10_学习证书办理说明",
@@ -64,18 +64,38 @@
     }
   ],
   "pages": 54,
-  "visual_review": "Current documents 06 (2 pages) and 07 (4 pages) were rendered and all six pages inspected individually after speech and execution-scope synchronization. Other eight PDF hashes remain unchanged from the preceding reviewed set. No clipping, missing glyphs or orphan headings observed.",
+  "visual_review": "Repository status updates inspected on reading pages 01:6, 05:7, 06:1, 07:3, 08:2 and 09:2; other pages pixel-identical at 1.8 scale to the previously reviewed set. All ten PDFs retain their page counts and have no bounds warnings.",
   "report_docx_qa": "report-visual-qa.json",
   "latest_reviewed_documents": [
     {
+      "name": "01_需求分析说明书",
+      "pages": 6,
+      "sha256": "cbf1f65f702baa5f3ab64e1de631c6921d02c7bdb0194a06bbae99477ab50099"
+    },
+    {
+      "name": "05_实验报告",
+      "pages": 21,
+      "sha256": "ffa507d0b5d1099dfa3264558a6cc39af5bf6987d0d5bb23caa09f78603b2dae"
+    },
+    {
       "name": "06_演示与答辩指南",
       "pages": 2,
-      "sha256": "1cb2f1913217b524f46aacd64d52b13535c0dd955b38b0d0dbdd17d76cc454b8"
+      "sha256": "ab9b589f7fc8beac3d4d6ca9138d985939f0c1ec4dd5af788da6cceb89c23c79"
     },
     {
       "name": "07_三人分工与协作方案",
       "pages": 4,
-      "sha256": "deb5234d00a6c6dc0ade067a2ebeea4931bb8f6e4a1666d936f62f278c6b4d6c"
+      "sha256": "4605cd22e8685b961e55d3431da62bb22f4481ed8da90acdf40dd9327a5011e2"
+    },
+    {
+      "name": "08_提交前验收清单",
+      "pages": 2,
+      "sha256": "45405f8fa9b14fa24a2db652d23e40ca3e10e1a5898921146e95b86db66ec38f"
+    },
+    {
+      "name": "09_复核结论与后续安排",
+      "pages": 2,
+      "sha256": "1aa968fc0b8fbae362edfd06ffbadc249843418c96768a0431220f3d27ff235f"
     }
   ]
 }

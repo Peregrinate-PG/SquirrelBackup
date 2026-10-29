@@ -223,7 +223,7 @@
 <p>每完成一轮验证，比较剩余任务，而不是只比较最初计划。若某人遇到权限或平台阻碍超过半天，另一人可接手可独立推进的测试或文档；转交时同时调整任务点，避免名义均分、实际集中。现有代码中发现的新缺陷由主维护人修复，另一人复核，第三人运行集成测试。</p>
 <h2>6 公共接口与协作边界</h2>
 <p>公开接口以 include/squirrel/backup.h 为准。Filter、Entry、Summary 和选项结构的修改必须告知另外两人；归档格式版本变更由 B 提议，A 评估恢复兼容性，C 检查 GUI/CLI 和发布包。密码不得写入共享聊天、截图或代码配置。</p>
-<p>建议使用 main 加 feat/files、feat/archive、feat/ui-schedule 三条功能分支。合入 main 前执行相应模块测试，涉及公共头或格式时执行完整 make test。A 复核 B，B 复核 C，C 复核 A，涉及数据安全时增加另一人的复核。原交付物只有本地历史，尚无已完成在线仓库的证据。第2讲第38页将Github/Gitee在线版本库和git列为项目要求，Teambition或类似看板为鼓励项；由本人账号补齐实际在线仓库和后续记录，不把建议工作流当成已经发生的协作。</p>
+<p>建议使用 main 加 feat/files、feat/archive、feat/ui-schedule 三条功能分支。合入 main 前执行相应模块测试，涉及公共头或格式时执行完整 make test。A 复核 B，B 复核 C，C 复核 A，涉及数据安全时增加另一人的复核。公开仓库Peregrinate-PG/SquirrelBackup已保存并核验真实历史。第2讲第38页要求GitHub/Gitee与git，Teambition等看板为鼓励项。后续用各自账号记录实际修改和评审，本段工作流是建议。</p>
 <p>现有 tests/core_test.cpp 由 B 统一维护合并；后续新增测试可按模块分到独立文件，再更新 Makefile，以减少冲突。GUI 和 Scheduler 的日志回调、停止标志及错误语义由 C 维护，A/B 不直接在工作线程操作 AppKit 控件。</p>
 <h2>7 共同里程碑与验收</h2>
 <table>

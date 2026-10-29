@@ -90,6 +90,12 @@ def main():
         raise SystemExit('Preparation expects the reviewed main branch')
     refs = git('for-each-ref', '--format=%(refname) %(objectname)',
                'refs/heads', 'refs/tags').decode().splitlines()
+    publication_path = ROOT / 'test-results/repository-publication.json'
+    publication = json.loads(publication_path.read_text()) if publication_path.exists() else None
+    repository_status = (
+        f"公开仓库为{publication['repository_url']}，已有远程核验记录。"
+        f"记录对应提交{publication['verified_head'][:12]}，本脚本不重新检查线上状态。"
+        if publication else '目前只有本地材料，尚无远程核验记录。')
     with tempfile.TemporaryDirectory(prefix='repository-preparation-', dir=target.parent) as temp:
         stage = Path(temp) / target.name
         stage.mkdir()
@@ -127,7 +133,8 @@ def main():
             'bundle_sha256': digest(bundle), 'tracked_files_verified': len(files),
             'local_clone_and_fsck_passed': True,
             'offline_test_dependency_in_history': True,
-            'remote_repository_created': False, 'remote_write_performed': False,
+            'remote_repository_created_by_this_run': False, 'remote_write_performed': False,
+            'existing_repository_evidence': publication,
             'personal_certificates_included': False,
             'scope': 'Current local preparation snapshot; regenerate after final document review.',
         }
@@ -137,7 +144,7 @@ def main():
             git('log', '--all', '--date=iso-strict', '--format=%h %ad %an <%ae> %s'))
         guide = f'''# 第3组 GitHub仓库准备材料
 
-拟用账号为Peregrinate-PG，仓库名SquirrelBackup，默认分支main。材料已在本地准备并验证，没有建立远程仓库，也没有上传文件。本快照对应提交{head[:12]}；报告补充和长测结束后应重新生成，最后发布经核对的版本。
+账号为Peregrinate-PG，仓库名SquirrelBackup，默认分支main。{repository_status}本地快照对应提交{head[:12]}；报告补充和长测结束后应重新生成，最后发布经核对的版本。
 
 ## 包内材料
 
@@ -158,9 +165,9 @@ make test
 
 构建平台为macOS 13及以上的Apple Silicon，需要Command Line Tools。测试依赖已纳入历史，克隆后可直接离线构建，无需再复制依赖或下载软件包。
 
-## 创建与上传
+## 后续同步
 
-成员已授权在Peregrinate-PG账号下创建公开的SquirrelBackup仓库。新仓库不预先生成README、许可证或.gitignore；完成GitHub官方登录授权后，可在上面克隆的SquirrelBackup目录执行以下命令。此准备脚本只生成本地材料，不执行创建或上传；实际完成状态以远程核验记录为准。
+成员已授权使用公开的SquirrelBackup仓库。先检查实际仓库状态；已有仓库无需再次创建。完成GitHub登录授权后，可在上面从bundle克隆的SquirrelBackup目录执行以下命令。此脚本只生成本地材料，不创建仓库或上传文件。
 
 ```sh
 git remote remove origin
@@ -168,7 +175,7 @@ git remote add origin https://github.com/Peregrinate-PG/SquirrelBackup.git
 git push -u origin main
 ```
 
-首次推送后应重新读取在线仓库的默认分支提交号，与repository-plan.json的head比较。若材料已更新，先重新准备并核对新提交号。网页上能看到文件和完整历史后，再把实际链接写入报告、答辩材料和提交检查表；拟定地址不能算在线仓库完成证据。
+每次推送后重新读取远程main的提交号，与repository-plan.json的head比较。若材料已更新，先重新准备并核对新提交号。遇到远程已有不同修改时先复核和合并，不使用强制推送；旧核验记录不能代替对新提交的检查。
 
 程序安装包和课程提交包单独交付，不必把历史ZIP、个人证书、账号会话或运行时缓存加进源码仓库。准备过程会扫描可达历史中的常见密钥格式和私密文件名，检查结果见history-audit.json；该扫描有明确范围，不等于证明不存在任何形式的敏感信息。
 '''

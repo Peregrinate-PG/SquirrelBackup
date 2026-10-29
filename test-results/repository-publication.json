@@ -1,0 +1,17 @@
+{
+  "schema": 1,
+  "verified_at": "2026-10-29T11:27:24.985428+00:00",
+  "repository_url": "https://github.com/Peregrinate-PG/SquirrelBackup",
+  "repository_id": 1438323464,
+  "owner": "Peregrinate-PG",
+  "visibility": "public",
+  "default_branch": "main",
+  "verified_head": "83a91b6c8e047aa3264898d3334937cacc81c084",
+  "tracked_files": 441,
+  "history_commit_count": 26,
+  "anonymous_clone_passed": true,
+  "all_tracked_files_and_executable_bits_match": true,
+  "reachable_commit_history_and_tags_match": true,
+  "git_fsck_passed": true,
+  "scope": "Initial public upload verified through GitHub metadata and a fresh anonymous network clone. Later commits require their own remote HEAD check. No personal certificates or task authentication directory included."
+}

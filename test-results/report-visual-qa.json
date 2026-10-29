@@ -1,8 +1,8 @@
 {
   "version": "0.2.0",
-  "checked_at": "2026-10-29T09:06:50.565676+00:00",
-  "docx_sha256": "315806428c8ad876bc1617d822f69e4af8201ec8c9278e55340ef211a6248204",
-  "pdf_sha256": "8aba5f4935a9fc988bf6b3c1bb28e40b1bde8268ae9b523a2e7484dd05dc307d",
+  "checked_at": "2026-10-29T11:30:29.537199+00:00",
+  "docx_sha256": "d6668e277525cee2b62162340270c635d17f7f0861ca1108aaac79f95ebb8cc9",
+  "pdf_sha256": "72885c2a3d6edc2cc6694eb75e3cb31be2de294c49ceb5e5e60fe49b73740684",
   "pages": 28,
   "reviewed_pages": [
     1,
@@ -35,8 +35,8 @@
     28
   ],
   "visual_review_passed": true,
-  "review_basis": "Canonical report-render-qa-13 had all pages reviewed. Updated pages 2,21,25,26,27,28 were inspected individually in render-v9; v10 only changes page28, also inspected. The other 22 pages were confirmed pixel-identical to the canonical render. No clipped table, isolated heading or blank trailing page observed.",
-  "final_render": "work/submission-report-preview/render-v10",
+  "review_basis": "Repository address and verified publication status updated. Pages 10 and 11 inspected individually after bundled render_docx rendering; all other 26 pages pixel-identical at 1.8 scale to the previously reviewed report. No clipping or missing glyphs observed.",
+  "final_render": "work/github-public/document-update/render",
   "blank_trailing_page": false,
   "isolated_headings": false,
   "page_png_sha256": {
@@ -49,8 +49,8 @@
     "7": "79af7c6098bc2ecc878fd4b0d4a31872cfad8a6d0af379abf29af0dc607c02a5",
     "8": "4142c6303ebf9b166a85a099790f57731c2e878a2c25f450497930ea6801db2a",
     "9": "83ba8048aeccdfe94bf40eb0fac3d9e786f89e841b457e0ee650e821e4912636",
-    "10": "ad15d3db6b34542c33f38f9206972b8a94bd4a4543b525b9cddef0d877f3c3df",
-    "11": "0e5bfd05c5891ceb9b0e99802f54c187f892d27ebab4bbb601ccfc581a648622",
+    "10": "0eb0644e06018b9280ab6eaf93cad2b3a23f95401db66a61f8dbae3ea2e741f8",
+    "11": "6f7b312dc44d7703d148f7132f31eab045be0a06af42989d5ab04c4484cfabaa",
     "12": "62bd639aa089888ce15577acddcae4107fec00c6ca94f780a9193390dfb75254",
     "13": "9c8611702d63c6ad10c76a99bc04a13364e92afd7c00e6439a63db54835a23ef",
     "14": "fcb8ebaed1c7e6d88ce1f36042d06980caa646cb837870fc9204d1bb42231f87",

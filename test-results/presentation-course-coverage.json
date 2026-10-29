@@ -25,7 +25,7 @@
       "slides": [
         3
       ],
-      "evidence": "Git main及真实历史、cpplint与Google C++规范；在线仓库尚待授权完成"
+      "evidence": "Git main及真实历史、cpplint与Google C++规范；公开仓库已上传真实历史并核验，见repository-publication.json"
     },
     {
       "requirement": "软件测试与工具",
@@ -67,5 +67,6 @@
   "native_application_playback_verified": false,
   "speech_planned_seconds": 180,
   "speech_actual_recitation_verified": false,
-  "online_repository_verified": false
+  "online_repository_verified": true,
+  "repository_url": "https://github.com/Peregrinate-PG/SquirrelBackup"
 }
