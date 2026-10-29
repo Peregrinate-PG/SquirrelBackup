@@ -1,6 +1,6 @@
 {
   "version": "0.2.0",
-  "checked_at": "2026-10-29T09:06:50.565676+00:00",
+  "checked_at": "2026-10-29T10:07:29.986414+00:00",
   "documents": [
     {
       "name": "01_需求分析说明书",
@@ -36,13 +36,13 @@
       "name": "06_演示与答辩指南",
       "pages": 2,
       "bounds_warnings": [],
-      "pdf_sha256": "12981b9dca64a5beba05e63deea6ef18f2d388920567b619e67894e760504e5b"
+      "pdf_sha256": "1cb2f1913217b524f46aacd64d52b13535c0dd955b38b0d0dbdd17d76cc454b8"
     },
     {
       "name": "07_三人分工与协作方案",
       "pages": 4,
       "bounds_warnings": [],
-      "pdf_sha256": "5e843104e1bb41a6cbb169326329dede13bf6616d04b026099ee6997b9659978"
+      "pdf_sha256": "deb5234d00a6c6dc0ade067a2ebeea4931bb8f6e4a1666d936f62f278c6b4d6c"
     },
     {
       "name": "08_提交前验收清单",
@@ -64,6 +64,18 @@
     }
   ],
   "pages": 54,
-  "visual_review": "Unchanged pages matched the previously reviewed canonical PDFs. All changed pages were inspected; seven retained changed pages matched render-v8 pixel-for-pixel at 1.8 scale. Latest guide pages 06:1,2; 08:1,2; 09:2 and report reading page05:21 were inspected individually. No clipping or orphan headings observed.",
-  "report_docx_qa": "report-visual-qa.json"
+  "visual_review": "Current documents 06 (2 pages) and 07 (4 pages) were rendered and all six pages inspected individually after speech and execution-scope synchronization. Other eight PDF hashes remain unchanged from the preceding reviewed set. No clipping, missing glyphs or orphan headings observed.",
+  "report_docx_qa": "report-visual-qa.json",
+  "latest_reviewed_documents": [
+    {
+      "name": "06_演示与答辩指南",
+      "pages": 2,
+      "sha256": "1cb2f1913217b524f46aacd64d52b13535c0dd955b38b0d0dbdd17d76cc454b8"
+    },
+    {
+      "name": "07_三人分工与协作方案",
+      "pages": 4,
+      "sha256": "deb5234d00a6c6dc0ade067a2ebeea4931bb8f6e4a1666d936f62f278c6b4d6c"
+    }
+  ]
 }

@@ -254,5 +254,10 @@
     "system file-picker or manual GUI acceptance",
     "ongoing soak-test completion"
   ],
-  "current_state_note": "Document 10 reflects real submitted training work and released ECS while certificate holder-name confirmation/issuance remains pending. No certificate completion inferred."
+  "current_state_note": "Historical review snapshot from 2026-10-29 13:09. Its PDF and certificate-state claims refer to that time. Current reviewed PDFs are recorded in document-qa.json; Li Xiang certificate issuance was subsequently verified in doc10-certificate-update-qa.json.",
+  "historical_record": true,
+  "superseded_by": {
+    "current_pdf_hashes_and_visual_review": "document-qa.json",
+    "later_certificate_update": "doc10-certificate-update-qa.json"
+  }
 }
