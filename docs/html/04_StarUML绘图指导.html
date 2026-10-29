@@ -1,420 +1,63 @@
-<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>松鼠备份 StarUML 手工绘图指导</title><style>body{max-width:900px;margin:48px auto;padding:0 32px;font:16px/1.85 -apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif;color:#202833}h1{color:#111;font-size:30px;line-height:1.5;margin-bottom:32px}h2{margin-top:36px;font-size:23px}h3{margin-top:24px;font-size:19px}table{border-collapse:collapse;width:100%;font-size:13px;line-height:1.65;margin:18px 0}th,td{border:1px solid #dde1e4;padding:8px 10px;text-align:left;vertical-align:top;overflow-wrap:anywhere}th{background:#edf0f1}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f4f5f6;padding:16px}code{font-size:.9em}a{color:#914321}nav{margin-bottom:28px;color:#777}footer{margin-top:44px;color:#777;font-size:12px}@media print{body{margin:0;padding:0;font-size:10pt}nav{display:none}h1,h2,h3,h4{break-after:avoid}tr{break-inside:avoid}thead{display:table-header-group}@page{size:A4;margin:18mm}}</style><nav><a href="index.html">文档目录</a></nav><main><h1>松鼠备份 StarUML 手工绘图指导</h1>
-<p>本指导供你在 StarUML 中手工完成课程建模，内容依据松鼠备份 0.1.1 的需求与公开接口。先冻结当前接口和行为，再开始绘图；所有用例编号与01需求说明书一致。本文不包含生成的 UML 图、PlantUML、Mermaid 或可直接导入的模型。本轮仅更新绘图指导，模型和图仍待完成；这不表示课程禁止生成可编辑模型。推荐先完成一张用例图、一张核心类图、一张构件图、备份与恢复各一张顺序图和一张任务状态图，再插入实验报告对应栏目。</p>
-<h2>1 建立项目与通用操作</h2>
-<p>安装适用于 Mac 的 StarUML，并按其许可条件使用。新建项目后保存为 SquirrelBackup.mdj。右侧 Model Explorer 保存模型元素，左侧 Toolbox 提供绘图元素，Property Editor 设置名字和属性。先选模型或包，再通过 Model &gt; Add Diagram &gt; 对应图类型创建图；也可使用模型节点右键菜单。该流程依据官方 Managing Diagrams 文档。</p>
-<p>建议用包分组：Requirements、Architecture、Core、Scenarios、States。图名按 UC_总体用例、CD_核心类、CMP_系统构件、SEQ_创建备份、SEQ_安全恢复、STM_自动任务命名。双击模型元素可编辑名字，类图可在 QuickEdit 添加属性和操作。不要把快捷键作为唯一操作方式，Mac 版本的键位可能不同，以菜单和右键可见项为准。</p>
-<p>所有图统一使用清晰的中英文名字，避免把代码所有辅助函数塞进一张图。图片导出前检查文字和箭头不重叠；保留 mdj 源文件。若导出菜单与版本不同，在 File 中查找 Export 相关项或使用应用内帮助确认。不要用屏幕上看不清的缩略图替代建模文件。</p>
-<h2>2 用例图 UC_总体用例</h2>
-<p>在 Requirements 包中建立 Use Case Diagram。用 Toolbox 的 Actor 放置“本机用户”，使用 Use Case Subject 建立名为“松鼠备份”的系统边界，在边界内放置下表用例。参与者放在系统边界之外。这些元素的创建方法可参见官方 Use Case Diagram 文档。</p>
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>松鼠备份 UML 模型与复核说明</title><style>body{max-width:900px;margin:48px auto;padding:0 32px;font:16px/1.85 -apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif;color:#202833}h1{color:#111;font-size:30px;line-height:1.5;margin-bottom:32px}h2{margin-top:36px;font-size:23px}h3{margin-top:24px;font-size:19px}table{border-collapse:collapse;width:100%;font-size:13px;line-height:1.65;margin:18px 0}th,td{border:1px solid #dde1e4;padding:8px 10px;text-align:left;vertical-align:top;overflow-wrap:anywhere}th{background:#edf0f1}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f4f5f6;padding:16px}code{font-size:.9em}a{color:#914321}nav{margin-bottom:28px;color:#777}footer{margin-top:44px;color:#777;font-size:12px}@media print{body{margin:0;padding:0;font-size:10pt}nav{display:none}h1,h2,h3,h4{break-after:avoid}tr{break-inside:avoid}thead{display:table-header-group}@page{size:A4;margin:18mm}}</style><nav><a href="index.html">文档目录</a></nav><main><style>img{max-width:100%;height:auto}</style><h1>松鼠备份 UML 模型与复核说明</h1>
+<p>版本0.2.0。可编辑模型为docs/uml/SquirrelBackup.mdj，共七张图。模型按当前公开头文件和实现流程组织，已通过StarUML 7.1.1命令行读取与导出检查。报告插图由本项目独立SVG排版程序生成；StarUML试用版原始导出的水印保留在校验材料中，没有修改程序或移除水印。</p>
+<h2>1 打开模型</h2>
+<p>在StarUML中选择File → Open，打开SquirrelBackup.mdj。模型树包含需求用例、核心静态模型、构件、备份和恢复交互、自动任务状态。双击各图即可编辑；请另存为自己的复核版本，避免覆盖交付基线。</p>
 <table>
 <thead>
 <tr>
-<th>编号</th>
-<th>用例名</th>
-<th>用户关联</th>
-<th>需求</th>
+<th>图</th>
+<th>对应报告位置</th>
+<th>应核对的内容</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>UC-01</td>
-<td>创建备份</td>
-<td>是</td>
-<td>FR-01、03、04、12、13、14</td>
+<td>01 系统用例图</td>
+<td>需求2.2</td>
+<td>UC-01至UC-08与文字描述对应，定时和变化任务复用创建备份</td>
 </tr>
 <tr>
-<td>UC-02</td>
-<td>恢复备份</td>
-<td>是</td>
-<td>FR-02、03、04</td>
+<td>02 核心服务类图</td>
+<td>设计3.1</td>
+<td>真实类名和依赖方向，静态方法标记，Operation取消与回调</td>
 </tr>
 <tr>
-<td>UC-03</td>
-<td>验证完整性</td>
-<td>是</td>
-<td>FR-15</td>
+<td>03 配置与记录类图</td>
+<td>设计3.1</td>
+<td>BackupOptions拥有Filter，Summary收集0..*个Entry</td>
 </tr>
 <tr>
-<td>UC-04</td>
-<td>查看内容</td>
-<td>是</td>
-<td>FR-16</td>
+<td>04 系统构件图</td>
+<td>设计2.1</td>
+<td>GUI、CLI共用核心库；系统密码库与文件系统依赖</td>
 </tr>
 <tr>
-<td>UC-05</td>
-<td>配置筛选</td>
-<td>是</td>
-<td>FR-05 至 11</td>
+<td>05 创建备份顺序图</td>
+<td>设计4.1</td>
+<td>扫描、打包、封装、源目录复查、独占发布</td>
 </tr>
 <tr>
-<td>UC-06</td>
-<td>启动定时任务</td>
-<td>是</td>
-<td>FR-18、19</td>
+<td>06 验证恢复顺序图</td>
+<td>设计4.2</td>
+<td>认证通过后解密，暂存恢复、元数据、独占发布</td>
 </tr>
 <tr>
-<td>UC-07</td>
-<td>启动实时任务</td>
-<td>是</td>
-<td>FR-20、19</td>
-</tr>
-<tr>
-<td>UC-08</td>
-<td>停止自动任务</td>
-<td>是</td>
-<td>FR-21</td>
+<td>07 自动任务状态图</td>
+<td>设计4.4</td>
+<td>首次备份、等待、失败重试、停止和成功次数上限</td>
 </tr>
 </tbody>
 </table>
-<p>用 Association 把用户连接到以上可操作用例。恢复备份和查看内容都必须验证完整性，分别添加 Include，方向从基础用例指向被包含的“验证完整性”。定时和实时任务调用创建备份，可各用 Include 指向“创建备份”，旁边添加 Note 注明重复执行和停止条件。配置筛选是创建前的可选设置，不需要为显示复杂度硬加 extend；可关联用户并以 Note 说明影响创建与自动任务。</p>
-<p>压缩、加密不必单独作为顶层用户目标，可在“创建备份”备注中列为可选处理。不要添加“云用户”“登录”“网盘”等未实现功能。系统时钟是实现机制，初版没有独立外部定时服务，因此不必新增虚构参与者。</p>
-<p>检查：系统边界名字正确；用户位于外部；include 箭头指向验证用例；用例名是用户目标而非 C++ 函数；需求文档中的前置、基本、异常和后置条件能逐一对上。完成后插入需求说明书系统用例位置。</p>
-<h2>3 类图 CD_核心类</h2>
-<p>在 Core 包中建立 Class Diagram，使用 Class 元素放入 BackupService、FileScanner、ArchiveWriter、ArchiveReader、HuffmanCodec、CryptoEnvelope、Scheduler、BackupOptions、ScheduleOptions、Filter、Entry、Summary。FileType 可用 Enumeration。它们对应公开头文件，内部 Writer/Reader/Fd/TempDir 如需展示可另建辅助类图，避免主图过密。</p>
-<p>双击类后通过 Add Attribute 和 Add Operation 填写属性和方法；可以使用右侧 Property Editor 核对 visibility、type 和 multiplicity。属性格式示例为 <code>+compress: bool = true</code>，操作示例为 <code>+backup(source: path, archive: path, options: BackupOptions): Summary</code>。这是 UML 展示签名，可适度省略 const、引用和默认回调，但实际方法名不能随意改动。</p>
-<table>
-<thead>
-<tr>
-<th>类</th>
-<th>应填属性</th>
-<th>应填操作</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>BackupService</td>
-<td>无持久属性</td>
-<td>backup、inspect、restore</td>
-</tr>
-<tr>
-<td>FileScanner</td>
-<td>无持久属性</td>
-<td>scan(root, filter, log): vector<Entry></td>
-</tr>
-<tr>
-<td>ArchiveWriter</td>
-<td>无持久属性</td>
-<td>write(source, entries, output, compress, log)</td>
-</tr>
-<tr>
-<td>ArchiveReader</td>
-<td>无持久属性</td>
-<td>read(plain, destination, log, collect): Summary</td>
-</tr>
-<tr>
-<td>HuffmanCodec</td>
-<td>无持久属性</td>
-<td>encode(input): Bytes；decode(input, expected): Bytes</td>
-</tr>
-<tr>
-<td>CryptoEnvelope</td>
-<td>无持久属性</td>
-<td>seal(plain, output, password)；open(archive, plain, password)</td>
-</tr>
-<tr>
-<td>Scheduler</td>
-<td>无持久属性</td>
-<td>run(source, repository, backup, options, stop, log)</td>
-</tr>
-<tr>
-<td>BackupOptions</td>
-<td>filter、compress、password</td>
-<td>无</td>
-</tr>
-<tr>
-<td>ScheduleOptions</td>
-<td>interval_seconds、keep、poll_seconds、watch、max_runs</td>
-<td>无</td>
-</tr>
-<tr>
-<td>Filter</td>
-<td>excludes、path_pattern、name_pattern、types、min_size、max_size、since、until、owner</td>
-<td>excluded、accepts</td>
-</tr>
-<tr>
-<td>Entry</td>
-<td>path、link、type、mode、uid、gid、mtime、mtime_ns、atime、atime_ns、size、xattrs；扫描专用device/inode/ctime/ctime_ns</td>
-<td>无</td>
-</tr>
-<tr>
-<td>Summary</td>
-<td>entries、files、bytes、archive_bytes、items</td>
-<td>无</td>
-</tr>
-</tbody>
-</table>
-<p>关系按下表连接。静态调用使用 Dependency，箭头指向被依赖者；不要用实体 Association 冒充长期拥有关系。组合关系实心菱形位于拥有者一侧。</p>
-<table>
-<thead>
-<tr>
-<th>起点</th>
-<th>终点</th>
-<th>关系</th>
-<th>基数或备注</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>BackupService</td>
-<td>FileScanner</td>
-<td>Dependency</td>
-<td>调用 scan</td>
-</tr>
-<tr>
-<td>BackupService</td>
-<td>ArchiveWriter</td>
-<td>Dependency</td>
-<td>调用 write</td>
-</tr>
-<tr>
-<td>BackupService</td>
-<td>ArchiveReader</td>
-<td>Dependency</td>
-<td>调用 read</td>
-</tr>
-<tr>
-<td>BackupService</td>
-<td>CryptoEnvelope</td>
-<td>Dependency</td>
-<td>调用 seal/open</td>
-</tr>
-<tr>
-<td>ArchiveWriter</td>
-<td>HuffmanCodec</td>
-<td>Dependency</td>
-<td>编码</td>
-</tr>
-<tr>
-<td>ArchiveReader</td>
-<td>HuffmanCodec</td>
-<td>Dependency</td>
-<td>解码</td>
-</tr>
-<tr>
-<td>Scheduler</td>
-<td>BackupService</td>
-<td>Dependency</td>
-<td>循环创建快照</td>
-</tr>
-<tr>
-<td>BackupOptions</td>
-<td>Filter</td>
-<td>Composition</td>
-<td>1 对 1</td>
-</tr>
-<tr>
-<td>Summary</td>
-<td>Entry</td>
-<td>Composition</td>
-<td>1 对 0..*</td>
-</tr>
-<tr>
-<td>Entry</td>
-<td>FileType</td>
-<td>Dependency</td>
-<td>type 枚举属性</td>
-</tr>
-</tbody>
-</table>
-<p>将 Filter、Entry、Summary 归到值对象一排，业务服务居中，算法和格式类分列。静态工具类的方法标记为 static，BackupService 的业务方法不是 static。没有接口继承层次，不画 Generalization。如果组合已经显示成连线，可在类框中省略重复的对应属性以降低冗余，并在注释中说明。</p>
-<p>检查：名字和源码一致；静态标记正确；拥有关系有基数；不要把两个入口各画成一套 BackupService 业务实现。Entry 的内存扫描字段与归档持久化字段需区分；以冻结后的 backup.h 为准，未写入归档的检测字段不得画成格式已经新增字段。完成后插入系统设计文档 3.1 系统对象模型。</p>
-<h2>4 构件图 CMP_系统构件</h2>
-<p>在 Architecture 包中建立 Component Diagram。摆放 GUI Executable、CLI Executable、Core Static Library 三个项目构件，外部构件为 Cocoa/AppKit、CommonCrypto/Security、macOS File System。GUI 与 CLI 都依赖 Core Static Library；GUI 额外依赖 Cocoa；核心库依赖密码库与文件系统。</p>
-<p>在 Core 的 Note 中列出 Scanner、Archive、Huffman、Envelope、Scheduler 模块即可，不要把类图完全复制过来。接口可标注“C++ backup.h”，因为当前是静态库和 C++ 编译期链接；不要标注成已经实现的 REST、DLL 或稳定 C ABI。GUI 的后台队列与 C++ 方法调用发生在同一进程，不能画成远端服务。</p>
-<p>如需子系统构件图，单独在 Core 包画“扫描与筛选”“树记录编解码”“密码封装”“任务调度”四个构件；依赖方向由调用方指向提供方。完成后插入总体设计 2.1；顶层图为必选，子系统图按教师要求补充。</p>
-<h2>5 顺序图 SEQ_创建备份</h2>
-<p>在 Scenarios 包建立 Sequence Diagram。使用 Lifeline 放置以下生命线，自左向右为 user、ui:SquirrelController、service:BackupService、scanner:FileScanner、writer:ArchiveWriter、codec:HuffmanCodec、envelope:CryptoEnvelope、filesystem。工具类生命线代表调用目标，不意味着源码创建了持久实例。</p>
-<p>使用 Message 表达方法调用，返回使用 reply；按时间从上到下布局。官方 Sequence Diagram 文档说明可通过 messageSort 设置同步、异步和返回。项目中的 GUI 到工作队列属于异步调度；工作队列内部的核心方法调用是同步。</p>
-<table>
-<thead>
-<tr>
-<th>顺序</th>
-<th>发送方到接收方</th>
-<th>消息</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>1</td>
-<td>user 到 ui</td>
-<td>点击开始备份，提交路径和选项</td>
-</tr>
-<tr>
-<td>2</td>
-<td>ui 到 ui</td>
-<td>收集输入，禁用业务按钮，启动后台工作</td>
-</tr>
-<tr>
-<td>3</td>
-<td>ui 到 service</td>
-<td>backup(source, archive, options, log)</td>
-</tr>
-<tr>
-<td>4</td>
-<td>service 到 filesystem</td>
-<td>检查输出不存在且不在源树内</td>
-</tr>
-<tr>
-<td>5</td>
-<td>service 到 scanner</td>
-<td>scan(root, filter)</td>
-</tr>
-<tr>
-<td>6</td>
-<td>scanner 到 service</td>
-<td>返回条目列表</td>
-</tr>
-<tr>
-<td>7</td>
-<td>service 到 writer</td>
-<td>write(source, entries, tempTree, compress)</td>
-</tr>
-<tr>
-<td>8</td>
-<td>writer 到 filesystem</td>
-<td>安全打开文件、读一个块、检查变化</td>
-</tr>
-<tr>
-<td>9</td>
-<td>writer 到 codec</td>
-<td>encode(block)，仅开启压缩时</td>
-</tr>
-<tr>
-<td>10</td>
-<td>writer 到 filesystem</td>
-<td>写块和树记录，完成后关闭</td>
-</tr>
-<tr>
-<td>11</td>
-<td>service 到 envelope</td>
-<td>seal(tempTree, sealed, password)</td>
-</tr>
-<tr>
-<td>12</td>
-<td>envelope 到 filesystem</td>
-<td>写完整性封装或密文及认证标签</td>
-</tr>
-<tr>
-<td>13</td>
-<td>service 到 filesystem</td>
-<td>fsync 和 link 独占发布</td>
-</tr>
-<tr>
-<td>14</td>
-<td>service 到 ui</td>
-<td>返回 Summary 或异常</td>
-</tr>
-<tr>
-<td>15</td>
-<td>ui 到 ui</td>
-<td>主队列显示结果、启用按钮</td>
-</tr>
-</tbody>
-</table>
-<p>用 loop 片段包住文件和块处理；用 opt 标记压缩和加密可选分支；用 alt 表达成功与读取／权限／磁盘失败。失败分支返回错误并清理暂存，不发布新备份。不要把备份“成功提示”放在 link 成功之前。</p>
-<h2>6 顺序图 SEQ_安全恢复</h2>
-<p>生命线为 user、ui、service:BackupService、envelope:CryptoEnvelope、reader:ArchiveReader、codec:HuffmanCodec、filesystem。主要消息如下：</p>
-<ol>
-<li>用户提交备份、密码和新目标路径。</li>
-<li>service 检查目标路径不存在，并创建私有暂存目录。</li>
-<li>envelope.open 读取外层头并计算全部 HMAC／摘要。</li>
-<li>alt 校验失败：抛异常，不创建可见恢复目标；成功：继续第二遍解密／复制。</li>
-<li>reader.read 验证根记录、条目数量与相对路径。</li>
-<li>loop 各条目：验证父节点和类型，创建目录、文件、软硬链接或 FIFO。</li>
-<li>loop 普通文件各块：必要时 codec.decode，写入文件。</li>
-<li>reader 恢复非目录元数据，目录延迟逆序处理；检查 footer 和 EOF。</li>
-<li>service 使用 renamex_np(RENAME_EXCL) 发布恢复目录。</li>
-<li>返回 Summary，UI 主队列显示完成。</li>
-</ol>
-<p>在失败 alt 分支注明“原有目标不覆盖，私有目录尝试清理”。owner/xattr 恢复失败的警告属于可降级分支，不等于文件内容恢复失败。顺序图应表现先验证后解密，不要根据 CBC 机制臆造先试密码解密再认证。</p>
-<h2>7 状态图 STM_自动任务</h2>
-<p>在 States 包建立 Statechart Diagram。放置 Initial、Idle、Scanning、BackingUp、Waiting、RetryWaiting、Stopping 和 Final。对转换写“事件 [守卫] / 动作”：</p>
-<table>
-<thead>
-<tr>
-<th>起点</th>
-<th>终点</th>
-<th>触发与动作</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Initial</td>
-<td>Idle</td>
-<td>应用／CLI 初始化</td>
-</tr>
-<tr>
-<td>Idle</td>
-<td>Scanning</td>
-<td>启动实时任务 / 读取选项</td>
-</tr>
-<tr>
-<td>Idle</td>
-<td>BackingUp</td>
-<td>启动定时任务 / 立即快照</td>
-</tr>
-<tr>
-<td>Scanning</td>
-<td>BackingUp</td>
-<td>首次或稳定变化</td>
-</tr>
-<tr>
-<td>Scanning</td>
-<td>Waiting</td>
-<td>无变化或变化未稳定</td>
-</tr>
-<tr>
-<td>BackingUp</td>
-<td>Waiting</td>
-<td>成功 / 登记快照并按 keep 淘汰</td>
-</tr>
-<tr>
-<td>BackingUp</td>
-<td>RetryWaiting</td>
-<td>失败 / 记录错误，保留旧快照</td>
-</tr>
-<tr>
-<td>Waiting</td>
-<td>Scanning</td>
-<td>实时轮询到期</td>
-</tr>
-<tr>
-<td>Waiting</td>
-<td>BackingUp</td>
-<td>定时间隔到期</td>
-</tr>
-<tr>
-<td>RetryWaiting</td>
-<td>Scanning 或 BackingUp</td>
-<td>到期重试，依任务模式选择</td>
-</tr>
-<tr>
-<td>Waiting 或 Scanning</td>
-<td>Stopping</td>
-<td>stop 标志置位</td>
-</tr>
-<tr>
-<td>BackingUp</td>
-<td>Stopping</td>
-<td>当前快照完成且 stop 已请求</td>
-</tr>
-<tr>
-<td>Stopping</td>
-<td>Final</td>
-<td>输出统计并退出循环</td>
-</tr>
-</tbody>
-</table>
-<p>状态名是对 Scheduler 控制流的建模抽象，代码没有单独的状态枚举。GUI还应以注释说明0.1.1的延迟关闭/退出请求：忙碌时记录，操作结束后执行；这不是Scheduler增加了独立后台守护状态。停止不会立即中断块写入，不能画成点击停止便立刻销毁快照。max_runs 达成也进入 Final。完成后插入系统设计动态建模章节。</p>
-<h2>8 插入报告与最终核对</h2>
-<p>在绘图前记录0.1.1源代码版本/提交号，复核公开接口、UC-01至UC-08及停止语义；涉及接口的修订完成后再冻结模型。将各图放到模板对应位置，保留图题和文字说明。需求文档使用用例图，设计文档使用构件、类、顺序和状态图。字体统一；连线避免穿过类框；一个页面过密则拆图。最终把 mdj 源文件和导出图片一起归档，报告中说明实际使用的 StarUML 版本和绘图人。</p>
-<p>逐项检查：没有未实现网络功能；static 与非 static 区分正确；依赖箭头方向正确；组合关系有基数；方法名能在源码定位；异常和停止路径均有说明；图和报告版本号一致。没有完成绘图时不把“StarUML 模型已完成”填写到实验结论。</p>
-<h2>9 官方操作参考</h2>
-<p>以下仅用于确认 StarUML 的操作入口，项目元素、方法和流程来自本项目源码。菜单会随版本变化，以实际安装版本为准。</p>
-<ul>
-<li>Managing Diagrams：https://docs.staruml.io/user-guide/managing-diagrams</li>
-<li>Use Case Diagram：https://docs.staruml.io/working-with-uml-diagrams/use-case-diagram</li>
-<li>Class Diagram：https://docs.staruml.io/working-with-uml-diagrams/class-diagram</li>
-<li>Sequence Diagram：https://docs.staruml.io/working-with-uml-diagrams/sequence-diagram</li>
-<li>Statechart Diagram：https://docs.staruml.io/working-with-uml-diagrams/statechart-diagram</li>
-</ul></main><footer>松鼠备份 0.1.1 · 请以源码和测试结果为准</footer></html>
+<h2>2 建模范围</h2>
+<p>服务类主要通过静态方法和局部值对象协作，没有为画图而增加继承层次。Operation借用停止标志并持有回调；并不拥有线程或取消后强制终止线程。类图中省略方法参数以保持可读，完整签名以include/squirrel/backup.h为准。值对象图将同类字段合并展示，不能直接用于代码生成。</p>
+<p>两个顺序图画正常调用链。错误密码、损坏、路径不合法或取消会沿异常路径返回，未完成输出由RAII清理；最后发布成功后不回滚已完成结果。它们不是文件系统原子快照或断电恢复协议的证明。</p>
+<p>状态图描述Scheduler一次调用的生命周期。定时与变化模式共用发布和淘汰逻辑；元数据轮询需要稳定变化。任务状态只在内存中，应用退出后不会自动恢复。max_runs达到上限的判断发生在成功快照及本轮淘汰之后。</p>
+<h2>3 三人复核</h2>
+<p>杨梦宇检查用例、筛选与恢复路径；郭畅检查类、格式与密码封装顺序；李想检查组件、界面调用、任务状态与取消。每人都应能用具体源文件解释图中的至少一条完整路径，并记录实际复核日期。这里的分工是后续职责安排，不是已经发生的个人建模工时。</p>
+<h2>4 生成与导出</h2>
+<p>运行python3 scripts/build_uml.py可以从项目脚本重建模型，随后运行python3 scripts/render_uml_svg.py生成独立SVG插图。PNG由SVG渲染得到，用于Word报告；修改模型后应同步修改构建定义，避免下一次生成覆盖手工修订。</p>
+<p>StarUML官方CLI可在不启动GUI的情况下导出图，例如：</p>
+<pre><code class="language-sh">StarUML image docs/uml/SquirrelBackup.mdj -f png -o 'export/&lt;%=filenamify(element.name)%&gt;.png'
+</code></pre>
+<p>命令语法以<a href="https://docs.staruml.io/user-guide/cli-command-line-interface">官方CLI文档</a>为准。试用版可能带水印；如需该软件无水印导出，应使用本人合法授权。本项目附带独立渲染的图和可编辑模型，不附带StarUML软件本体。</p>
+<p>视图JSON结构参考<a href="https://github.com/staruml/staruml-samples">StarUML官方示例</a>，相关MIT许可证保存在scripts/LICENSE-StarUML-Samples.txt。模型内容、类名、消息和布局由本项目根据源码建立，AI辅助过程在实验报告第七节说明。</p></main><footer>松鼠备份 0.2.0 · 请以源码和测试结果为准</footer></html>

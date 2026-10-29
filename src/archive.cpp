@@ -143,11 +143,20 @@ void metadata(const fs::path& path, const Entry& e, const Log& log) {
 }
 }  // namespace
 void ArchiveWriter::write(const fs::path& source, const std::vector<Entry>& entries,
-                          const fs::path& output, bool compress, const Log& log) {
+                          const fs::path& output, bool compress, const Log& log,
+                          const Operation& operation) {
+  uint64_t total = 0, completed = 0;
+  for (const auto& e : entries) {
+    if (e.type == FileType::Regular) {
+      total += e.size;
+    }
+  }
+  operation.checkpoint(Phase::Pack, 0, total);
   Writer w(output);
   w.bytes("SQTREE01", 8);
   w.number(entries.size(), 8);
   for (const auto& e : entries) {
+    operation.checkpoint(Phase::Pack, completed, total, e.path);
     writeEntry(w, e);
     if (e.type != FileType::Regular) {
       continue;
@@ -165,6 +174,7 @@ void ArchiveWriter::write(const fs::path& source, const std::vector<Entry>& entr
     require(unchanged(), "Source changed before backup: " + e.path);
     uint64_t remaining = e.size;
     while (remaining) {
+      operation.checkpoint(Phase::Pack, completed, total, e.path);
       size_t n = std::min<uint64_t>(remaining, kBlockSize);
       Bytes data(n);
       size_t offset = 0;
@@ -184,17 +194,21 @@ void ArchiveWriter::write(const fs::path& source, const std::vector<Entry>& entr
       w.number(payload.size(), 4);
       w.bytes(payload.data(), payload.size());
       remaining -= n;
+      completed += n;
     }
     syscheck(::fstat(fd.value, &st) == 0, "Cannot recheck source");
     require(unchanged(), "Source changed while backing up: " + e.path);
     emit(log, "Packed: " + e.path);
   }
+  operation.checkpoint(Phase::Pack, completed, total);
   w.bytes("SQEND001", 8);
   w.stream.close();
   require(static_cast<bool>(w.stream), "Cannot finish archive");
 }
 Summary ArchiveReader::read(const fs::path& plain, const fs::path* destination, const Log& log,
-                            bool collect) {
+                            bool collect, const Operation& operation) {
+  const auto total = fs::file_size(plain);
+  operation.checkpoint(Phase::Read, 0, total);
   Reader r(plain);
   char magic[8];
   r.bytes(magic, 8);
@@ -205,6 +219,7 @@ Summary ArchiveReader::read(const fs::path& plain, const fs::path* destination, 
   std::map<std::string, std::pair<FileType, uint64_t>> seen;
   std::vector<Entry> directories;
   for (uint64_t i = 0; i < count; ++i) {
+    operation.checkpoint(Phase::Read, static_cast<uint64_t>(r.stream.tellg()), total);
     Entry e = readEntry(r);
     if (i == 0) {
       require(e.path.empty() && e.type == FileType::Directory, "Missing root directory");
@@ -237,6 +252,8 @@ Summary ArchiveReader::read(const fs::path& plain, const fs::path* destination, 
         Fd out(raw);
         uint64_t remaining = e.size;
         while (remaining) {
+          operation.checkpoint(Phase::Read, static_cast<uint64_t>(r.stream.tellg()), total,
+                               e.path);
           uint64_t coding = r.number(1), n = r.number(4), packed = r.number(4);
           require(coding <= 1 && n > 0 && n <= kBlockSize && n <= remaining &&
                       packed <= kBlockSize && (coding == 1 || packed == n),
@@ -304,10 +321,13 @@ Summary ArchiveReader::read(const fs::path& plain, const fs::path* destination, 
   require(std::string(magic, 8) == "SQEND001" && r.stream.peek() == EOF,
           "Invalid archive footer or trailing data");
   if (destination) {
+    uint64_t applied = 0;
     for (auto it = directories.rbegin(); it != directories.rend(); ++it) {
+      operation.checkpoint(Phase::Metadata, applied++, directories.size(), it->path);
       metadata(*destination / it->path, *it, log);
     }
   }
+  operation.check();
   return result;
 }
 }  // namespace squirrel

@@ -10,7 +10,14 @@
 | GoogleTest v1.15.2 | 测试框架，BSD-3-Clause | 否，不链接到正式程序；源码包保留原许可证 |
 | cpplint 2.0.2 / clang-format 23.1.3 | 代码检查与格式化 | 否，开发工具 |
 | Python 与报告生成包 | 测试驱动、文档生成 | 否，备份后端不依赖 Python |
+| macOS AVFoundation / CoreVideo / CoreMedia | 后台演示视频编码及完整解码检查 | 否，仅演示与验证工具使用 |
+| @oai/artifact-tool、sharp、LibreOffice | PPTX生成、图片渲染与Office文件后台排版验证 | 否，独立制作工具，不随软件运行 |
 
 打包发布脚本使用 Python 标准库 zipfile 生成交付 ZIP；该命令不参与软件的备份打包功能。业务程序只产生自定义 .sqbk 格式。
 
 讲义是需求与概念参考。StarUML 绘图指导引用其官方文档，参考地址列在指导文档末尾。平台 SDK 服从系统自带许可；工具遵循各自许可，安装时可查看其包元数据。无云服务、收费 SDK 或 API Key 依赖。
+
+
+## UML视图序列化参考
+
+scripts/uml-view-templates.json参考StarUML官方staruml-samples项目（MIT，MKLabs Co., Ltd.）。许可证随scripts/LICENSE-StarUML-Samples.txt保留。只复用视图数据结构；项目模型内容来自本项目源码，未使用或修改StarUML应用源码。StarUML软件本体不随发布包分发。

@@ -1,0 +1,3 @@
+clang++ -std=c++17 -O1 -g -Iinclude -fsanitize=address,undefined tests/huffman_fuzz.cpp tests/fuzz_driver.cpp src/huffman.cpp -o build/huffman_fuzz
+mkdir -p test-results
+build/huffman_fuzz test-results/fuzz.json 60 > test-results/fuzz.log 2>&1

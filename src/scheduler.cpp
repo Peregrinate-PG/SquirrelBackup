@@ -9,11 +9,13 @@
 #include "internal.h"
 namespace squirrel {
 namespace {
-std::string fingerprint(const fs::path& source, const Filter& filter) {
-  auto entries = FileScanner::scan(source, filter);
+std::string fingerprint(const fs::path& source, const Filter& filter,
+                        const Operation& operation) {
+  auto entries = FileScanner::scan(source, filter, {}, operation);
   // Metadata polling does not read file bodies and never changes their access time.
   std::ostringstream out;
   for (const auto& e : entries) {
+    operation.check();
     out << e.path.size() << ':' << e.path << ':' << int(e.type) << ':' << e.size << ':' << e.inode
         << ':' << e.mtime << ':' << e.mtime_ns << ':' << e.ctime << ':' << e.ctime_ns
         << ':' << e.device << ':' << e.mode << ':' << e.uid << ':' << e.gid
@@ -28,7 +30,11 @@ std::string fingerprint(const fs::path& source, const Filter& filter) {
 }  // namespace
 void Scheduler::run(const fs::path& source, const fs::path& repository,
                     const BackupOptions& options, const ScheduleOptions& schedule,
-                    const std::atomic<bool>& stop, const Log& log) {
+                    const std::atomic<bool>& stop, const Log& log, const Progress& progress) {
+  Operation operation{&stop, progress};
+  if (stop.load()) {
+    return;
+  }
   require(schedule.interval_seconds >= 1 && schedule.poll_seconds >= 1 && schedule.keep >= 1,
           "Interval, poll seconds and retention must be positive");
   require(options.password.empty() || options.password.size() >= 8,
@@ -60,7 +66,7 @@ void Scheduler::run(const fs::path& source, const fs::path& repository,
       bool due = first;
       std::string current;
       if (schedule.watch) {
-        current = fingerprint(root, options.filter);
+        current = fingerprint(root, options.filter, operation);
         due = first || (current != baseline && current == pending);
         pending = current;
       } else {
@@ -68,7 +74,7 @@ void Scheduler::run(const fs::path& source, const fs::path& repository,
       }
       if (due) {
         auto file = job / ("snapshot-" + std::to_string(runs + 1) + ".sqbk");
-        BackupService{}.backup(root, file, options, log);
+        BackupService{}.backup(root, file, options, log, operation);
         owned.push_back(file);
         ++runs;
         // Commit snapshot state before best-effort retention. Cleanup failure must not
@@ -93,11 +99,13 @@ void Scheduler::run(const fs::path& source, const fs::path& repository,
       if (schedule.max_runs && runs >= schedule.max_runs) {
         break;
       }
+    } catch (const Cancelled&) {
+      break;
     } catch (const std::exception& error) {
       emit(log, "WARNING: scheduled backup failed; will retry: " + std::string(error.what()));
     }
-    uint32_t delay = schedule.watch ? schedule.poll_seconds * 10 : 10;
-    for (uint32_t i = 0; i < delay && !stop.load(); ++i) {
+    uint64_t delay = schedule.watch ? static_cast<uint64_t>(schedule.poll_seconds) * 10 : 10;
+    for (uint64_t i = 0; i < delay && !stop.load(); ++i) {
       std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
   }

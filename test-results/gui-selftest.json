@@ -1,1 +1,1 @@
-{"passed":true,"assertions":32}
+{"passed":true,"assertions":53,"method":"offscreen AppKit handlers; no system picker or mouse input"}

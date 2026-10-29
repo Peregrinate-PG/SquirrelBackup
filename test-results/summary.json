@@ -1,10 +1,11 @@
 {
-  "generated_at": "2026-10-29T10:06:59+08:00",
-  "unit": 37,
+  "generated_at": "2026-10-29T12:46:38+08:00",
+  "version": "0.2.0",
+  "unit": 52,
   "integration": 21,
   "security": 18,
   "workflow": 6,
-  "version": "0.1.1",
-  "total": 82,
-  "passed": 82
+  "total": 97,
+  "passed": 97,
+  "binary_sha256": "524c56d8b66c7bf533b1a7649f86b908a0fa4251b552681d87316c58da6424e4"
 }

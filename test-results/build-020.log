@@ -1,0 +1,5 @@
+mkdir -p build/SquirrelBackup.app/Contents/MacOS build/SquirrelBackup.app/Contents/Resources
+clang++ -Iinclude -Isrc -std=c++17 -O2 -g -Wall -Wextra -Wpedantic -Werror -Wno-deprecated-declarations -fobjc-arc src/gui.mm build/libsquirrel.a -framework Cocoa -framework Security -o build/SquirrelBackup.app/Contents/MacOS/SquirrelBackup
+cp resources/Info.plist build/SquirrelBackup.app/Contents/Info.plist
+codesign --force --sign - build/SquirrelBackup.app
+build/SquirrelBackup.app: replacing existing signature

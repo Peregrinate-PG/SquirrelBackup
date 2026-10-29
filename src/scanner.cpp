@@ -59,7 +59,8 @@ std::string typeName(FileType type) {
   return "unknown";
 }
 namespace {
-std::vector<std::pair<std::string, Bytes>> attributes(const fs::path& path) {
+std::vector<std::pair<std::string, Bytes>> attributes(const fs::path& path,
+                                                    const Operation& operation) {
   ssize_t n = ::listxattr(path.c_str(), nullptr, 0, XATTR_NOFOLLOW);
   if (n < 0 && (errno == ENOTSUP || errno == EPERM)) {
     return {};
@@ -74,6 +75,7 @@ std::vector<std::pair<std::string, Bytes>> attributes(const fs::path& path) {
   std::vector<std::pair<std::string, Bytes>> result;
   size_t offset = 0, total = 0;
   while (offset < names.size()) {
+    operation.check();
     std::string name(names.data() + offset);
     offset += name.size() + 1;
     ssize_t len = ::getxattr(path.c_str(), name.c_str(), nullptr, 0, 0, XATTR_NOFOLLOW);
@@ -90,7 +92,9 @@ std::vector<std::pair<std::string, Bytes>> attributes(const fs::path& path) {
   return result;
 }
 }  // namespace
-std::vector<Entry> FileScanner::scan(const fs::path& root, const Filter& filter, const Log& log) {
+std::vector<Entry> FileScanner::scan(const fs::path& root, const Filter& filter, const Log& log,
+                                    const Operation& operation) {
+  operation.checkpoint(Phase::Scan);
   require(fs::is_directory(root), "Source must be a directory");
   require(filter.min_size <= filter.max_size && filter.since <= filter.until,
           "Invalid filter range");
@@ -100,6 +104,7 @@ std::vector<Entry> FileScanner::scan(const fs::path& root, const Filter& filter,
   std::vector<Entry> entries;
   std::map<std::pair<uint64_t, uint64_t>, std::string> hardlinks;
   std::function<void(const std::string&)> visit = [&](const std::string& rel) {
+    operation.checkpoint(Phase::Scan, entries.size(), 0, rel);
     if (!rel.empty() && filter.excluded(rel)) {
       return;
     }
@@ -148,12 +153,13 @@ std::vector<Entry> FileScanner::scan(const fs::path& root, const Filter& filter,
         hardlinks[key] = rel;
       }
     }
-    e.xattrs = attributes(path);
+    e.xattrs = attributes(path, operation);
     entries.push_back(std::move(e));
     require(entries.size() <= 1000000, "Entry limit exceeded (1 million)");
     if (S_ISDIR(st.st_mode)) {
       std::vector<std::string> children;
       for (const auto& child : fs::directory_iterator(path)) {
+        operation.check();
         children.push_back(child.path().filename().string());
       }
       std::sort(children.begin(), children.end());

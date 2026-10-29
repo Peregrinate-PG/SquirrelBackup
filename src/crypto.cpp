@@ -70,7 +70,10 @@ void write(std::ostream& stream, const void* p, size_t n) {
 }
 }  // namespace
 void CryptoEnvelope::seal(const fs::path& plain, const fs::path& output,
-                          const std::string& password) {
+                          const std::string& password, const Operation& operation) {
+  const auto total = fs::file_size(plain);
+  uint64_t completed = 0;
+  operation.checkpoint(Phase::Seal, completed, total);
   bool encrypted = !password.empty();
   Bytes header(kHeaderSize, 0);
   const std::string magic = "SQBK0001";
@@ -97,6 +100,7 @@ void CryptoEnvelope::seal(const fs::path& plain, const fs::path& output,
   write(out, header.data(), header.size());
   Bytes buffer(kBlockSize), transformed(kBlockSize + 32);
   while (in) {
+    operation.checkpoint(Phase::Seal, completed, total);
     in.read(reinterpret_cast<char*>(buffer.data()), buffer.size());
     size_t n = in.gcount();
     if (!n) {
@@ -112,6 +116,7 @@ void CryptoEnvelope::seal(const fs::path& plain, const fs::path& output,
     }
     digest.update(data, count);
     write(out, data, count);
+    completed += n;
   }
   require(in.eof() && !in.bad(), "Cannot read packed data");
   if (encrypted) {
@@ -127,9 +132,11 @@ void CryptoEnvelope::seal(const fs::path& plain, const fs::path& output,
   out.close();
   require(static_cast<bool>(out), "Cannot finish envelope");
   std::fill(key.begin(), key.end(), 0);
+  operation.checkpoint(Phase::Seal, completed, total);
 }
 void CryptoEnvelope::open(const fs::path& archive, const fs::path& plain,
-                          const std::string& password) {
+                          const std::string& password, const Operation& operation) {
+  operation.checkpoint(Phase::Authenticate);
   // Open once with O_NOFOLLOW so a replaced filename cannot swap verification and decryption
   // inputs.
   Fd fd(::open(archive.c_str(), O_RDONLY | O_NOFOLLOW | O_NONBLOCK));
@@ -165,6 +172,7 @@ void CryptoEnvelope::open(const fs::path& archive, const fs::path& plain,
   uint64_t payload = before.st_size - kHeaderSize - kTagSize, remaining = payload;
   Bytes buffer(kBlockSize), transformed(kBlockSize + 32);
   while (remaining) {
+    operation.checkpoint(Phase::Authenticate, payload - remaining, payload);
     size_t n = std::min<uint64_t>(remaining, buffer.size());
     exact(buffer.data(), n);
     digest.update(buffer.data(), n);
@@ -179,6 +187,7 @@ void CryptoEnvelope::open(const fs::path& archive, const fs::path& plain,
   }
   require(difference == 0, encrypted ? "Wrong password or damaged backup (authentication failed)"
                                      : "Backup checksum mismatch");
+  operation.checkpoint(Phase::Authenticate, payload, payload);
   syscheck(::lseek(fd.value, kHeaderSize, SEEK_SET) == static_cast<int64_t>(kHeaderSize),
            "Cannot seek backup");
   std::unique_ptr<Cipher> cipher;
@@ -192,6 +201,7 @@ void CryptoEnvelope::open(const fs::path& archive, const fs::path& plain,
   second.update(header.data(), header.size());
   remaining = payload;
   while (remaining) {
+    operation.checkpoint(Phase::Decode, payload - remaining, payload);
     size_t n = std::min<uint64_t>(remaining, buffer.size());
     exact(buffer.data(), n);
     second.update(buffer.data(), n);
@@ -223,5 +233,6 @@ void CryptoEnvelope::open(const fs::path& archive, const fs::path& plain,
   out.close();
   require(static_cast<bool>(out), "Cannot write decoded backup");
   std::fill(key.begin(), key.end(), 0);
+  operation.checkpoint(Phase::Decode, payload, payload);
 }
 }  // namespace squirrel

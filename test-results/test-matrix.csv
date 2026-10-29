@@ -1,0 +1,98 @@
+编号,层次,用例名称,实际结果
+单元-01,单元,Huffman.Empty,通过
+单元-02,单元,Huffman.SingleSymbol,通过
+单元-03,单元,Huffman.AllSymbols,通过
+单元-04,单元,Huffman.RandomRoundtrip,通过
+单元-05,单元,Huffman.Compression,通过
+单元-06,单元,Huffman.RejectTruncation,通过
+单元-07,单元,Huffman.RejectFrequency,通过
+单元-08,单元,Huffman.RejectOversize,通过
+单元-09,单元,Huffman.RejectTrailing,通过
+单元-10,单元,BackupTest.Roundtrip,通过
+单元-11,单元,BackupTest.RawRoundtrip,通过
+单元-12,单元,BackupTest.EncryptedRoundtrip,通过
+单元-13,单元,BackupTest.WrongPasswordLeavesNoOutput,通过
+单元-14,单元,BackupTest.RejectShortPassword,通过
+单元-15,单元,BackupTest.TamperDetection,通过
+单元-16,单元,BackupTest.RejectTruncated,通过
+单元-17,单元,BackupTest.NoOverwriteBackup,通过
+单元-18,单元,BackupTest.NoOverwriteRestore,通过
+单元-19,单元,BackupTest.RejectOutputInSource,通过
+单元-20,单元,BackupTest.MissingSource,通过
+单元-21,单元,BackupTest.SymlinkHardlinkFifo,通过
+单元-22,单元,BackupTest.Metadata,通过
+单元-23,单元,BackupTest.ReadOnlyRootRestoresWithOriginalPermissions,通过
+单元-24,单元,BackupTest.RewritePreservingMtimeIsRejected,通过
+单元-25,单元,BackupTest.PrivateCleanupHandlesUnreadableDirectoriesWithoutFollowingSymlinks,通过
+单元-26,单元,BackupTest.FailedPublicationCleansReadOnlyRestoredDirectories,通过
+单元-27,单元,BackupTest.ExcludePrunesDirectory,通过
+单元-28,单元,BackupTest.NameFilter,通过
+单元-29,单元,BackupTest.PathFilter,通过
+单元-30,单元,BackupTest.SizeFilter,通过
+单元-31,单元,BackupTest.TimeFilter,通过
+单元-32,单元,BackupTest.OwnerFilter,通过
+单元-33,单元,BackupTest.TypeFilter,通过
+单元-34,单元,BackupTest.InvalidFilter,通过
+单元-35,单元,BackupTest.EmptyTree,通过
+单元-36,单元,BackupTest.UncompressedEncrypted,通过
+单元-37,单元,BackupTest.RetentionFailureDoesNotRepeatSnapshot,通过
+单元-38,单元,BackupTest.SourceAdditionAfterPackingPreventsPublication,通过
+单元-39,单元,BackupTest.SourceDeletionAfterPackingPreventsPublication,通过
+单元-40,单元,BackupTest.SourceMetadataChangeAfterPackingPreventsPublication,通过
+单元-41,单元,BackupTest.CancelledJobKeepsPreviousSnapshot,通过
+单元-42,单元,BackupTest.PreCancelledOperationDoesNotTouchFilesystem,通过
+单元-43,单元,EachStage/CancelBackupTest.LeavesNoPublishedOrTemporaryFiles/0,通过
+单元-44,单元,EachStage/CancelBackupTest.LeavesNoPublishedOrTemporaryFiles/1,通过
+单元-45,单元,EachStage/CancelBackupTest.LeavesNoPublishedOrTemporaryFiles/2,通过
+单元-46,单元,EachStage/CancelBackupTest.LeavesNoPublishedOrTemporaryFiles/3,通过
+单元-47,单元,EachStage/CancelBackupTest.LeavesNoPublishedOrTemporaryFiles/4,通过
+单元-48,单元,EachStage/CancelRestoreTest.LeavesNoDestinationAndPreservesArchive/0,通过
+单元-49,单元,EachStage/CancelRestoreTest.LeavesNoDestinationAndPreservesArchive/1,通过
+单元-50,单元,EachStage/CancelRestoreTest.LeavesNoDestinationAndPreservesArchive/2,通过
+单元-51,单元,EachStage/CancelRestoreTest.LeavesNoDestinationAndPreservesArchive/3,通过
+单元-52,单元,EachStage/CancelRestoreTest.LeavesNoDestinationAndPreservesArchive/4,通过
+CLI集成-01,CLI集成,CLI-01 help,通过
+CLI集成-02,CLI集成,CLI-02 backup,通过
+CLI集成-03,CLI集成,CLI-03 verify,通过
+CLI集成-04,CLI集成,CLI-04 list,通过
+CLI集成-05,CLI集成,CLI-05 content hashes,通过
+CLI集成-06,CLI集成,CLI-06 restore no-clobber,通过
+CLI集成-07,CLI集成,CLI-07 backup no-clobber,通过
+CLI集成-08,CLI集成,CLI-08 reject self-backup,通过
+CLI集成-09,CLI集成,CLI-09 unknown option,通过
+CLI集成-10,CLI集成,CLI-10 missing value,通过
+CLI集成-11,CLI集成,CLI-11 invalid numeric option,通过
+CLI集成-12,CLI集成,CLI-12 combined filters,通过
+CLI集成-13,CLI集成,CLI-13 encrypted CLI,通过
+CLI集成-14,CLI集成,CLI-14 schedule retention isolation,通过
+CLI集成-15,CLI集成,CLI-15 change detection,通过
+CLI集成-16,CLI集成,CLI-16 graceful stop,通过
+CLI集成-17,CLI集成,CLI-17 invalid type filter,通过
+CLI集成-18,CLI集成,CLI-18 missing password env,通过
+CLI集成-19,CLI集成,CLI-19 do not overwrite dangling symlink,通过
+CLI集成-20,CLI集成,CLI-20 schedule rejects short password before starting,通过
+CLI集成-21,CLI集成,CLI-21 schedule rejects invalid filters before starting,通过
+异常归档与并发-01,异常归档与并发,SEC-01 parent traversal,通过
+异常归档与并发-02,异常归档与并发,SEC-02 absolute path,通过
+异常归档与并发-03,异常归档与并发,SEC-03 repeated separators,通过
+异常归档与并发-04,异常归档与并发,SEC-04 dot component,通过
+异常归档与并发-05,异常归档与并发,SEC-05 duplicate path,通过
+异常归档与并发-06,异常归档与并发,SEC-06 symlink parent escape,通过
+异常归档与并发-07,异常归档与并发,SEC-07 hardlink external,通过
+异常归档与并发-08,异常归档与并发,SEC-08 unknown file type,通过
+异常归档与并发-09,异常归档与并发,SEC-09 oversized entry count,通过
+异常归档与并发-10,异常归档与并发,SEC-10 missing root,通过
+异常归档与并发-11,异常归档与并发,SEC-11 size overflow,通过
+异常归档与并发-12,异常归档与并发,SEC-12 invalid mode,通过
+异常归档与并发-13,异常归档与并发,SEC-13 trailing tree data,通过
+异常归档与并发-14,异常归档与并发,SEC-14 NUL filename,通过
+异常归档与并发-15,异常归档与并发,SEC-15 missing parent directory,通过
+异常归档与并发-16,异常归档与并发,SEC-16 bad Huffman block,通过
+异常归档与并发-17,异常归档与并发,SEC-17 short raw block,通过
+异常归档与并发-18,异常归档与并发,SEC-18 concurrent publication,通过
+工作流回归-01,工作流回归,FLOW-01 schedule rejects a file source immediately,通过
+工作流回归-02,工作流回归,FLOW-02 watch rejects a file source immediately,通过
+工作流回归-03,工作流回归,FLOW-03 schedule rejects ineffective --poll,通过
+工作流回归-04,工作流回归,FLOW-04 watch rejects ineffective --every,通过
+工作流回归-05,工作流回归,FLOW-05 watch detects same-size edits with preserved mtime,通过
+工作流回归-06,工作流回归,FLOW-06 watch does not generate snapshots for unchanged sources,通过

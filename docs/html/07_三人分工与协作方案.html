@@ -1,5 +1,5 @@
-<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>松鼠备份三人分工与协作方案</title><style>body{max-width:900px;margin:48px auto;padding:0 32px;font:16px/1.85 -apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif;color:#202833}h1{color:#111;font-size:30px;line-height:1.5;margin-bottom:32px}h2{margin-top:36px;font-size:23px}h3{margin-top:24px;font-size:19px}table{border-collapse:collapse;width:100%;font-size:13px;line-height:1.65;margin:18px 0}th,td{border:1px solid #dde1e4;padding:8px 10px;text-align:left;vertical-align:top;overflow-wrap:anywhere}th{background:#edf0f1}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f4f5f6;padding:16px}code{font-size:.9em}a{color:#914321}nav{margin-bottom:28px;color:#777}footer{margin-top:44px;color:#777;font-size:12px}@media print{body{margin:0;padding:0;font-size:10pt}nav{display:none}h1,h2,h3,h4{break-after:avoid}tr{break-inside:avoid}thead{display:table-header-group}@page{size:A4;margin:18mm}}</style><nav><a href="index.html">文档目录</a></nav><main><h1>松鼠备份三人分工与协作方案</h1>
-<p>本方案按0.1.1的实际模块安排三名成员接手、复核和完善项目。成员 A、B、C 是角色代号，提交前替换成姓名、学号；表中为建议承担的职责，不代表三人已经分别完成了现有代码。总体按每人 30 个相对工作量点、共 90 点分配，约各占三分之一。工作量点用于比较任务复杂度和验收责任，不等同于工时或成绩比例。</p>
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>松鼠备份三人分工与协作方案</title><style>body{max-width:900px;margin:48px auto;padding:0 32px;font:16px/1.85 -apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif;color:#202833}h1{color:#111;font-size:30px;line-height:1.5;margin-bottom:32px}h2{margin-top:36px;font-size:23px}h3{margin-top:24px;font-size:19px}table{border-collapse:collapse;width:100%;font-size:13px;line-height:1.65;margin:18px 0}th,td{border:1px solid #dde1e4;padding:8px 10px;text-align:left;vertical-align:top;overflow-wrap:anywhere}th{background:#edf0f1}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f4f5f6;padding:16px}code{font-size:.9em}a{color:#914321}nav{margin-bottom:28px;color:#777}footer{margin-top:44px;color:#777;font-size:12px}@media print{body{margin:0;padding:0;font-size:10pt}nav{display:none}h1,h2,h3,h4{break-after:avoid}tr{break-inside:avoid}thead{display:table-header-group}@page{size:A4;margin:18mm}}</style><nav><a href="index.html">文档目录</a></nav><main><style>img{max-width:100%;height:auto}</style><h1>松鼠备份三人分工与协作方案</h1>
+<p>本方案按0.2.0的实际模块安排三名成员接手、复核和完善项目。第3组成员为杨梦宇（组长，2023150901002）、郭畅（2023040904017）、李想（2023150901012）；下文A/B/C分别对应三人，表中为建议承担的职责，不代表三人已经分别完成了现有代码。总体按每人 30 个相对工作量点、共 90 点分配，约各占三分之一。工作量点用于比较任务复杂度和验收责任，不等同于工时或成绩比例。</p>
 <h2>1 分工总览</h2>
 <table>
 <thead>
@@ -12,26 +12,26 @@
 </thead>
 <tbody>
 <tr>
-<td>A 文件与安全恢复</td>
+<td>杨梦宇（A）</td>
 <td>扫描筛选、特殊文件与元数据、业务编排和 CLI</td>
 <td>scanner.cpp、service.cpp、cli.cpp，协作维护恢复文件操作</td>
 <td>30 点</td>
 </tr>
 <tr>
-<td>B 文件格式与算法</td>
+<td>郭畅（B）</td>
 <td>打包解包格式、Huffman、加密与完整性验证</td>
 <td>archive.cpp 的格式编解码、huffman.cpp、crypto.cpp</td>
 <td>30 点</td>
 </tr>
 <tr>
-<td>C 界面与自动任务</td>
+<td>李想（C）</td>
 <td>Cocoa GUI、定时与实时备份、保留策略、集成发布</td>
 <td>gui.mm、scheduler.cpp、Makefile、发布脚本</td>
 <td>30 点</td>
 </tr>
 </tbody>
 </table>
-<p>平衡原则是每个人都承担代码、测试、文档、建模和演示，不能让某一人只写报告或做 PPT。C 的界面代码行数较多，但大量是控件装配；A 的文件系统权限和 B 的协议、密码边界更复杂，因此不按代码行数简单均分。组长可由 A 担任协调人，协调职责包含在 A 的工作量内，不能额外把所有公共任务都压给组长。</p>
+<p>平衡原则是每个人都承担代码、测试、文档、建模和演示，不能让某一人只写报告或做 PPT。C 的界面代码行数较多，但大量是控件装配；A 的文件系统权限和 B 的协议、密码边界更复杂，因此不按代码行数简单均分。组长杨梦宇同时担任协调人，协调职责包含在 A 的工作量内，不能额外把所有公共任务都压给组长。</p>
 <h2>2 成员 A 文件与安全恢复</h2>
 <table>
 <thead>
@@ -65,7 +65,7 @@
 <tr>
 <td>需求文档和用例建模</td>
 <td>5</td>
-<td>维护需求编号与用例描述，按指导手工绘制用例图；填入需求报告和自己的模块设计</td>
+<td>维护需求编号与用例描述，按指导复核并维护用例图；填入需求报告和自己的模块设计</td>
 </tr>
 <tr>
 <td>交叉复核、协调及演示</td>
@@ -113,7 +113,7 @@
 <tr>
 <td>系统设计文档和类图</td>
 <td>5</td>
-<td>维护数据格式和算法设计，按实际头文件手工绘制核心类图；补充自己的测试说明</td>
+<td>维护数据格式和算法设计，按实际头文件复核并维护核心类图；补充自己的测试说明</td>
 </tr>
 <tr>
 <td>交叉复核及演示</td>
@@ -161,7 +161,7 @@
 <tr>
 <td>测试报告和动态建模</td>
 <td>5</td>
-<td>汇总三人的测试证据，维护测试报告；手工绘制顺序图、构件图与任务状态图</td>
+<td>汇总三人的测试证据，维护测试报告；复核并维护顺序图、构件图与任务状态图</td>
 </tr>
 <tr>
 <td>交叉复核与演示组织</td>
@@ -255,7 +255,7 @@
 <td>需求、用例与个人设计</td>
 <td>格式、算法与类图</td>
 <td>测试汇总、顺序与构件图</td>
-<td>代码、文档、手工 UML 名字一致</td>
+<td>代码、文档、UML模型 名字一致</td>
 </tr>
 <tr>
 <td>M4 发布与答辩</td>
@@ -266,9 +266,9 @@
 </tr>
 </tbody>
 </table>
-<p>这些是后续计划里程碑，尚不是模板要求的带日期甘特图。应补实际人员、任务起止日期、依赖、完成比例与里程碑；没有证据的过去日期不补造。建议把任务录入实际使用的看板，完成后再填写日期、提交号、测试日志与复核人。</p>
+<p>带日期的后续计划及甘特图见需求文档第5.2节。起始日为2026年10月29日，历史开发阶段不补造日期。完成后记录实际日期、提交号、测试日志与复核人。</p>
 <h2>8 答辩与现场演示分配</h2>
 <p>三分钟介绍可安排：A约50秒讲平台、目标与基础功能；B约50秒讲格式、算法和库依赖；C约60秒讲当前版本测试、在线版本管理、甘特图和实际分工，余20秒留给切页。若教师要求一人主讲，可由一人汇总，但另外两人必须准备各自模块的问题。</p>
 <p>第9讲第39页要求老师/助教在同学指导下完成七分钟操作。A指导基础备份还原和不覆盖检查，B解释压缩、加密和内容验证，C指导自动任务、保留策略与测试证据；操作安排见08清单。三人都应能替补基础流程，避免某一个人缺席就无法演示。</p>
-<p>最终提交前共同确认：真实姓名学号、分工与实际贡献一致；手工 UML、PPT 和程序版本一致；录屏不含个人密码；未实现的网盘、增量、后台服务和完整元数据不宣称完成。</p>
-<p>第9讲第40页：2026年11月18日上午上课时答辩；当日23:59前，组长将报告、PPT、源码/程序/构建脚本及≤2分钟视频打包提交成电慕课，AI学习证书每人单独提交；第38页还要求完善在线分组文档。若课程后续通知调整，更新清单后执行。现有0.1.0 PPT仅作历史参考，必须更新真实分工、甘特图与0.1.1测试证据后再正式展示。</p></main><footer>松鼠备份 0.1.1 · 请以源码和测试结果为准</footer></html>
+<p>最终提交前共同确认：真实姓名学号、分工与实际贡献一致；UML模型、PPT 和程序版本一致；录屏不含个人密码；未实现的网盘、增量、后台服务和完整元数据不宣称完成。</p>
+<p>第9讲第40页：2026年11月18日上午上课时答辩；当日23:59前，组长将报告、PPT、源码/程序/构建脚本及≤2分钟视频打包提交成电慕课，AI学习证书每人单独提交；第38页还要求完善在线分组文档。若课程后续通知调整，更新清单后执行。答辩材料应与最终程序版本、测试结果和实际分工一致。</p></main><footer>松鼠备份 0.2.0 · 请以源码和测试结果为准</footer></html>

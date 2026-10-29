@@ -1,0 +1,79 @@
+#!/usr/bin/env python3
+"""Verify a locally produced release in a fresh directory; never open GUI windows."""
+import argparse
+import hashlib
+import json
+import os
+import subprocess
+import time
+from pathlib import Path
+from zipfile import ZipFile
+
+parser=argparse.ArgumentParser()
+parser.add_argument('archive',type=Path)
+parser.add_argument('output',type=Path,help='A new directory, whose parent already exists')
+parser.add_argument('--with-gui-self-test', action='store_true',
+                    help='Also exercise offscreen AppKit in a macOS graphical login session')
+a=parser.parse_args();archive=a.archive.resolve();output=a.output.resolve()
+if output.exists() or not output.parent.is_dir():raise SystemExit('Choose a new directory under an existing parent')
+with ZipFile(archive) as z:
+    assert z.testzip() is None,'ZIP CRC failed'
+    roots=set()
+    for entry in z.infolist():
+        p=Path(entry.filename)
+        assert not p.is_absolute() and '..' not in p.parts,'Unsafe ZIP path'
+        roots.add(p.parts[0])
+        if any(ord(c)>127 for c in entry.filename):assert entry.flag_bits&0x800,'Missing UTF-8 flag'
+    assert len(roots)==1,'Expected one release directory'
+output.mkdir();began=time.monotonic();checks=[]
+def run(name,args,cwd=None,timeout=600):
+    with (output/(name+'.log')).open('w') as f:
+        proc=subprocess.run([str(x) for x in args],cwd=cwd,stdout=f,stderr=subprocess.STDOUT,timeout=timeout)
+    checks.append({'name':name,'exit_code':proc.returncode,'passed':proc.returncode==0})
+    if proc.returncode:raise RuntimeError(name+' failed; see log')
+result={'archive_sha256':hashlib.sha256(archive.read_bytes()).hexdigest(),'passed':False,'checks':checks}
+try:
+    run('extract',['ditto','-x','-k',archive,output])
+    release=output/next(iter(roots));source=release/'source'
+    records=(release/'SHA256SUMS').read_text().splitlines()
+    for record in records:
+        expected,name=record.split('  ',1);p=release/name
+        assert p.is_file() and hashlib.sha256(p.read_bytes()).hexdigest()==expected,'Hash mismatch: '+name
+    result['verified_files']=len(records)
+    assert os.access(release/'squirrel',os.X_OK),'CLI executable bit missing'
+    assert os.access(release/'SquirrelBackup.app/Contents/MacOS/SquirrelBackup',os.X_OK),'GUI executable bit missing'
+    run('cli-signature',['codesign','--verify','--strict',release/'squirrel'])
+    run('app-signature',['codesign','--verify','--deep','--strict',release/'SquirrelBackup.app'])
+    if a.with_gui_self_test:
+        gui_results=output/'published-gui-selftest'
+        run('published-gui',[release/'SquirrelBackup.app/Contents/MacOS/SquirrelBackup',
+                             '--self-test',gui_results])
+        gui=json.loads((gui_results/'gui-selftest.json').read_text())
+        assert gui['passed'] and gui['assertions']==53,'Packaged GUI self-test failed'
+        result['gui_assertions']=gui['assertions']
+    run('version',[release/'squirrel','--version'])
+    result['version']=(output/'version.log').read_text().strip()
+    manifest=json.loads((release/'release-manifest.json').read_text())
+    assert result['version']==manifest['version']
+    run('offline-build-test',['make','-j4','all','test'],cwd=source)
+    run('demo-cli',['bash','scripts/demo.sh'],cwd=source)
+    fixture=output/'published-smoke';fixture.mkdir();(fixture/'source').mkdir()
+    (fixture/'source'/'中文.txt').write_text('Release binary round trip\n')
+    run('published-backup',[release/'squirrel','backup',fixture/'source',fixture/'smoke.sqbk'])
+    run('published-verify',[release/'squirrel','verify',fixture/'smoke.sqbk'])
+    run('published-restore',[release/'squirrel','restore',fixture/'smoke.sqbk',fixture/'restored'])
+    assert (fixture/'restored/中文.txt').read_bytes()==(fixture/'source/中文.txt').read_bytes()
+    if (release/'source-history.bundle').exists():
+        history=output/'history-check'
+        run('git-history',['git','clone',release/'source-history.bundle',history])
+        run('git-bundle',['git','bundle','verify',release/'source-history.bundle'],cwd=history)
+        commit=subprocess.check_output(['git','rev-parse','HEAD'],cwd=history,text=True).strip()
+        assert commit==(source/'历史基线提交.txt').read_text().strip()
+    result['passed']=True
+except BaseException as error:
+    result['error']=str(error)
+finally:
+    result['elapsed_seconds']=time.monotonic()-began
+    (output/'release-validation.json').write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n')
+print(json.dumps(result,ensure_ascii=False,indent=2))
+raise SystemExit(0 if result['passed'] else 1)

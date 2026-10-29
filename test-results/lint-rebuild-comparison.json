@@ -1,0 +1,87 @@
+{
+  "before_sha256": "4aa1b588e1844975117bbbbfe4c261d81e095cb863d1d5eb72ce972baf5d447d",
+  "after_sha256": "524c56d8b66c7bf533b1a7649f86b908a0fa4251b552681d87316c58da6424e4",
+  "before_sections": {
+    "__TEXT,__text": {
+      "size": 93352,
+      "sha256": "e52088a54a96e7d81da9ecad268e427b6b2402ecfd12091ca9fa1516b8763ee6"
+    },
+    "__TEXT,__stubs": {
+      "size": 1620,
+      "sha256": "62a0f5a82d8c708347f2705923dafacc9e8503928f49e0d8100a25ce4f00ad4a"
+    },
+    "__TEXT,__const": {
+      "size": 1152,
+      "sha256": "e16111a430116a981eb950e90576f45f17080c6b0628a62f65723fa054977b30"
+    },
+    "__TEXT,__gcc_except_tab": {
+      "size": 6584,
+      "sha256": "7af17efcf8f75972636c684a2b034288c68d48ad3d2e63aa704b33c27e895f2d"
+    },
+    "__TEXT,__cstring": {
+      "size": 6221,
+      "sha256": "bd31acf7682371efe6f1a7b9a583456b6fea2b9de0fbe18b15d683fc4fa91280"
+    },
+    "__TEXT,__unwind_info": {
+      "size": 1160,
+      "sha256": "2f0b33e51ed081e5c49490895506579dd75f48bb0f612a4204a942bc4c881fa7"
+    },
+    "__TEXT,__eh_frame": {
+      "size": 136,
+      "sha256": "23e7978625017238934eef6f3cfdf714e3f2ad3f45a335d61f9d216e46da3d3e"
+    },
+    "__DATA_CONST,__got": {
+      "size": 1320,
+      "sha256": "7950ea2db0d800f223512901145690e95f375e003ca546c800becda3964e1715"
+    },
+    "__DATA_CONST,__const": {
+      "size": 464,
+      "sha256": "5d7c8f8c252069aca9ade1cafb4feddd5743e268cec23f0fad93120c643d22a9"
+    }
+  },
+  "after_sections": {
+    "__TEXT,__text": {
+      "size": 93352,
+      "sha256": "e52088a54a96e7d81da9ecad268e427b6b2402ecfd12091ca9fa1516b8763ee6"
+    },
+    "__TEXT,__stubs": {
+      "size": 1620,
+      "sha256": "62a0f5a82d8c708347f2705923dafacc9e8503928f49e0d8100a25ce4f00ad4a"
+    },
+    "__TEXT,__const": {
+      "size": 1152,
+      "sha256": "e16111a430116a981eb950e90576f45f17080c6b0628a62f65723fa054977b30"
+    },
+    "__TEXT,__gcc_except_tab": {
+      "size": 6584,
+      "sha256": "7af17efcf8f75972636c684a2b034288c68d48ad3d2e63aa704b33c27e895f2d"
+    },
+    "__TEXT,__cstring": {
+      "size": 6221,
+      "sha256": "bd31acf7682371efe6f1a7b9a583456b6fea2b9de0fbe18b15d683fc4fa91280"
+    },
+    "__TEXT,__unwind_info": {
+      "size": 1160,
+      "sha256": "2f0b33e51ed081e5c49490895506579dd75f48bb0f612a4204a942bc4c881fa7"
+    },
+    "__TEXT,__eh_frame": {
+      "size": 136,
+      "sha256": "23e7978625017238934eef6f3cfdf714e3f2ad3f45a335d61f9d216e46da3d3e"
+    },
+    "__DATA_CONST,__got": {
+      "size": 1320,
+      "sha256": "7950ea2db0d800f223512901145690e95f375e003ca546c800becda3964e1715"
+    },
+    "__DATA_CONST,__const": {
+      "size": 464,
+      "sha256": "5d7c8f8c252069aca9ade1cafb4feddd5743e268cec23f0fad93120c643d22a9"
+    }
+  },
+  "identical_sections": true,
+  "changes": [
+    "explicit vector include",
+    "equivalent uint64_t static_cast",
+    "split adjacent string literal"
+  ],
+  "scope": "section-content comparison excludes load commands, debug symbols, linkedit and signature; not a proof of all runtime behavior"
+}

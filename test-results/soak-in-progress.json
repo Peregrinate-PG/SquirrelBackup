@@ -1,0 +1,552 @@
+{
+  "status": "running",
+  "started_at": "2026-10-29T02:54:07.658784+00:00",
+  "requested_seconds": 72000,
+  "binary_sha256": "4aa1b588e1844975117bbbbfe4c261d81e095cb863d1d5eb72ce972baf5d447d",
+  "version": "0.2.0",
+  "pid": 16305,
+  "edits": 4807,
+  "checkpoints": [
+    {
+      "at": "2026-10-29T02:59:07.685042+00:00",
+      "elapsed_seconds": 300.02819974999875,
+      "edits": 201,
+      "final": false,
+      "jobs": {
+        "schedule": {
+          "retained": 3,
+          "verified": 3,
+          "restored_revision": 201,
+          "rss_bytes": 14270464,
+          "metadata_and_hashes_passed": true
+        },
+        "watch": {
+          "retained": 3,
+          "verified": 3,
+          "restored_revision": 200,
+          "rss_bytes": 16302080,
+          "metadata_and_hashes_passed": true
+        }
+      }
+    },
+    {
+      "at": "2026-10-29T03:04:08.318026+00:00",
+      "elapsed_seconds": 600.6630053749977,
+      "edits": 402,
+      "final": false,
+      "jobs": {
+        "schedule": {
+          "retained": 3,
+          "verified": 3,
+          "restored_revision": 398,
+          "rss_bytes": 5259264,
+          "metadata_and_hashes_passed": true
+        },
+        "watch": {
+          "retained": 3,
+          "verified": 3,
+          "restored_revision": 398,
+          "rss_bytes": 6553600,
+          "metadata_and_hashes_passed": true
+        }
+      }
+    },
+    {
+      "at": "2026-10-29T03:09:09.019665+00:00",
+      "elapsed_seconds": 901.3667423330044,
+      "edits": 600,
+      "final": false,
+      "jobs": {
+        "schedule": {
+          "retained": 3,
+          "verified": 3,
+          "restored_revision": 600,
+          "rss_bytes": 15220736,
+          "metadata_and_hashes_passed": true
+        },
+        "watch": {
+          "retained": 3,
+          "verified": 3,
+          "restored_revision": 600,
+          "rss_bytes": 20955136,
+          "metadata_and_hashes_passed": true
+        }
+      }
+    },
+    {
+      "at": "2026-10-29T03:14:09.694295+00:00",
+      "elapsed_seconds": 1202.0433940420044,
+      "edits": 802,
+      "final": false,
+      "jobs": {
+        "schedule": {
+          "retained": 3,
+          "verified": 3,
+          "restored_revision": 797,
+          "rss_bytes": 29605888,
+          "metadata_and_hashes_passed": true
+        },
+        "watch": {
+          "retained": 3,
+          "verified": 3,
+          "restored_revision": 797,
+          "rss_bytes": 28590080,
+          "metadata_and_hashes_passed": true
+        }
+      }
+    },
+    {
+      "at": "2026-10-29T03:19:10.333862+00:00",
+      "elapsed_seconds": 1502.684921417007,
+      "edits": 1000,
+      "final": false,
+      "jobs": {
+        "schedule": {
+          "retained": 3,
+          "verified": 3,
+          "restored_revision": 1000,
+          "rss_bytes": 16236544,
+          "metadata_and_hashes_passed": true
+        },
+        "watch": {
+          "retained": 3,
+          "verified": 3,
+          "restored_revision": 999,
+          "rss_bytes": 16089088,
+          "metadata_and_hashes_passed": true
+        }
+      }
+    },
+    {
+      "at": "2026-10-29T03:24:11.008194+00:00",
+      "elapsed_seconds": 1803.3612520419993,
+      "edits": 1201,
+      "final": false,
+      "jobs": {
+        "schedule": {
+          "retained": 3,
+          "verified": 3,
+          "restored_revision": 1201,
+          "rss_bytes": 19660800,
+          "metadata_and_hashes_passed": true
+        },
+        "watch": {
+          "retained": 3,
+          "verified": 3,
+          "restored_revision": 1201,
+          "rss_bytes": 18644992,
+          "metadata_and_hashes_passed": true
+        }
+      }
+    },
+    {
+      "at": "2026-10-29T03:29:11.667942+00:00",
+      "elapsed_seconds": 2104.022534667005,
+      "edits": 1399,
+      "final": false,
+      "jobs": {
+        "schedule": {
+          "retained": 3,
+          "verified": 3,
+          "restored_revision": 1399,
+          "rss_bytes": 22544384,
+          "metadata_and_hashes_passed": true
+        },
+        "watch": {
+          "retained": 3,
+          "verified": 3,
+          "restored_revision": 1399,
+          "rss_bytes": 23691264,
+          "metadata_and_hashes_passed": true
+        }
+      }
+    },
+    {
+      "at": "2026-10-29T03:34:12.365183+00:00",
+      "elapsed_seconds": 2404.721588291999,
+      "edits": 1601,
+      "final": false,
+      "jobs": {
+        "schedule": {
+          "retained": 3,
+          "verified": 3,
+          "restored_revision": 1601,
+          "rss_bytes": 22790144,
+          "metadata_and_hashes_passed": true
+        },
+        "watch": {
+          "retained": 3,
+          "verified": 3,
+          "restored_revision": 1600,
+          "rss_bytes": 25657344,
+          "metadata_and_hashes_passed": true
+        }
+      }
+    },
+    {
+      "at": "2026-10-29T03:39:13.014635+00:00",
+      "elapsed_seconds": 2705.372780417005,
+      "edits": 1803,
+      "final": false,
+      "jobs": {
+        "schedule": {
+          "retained": 3,
+          "verified": 3,
+          "restored_revision": 1798,
+          "rss_bytes": 11812864,
+          "metadata_and_hashes_passed": true
+        },
+        "watch": {
+          "retained": 3,
+          "verified": 3,
+          "restored_revision": 1798,
+          "rss_bytes": 10469376,
+          "metadata_and_hashes_passed": true
+        }
+      }
+    },
+    {
+      "at": "2026-10-29T03:44:13.724285+00:00",
+      "elapsed_seconds": 3006.0841812500003,
+      "edits": 2001,
+      "final": false,
+      "jobs": {
+        "schedule": {
+          "retained": 3,
+          "verified": 3,
+          "restored_revision": 2001,
+          "rss_bytes": 21463040,
+          "metadata_and_hashes_passed": true
+        },
+        "watch": {
+          "retained": 3,
+          "verified": 3,
+          "restored_revision": 2000,
+          "rss_bytes": 26312704,
+          "metadata_and_hashes_passed": true
+        }
+      }
+    },
+    {
+      "at": "2026-10-29T03:49:14.463171+00:00",
+      "elapsed_seconds": 3306.8247817500087,
+      "edits": 2203,
+      "final": false,
+      "jobs": {
+        "schedule": {
+          "retained": 3,
+          "verified": 3,
+          "restored_revision": 2202,
+          "rss_bytes": 17498112,
+          "metadata_and_hashes_passed": true
+        },
+        "watch": {
+          "retained": 3,
+          "verified": 3,
+          "restored_revision": 2202,
+          "rss_bytes": 14417920,
+          "metadata_and_hashes_passed": true
+        }
+      }
+    },
+    {
+      "at": "2026-10-29T03:54:15.143593+00:00",
+      "elapsed_seconds": 3607.506881207999,
+      "edits": 2403,
+      "final": false,
+      "jobs": {
+        "schedule": {
+          "retained": 3,
+          "verified": 3,
+          "restored_revision": 2400,
+          "rss_bytes": 17481728,
+          "metadata_and_hashes_passed": true
+        },
+        "watch": {
+          "retained": 3,
+          "verified": 3,
+          "restored_revision": 2400,
+          "rss_bytes": 18432000,
+          "metadata_and_hashes_passed": true
+        }
+      }
+    },
+    {
+      "at": "2026-10-29T03:59:15.773975+00:00",
+      "elapsed_seconds": 3908.1387260000047,
+      "edits": 2602,
+      "final": false,
+      "jobs": {
+        "schedule": {
+          "retained": 3,
+          "verified": 3,
+          "restored_revision": 2601,
+          "rss_bytes": 13221888,
+          "metadata_and_hashes_passed": true
+        },
+        "watch": {
+          "retained": 3,
+          "verified": 3,
+          "restored_revision": 2602,
+          "rss_bytes": 17203200,
+          "metadata_and_hashes_passed": true
+        }
+      }
+    },
+    {
+      "at": "2026-10-29T04:04:16.441576+00:00",
+      "elapsed_seconds": 4208.807824375006,
+      "edits": 2804,
+      "final": false,
+      "jobs": {
+        "schedule": {
+          "retained": 3,
+          "verified": 3,
+          "restored_revision": 2804,
+          "rss_bytes": 16105472,
+          "metadata_and_hashes_passed": true
+        },
+        "watch": {
+          "retained": 3,
+          "verified": 3,
+          "restored_revision": 2799,
+          "rss_bytes": 16859136,
+          "metadata_and_hashes_passed": true
+        }
+      }
+    },
+    {
+      "at": "2026-10-29T04:09:17.160606+00:00",
+      "elapsed_seconds": 4509.526828167,
+      "edits": 3002,
+      "final": false,
+      "jobs": {
+        "schedule": {
+          "retained": 3,
+          "verified": 3,
+          "restored_revision": 3002,
+          "rss_bytes": 9273344,
+          "metadata_and_hashes_passed": true
+        },
+        "watch": {
+          "retained": 3,
+          "verified": 3,
+          "restored_revision": 3002,
+          "rss_bytes": 10027008,
+          "metadata_and_hashes_passed": true
+        }
+      }
+    },
+    {
+      "at": "2026-10-29T04:14:17.843729+00:00",
+      "elapsed_seconds": 4810.211751167008,
+      "edits": 3204,
+      "final": false,
+      "jobs": {
+        "schedule": {
+          "retained": 3,
+          "verified": 3,
+          "restored_revision": 3204,
+          "rss_bytes": 11436032,
+          "metadata_and_hashes_passed": true
+        },
+        "watch": {
+          "retained": 3,
+          "verified": 3,
+          "restored_revision": 3203,
+          "rss_bytes": 9306112,
+          "metadata_and_hashes_passed": true
+        }
+      }
+    },
+    {
+      "at": "2026-10-29T04:19:18.541375+00:00",
+      "elapsed_seconds": 5110.910503667008,
+      "edits": 3406,
+      "final": false,
+      "jobs": {
+        "schedule": {
+          "retained": 3,
+          "verified": 3,
+          "restored_revision": 3406,
+          "rss_bytes": 21790720,
+          "metadata_and_hashes_passed": true
+        },
+        "watch": {
+          "retained": 3,
+          "verified": 3,
+          "restored_revision": 3401,
+          "rss_bytes": 18169856,
+          "metadata_and_hashes_passed": true
+        }
+      }
+    },
+    {
+      "at": "2026-10-29T04:24:19.248435+00:00",
+      "elapsed_seconds": 5411.619098458003,
+      "edits": 3604,
+      "final": false,
+      "jobs": {
+        "schedule": {
+          "retained": 3,
+          "verified": 3,
+          "restored_revision": 3603,
+          "rss_bytes": 15400960,
+          "metadata_and_hashes_passed": true
+        },
+        "watch": {
+          "retained": 3,
+          "verified": 3,
+          "restored_revision": 3603,
+          "rss_bytes": 16171008,
+          "metadata_and_hashes_passed": true
+        }
+      }
+    },
+    {
+      "at": "2026-10-29T04:29:19.907686+00:00",
+      "elapsed_seconds": 5712.27977641701,
+      "edits": 3806,
+      "final": false,
+      "jobs": {
+        "schedule": {
+          "retained": 3,
+          "verified": 3,
+          "restored_revision": 3805,
+          "rss_bytes": 21315584,
+          "metadata_and_hashes_passed": true
+        },
+        "watch": {
+          "retained": 3,
+          "verified": 3,
+          "restored_revision": 3805,
+          "rss_bytes": 22773760,
+          "metadata_and_hashes_passed": true
+        }
+      }
+    },
+    {
+      "at": "2026-10-29T04:34:20.562612+00:00",
+      "elapsed_seconds": 6012.9360265,
+      "edits": 4006,
+      "final": false,
+      "jobs": {
+        "schedule": {
+          "retained": 3,
+          "verified": 3,
+          "restored_revision": 4006,
+          "rss_bytes": 17170432,
+          "metadata_and_hashes_passed": true
+        },
+        "watch": {
+          "retained": 3,
+          "verified": 3,
+          "restored_revision": 4003,
+          "rss_bytes": 17743872,
+          "metadata_and_hashes_passed": true
+        }
+      }
+    },
+    {
+      "at": "2026-10-29T04:39:21.245758+00:00",
+      "elapsed_seconds": 6313.620719291997,
+      "edits": 4205,
+      "final": false,
+      "jobs": {
+        "schedule": {
+          "retained": 3,
+          "verified": 3,
+          "restored_revision": 4205,
+          "rss_bytes": 18399232,
+          "metadata_and_hashes_passed": true
+        },
+        "watch": {
+          "retained": 3,
+          "verified": 3,
+          "restored_revision": 4205,
+          "rss_bytes": 18841600,
+          "metadata_and_hashes_passed": true
+        }
+      }
+    },
+    {
+      "at": "2026-10-29T04:44:21.893770+00:00",
+      "elapsed_seconds": 6614.270399458008,
+      "edits": 4407,
+      "final": false,
+      "jobs": {
+        "schedule": {
+          "retained": 3,
+          "verified": 3,
+          "restored_revision": 4407,
+          "rss_bytes": 10387456,
+          "metadata_and_hashes_passed": true
+        },
+        "watch": {
+          "retained": 3,
+          "verified": 3,
+          "restored_revision": 4402,
+          "rss_bytes": 9633792,
+          "metadata_and_hashes_passed": true
+        }
+      }
+    },
+    {
+      "at": "2026-10-29T04:49:22.572476+00:00",
+      "elapsed_seconds": 6914.950258167009,
+      "edits": 4605,
+      "final": false,
+      "jobs": {
+        "schedule": {
+          "retained": 3,
+          "verified": 3,
+          "restored_revision": 4605,
+          "rss_bytes": 18432000,
+          "metadata_and_hashes_passed": true
+        },
+        "watch": {
+          "retained": 3,
+          "verified": 3,
+          "restored_revision": 4605,
+          "rss_bytes": 21135360,
+          "metadata_and_hashes_passed": true
+        }
+      }
+    },
+    {
+      "at": "2026-10-29T04:54:23.269995+00:00",
+      "elapsed_seconds": 7215.649133166997,
+      "edits": 4807,
+      "final": false,
+      "jobs": {
+        "schedule": {
+          "retained": 3,
+          "verified": 3,
+          "restored_revision": 4806,
+          "rss_bytes": 20201472,
+          "metadata_and_hashes_passed": true
+        },
+        "watch": {
+          "retained": 3,
+          "verified": 3,
+          "restored_revision": 4806,
+          "rss_bytes": 17793024,
+          "metadata_and_hashes_passed": true
+        }
+      }
+    }
+  ],
+  "errors": [],
+  "tested": [
+    "schedule",
+    "watch encrypted",
+    "retention",
+    "restore hashes",
+    "symlink",
+    "hardlink",
+    "FIFO",
+    "read-only directory",
+    "SIGINT cleanup"
+  ],
+  "elapsed_seconds": 7216.270920791998
+}

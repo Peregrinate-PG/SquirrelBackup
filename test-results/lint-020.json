@@ -1,0 +1,7 @@
+{
+  "tool": "cpplint 2.0.2",
+  "passed": true,
+  "exit_code": 0,
+  "tested_at": "2026-10-29T04:26:31.562935+00:00",
+  "scope": "C++ headers, sources and tests selected by Makefile; Objective-C++ is excluded"
+}

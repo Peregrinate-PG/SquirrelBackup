@@ -8,7 +8,7 @@ import json
 import markdown
 import fitz
 from PIL import Image, ImageDraw
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, CondPageBreak, KeepTogether
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, CondPageBreak, KeepTogether, Image as FlowImage
 from reportlab.lib import colors
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.lib.enums import TA_LEFT
@@ -37,6 +37,7 @@ styles={
 css='''body{max-width:900px;margin:48px auto;padding:0 32px;font:16px/1.85 -apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif;color:#202833}h1{color:#111;font-size:30px;line-height:1.5;margin-bottom:32px}h2{margin-top:36px;font-size:23px}h3{margin-top:24px;font-size:19px}table{border-collapse:collapse;width:100%;font-size:13px;line-height:1.65;margin:18px 0}th,td{border:1px solid #dde1e4;padding:8px 10px;text-align:left;vertical-align:top;overflow-wrap:anywhere}th{background:#edf0f1}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f4f5f6;padding:16px}code{font-size:.9em}a{color:#914321}nav{margin-bottom:28px;color:#777}footer{margin-top:44px;color:#777;font-size:12px}@media print{body{margin:0;padding:0;font-size:10pt}nav{display:none}h1,h2,h3,h4{break-after:avoid}tr{break-inside:avoid}thead{display:table-header-group}@page{size:A4;margin:18mm}}'''
 def inline(s):
     s=escape(s)
+    s=re.sub(r'\[([^\]]+)\]\((https?://[^)]+)\)',r'<link href="\2" color="#914321">\1</link>',s)
     s=re.sub(r'\[([^\]]+)\]\(([^)]+)\)',r'\1',s)
     s=re.sub(r'`([^`]+)`',r'<font color="#67402c">\1</font>',s)
     s=re.sub(r'\*\*([^*]+)\*\*',r'<b>\1</b>',s)
@@ -51,7 +52,15 @@ def story(text,group_cases=True):
             end=i+1
             while end<len(lines) and not lines[end].startswith('#'):end+=1
             out.append(KeepTogether(story('\n'.join(lines[i:end]),False)));i=end;continue
+        picture=re.fullmatch(r'!\[(.*?)\]\((.*?)\)',line)
+        if picture:
+            path=DOCS/picture[2]
+            with Image.open(path) as im:w,h=im.size
+            scale=min((A4[0]-100)/w,590/h)
+            out.append(KeepTogether([FlowImage(str(path),width=w*scale,height=h*scale),Spacer(1,6),Paragraph(inline(picture[1]),styles['cell']),Spacer(1,12)]))
+            i+=1;continue
         if line.startswith('```'):
+
             i+=1;code=[]
             while i<len(lines) and not lines[i].startswith('```'):code.append(escape(lines[i]).replace(' ','&#160;'));i+=1
             out.append(Paragraph('<br/>'.join(code),styles['code']));i+=1;continue
@@ -93,16 +102,19 @@ def story(text,group_cases=True):
 
 def footer(canvas,doc):
     canvas.saveState();canvas.setFont('CJK',8);canvas.setFillColor(colors.HexColor('#777777'))
-    canvas.drawString(50,26,'松鼠备份 0.1.1  软件开发综合实验')
+    canvas.drawString(50,26,'松鼠备份 0.2.0  软件开发综合实验')
     canvas.drawRightString(A4[0]-50,26,str(doc.page));canvas.restoreState()
 
 manifest=[]
-for src in sorted(DOCS.glob('0*.md')):
+for src in sorted(DOCS.glob('[0-9][0-9]_*.md')):
     if len(sys.argv) > 1 and not any(src.name.startswith(prefix) for prefix in sys.argv[1:]):
         continue
     text=src.read_text();name=src.stem;title=text.splitlines()[0].lstrip('# ')
     html=markdown.markdown(text,extensions=['tables','fenced_code'])
-    (HTML/(name+'.html')).write_text('<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>'+escape(title)+'</title><style>'+css+'</style><nav><a href="index.html">文档目录</a></nav><main>'+html+'</main><footer>松鼠备份 0.1.1 · 请以源码和测试结果为准</footer></html>')
+    # Generated HTML lives one directory below the Markdown source.
+    html=re.sub(r'src="(?![a-z]+:|/|#)([^"]+)"',r'src="../\1"',html)
+    html='<style>img{max-width:100%;height:auto}</style>'+html
+    (HTML/(name+'.html')).write_text('<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>'+escape(title)+'</title><style>'+css+'</style><nav><a href="index.html">文档目录</a></nav><main>'+html+'</main><footer>松鼠备份 0.2.0 · 请以源码和测试结果为准</footer></html>')
     pdf=PDF/(name+'.pdf')
     SimpleDocTemplate(str(pdf),pagesize=A4,rightMargin=50,leftMargin=50,topMargin=45,bottomMargin=45,title=title,author='Squirrel Backup course project').build(story(text),onFirstPage=footer,onLaterPages=footer)
     document=fitz.open(pdf);pages=[];bounds=[]
@@ -120,7 +132,7 @@ for src in sorted(DOCS.glob('0*.md')):
         sheet.save(QA/(name+f'-sheet-{start//4+1:02d}.jpg'),quality=90)
     print(name,len(pages),'pages','bounds warnings',len(bounds))
 links=''.join('<li><a href="'+escape(x['name'])+'.html">'+escape(x['name'])+'</a> · <a href="../pdf/'+escape(x['name'])+'.pdf">PDF</a></li>' for x in manifest)
-if len(sys.argv) == 1: (HTML/'index.html').write_text('<!doctype html><meta charset="utf-8"><title>松鼠备份文档</title><style>'+css+'</style><h1>松鼠备份课程文档</h1><p><a href="../../presentations/松鼠备份_三分钟演示.pptx">原版演示 PPT（待修订）</a> · <a href="../../presentations/松鼠备份_三分钟演示.pdf">原版演示 PDF（待修订）</a></p><p>0.1.1 复核修订版。可编辑源文件在上一级目录。</p><ul>'+links+'</ul>')
+if len(sys.argv) == 1: (HTML/'index.html').write_text('<!doctype html><meta charset="utf-8"><title>松鼠备份文档</title><style>'+css+'</style><h1>松鼠备份课程文档</h1><p><a href="../../presentations/第3组_松鼠备份_答辩.pptx">答辩 PPT</a> · <a href="../../presentations/第3组_松鼠备份_答辩.pdf">答辩 PDF</a></p><p>0.2.0 复核修订版。可编辑源文件在上一级目录。</p><ul>'+links+'</ul>')
 if len(sys.argv) > 1 and (QA/'manifest.json').exists():
     existing = json.loads((QA/'manifest.json').read_text())
     updated = {item['name']: item for item in existing + manifest}

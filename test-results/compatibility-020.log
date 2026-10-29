@@ -1,0 +1,29 @@
+{
+  "tested_at": "2026-10-29T03:36:25.679696+00:00",
+  "results": [
+    {
+      "case": "old_to_new_plain",
+      "writer": "0.1.0",
+      "reader": "0.2.0",
+      "passed": true
+    },
+    {
+      "case": "old_to_new_encrypted",
+      "writer": "0.1.0",
+      "reader": "0.2.0",
+      "passed": true
+    },
+    {
+      "case": "new_to_old_plain",
+      "writer": "0.2.0",
+      "reader": "0.1.0",
+      "passed": true
+    },
+    {
+      "case": "new_to_old_encrypted",
+      "writer": "0.2.0",
+      "reader": "0.1.0",
+      "passed": true
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "template_sha256": "3323e15ccfa3445483575fd6b77a1606c8b7c64cbdc30cca69cdea858913a2e0",
+  "preserved_parts": 21,
+  "edited_parts": [
+    "[Content_Types].xml",
+    "word/_rels/document.xml.rels",
+    "word/document.xml"
+  ],
+  "new_media": 9,
+  "sections_unchanged": true
+}

@@ -10,9 +10,10 @@
 #include "squirrel/backup.h"
 namespace {
 std::atomic<bool> stopped{false};
+static_assert(std::atomic<bool>::is_always_lock_free, "Signal stop flag must be lock-free");
 void onSignal(int) { stopped.store(true); }
 void help() {
-  std::cout << R"(Squirrel Backup 0.1.1 - macOS C++ backup software
+  std::cout << R"(Squirrel Backup 0.2.0 - macOS C++ backup software
 Usage:
   squirrel backup SOURCE ARCHIVE [options]
   squirrel restore ARCHIVE NEW_FOLDER [--password-env ENV_NAME]
@@ -38,7 +39,7 @@ Options:
   --runs N               Stop after N successful snapshots; default unlimited
   --quiet               Suppress progress messages
 Restore never overwrites an existing path. Outputs must be outside source.
-Jobs run while this process is alive. Ctrl+C stops a job.
+Jobs run while this process is alive. Ctrl+C cancels the current operation safely.
 )";
 }
 uint64_t number(const std::string& value) {
@@ -61,7 +62,7 @@ int main(int argc, char** argv) {
       return 0;
     }
     if (std::string(argv[1]) == "--version") {
-      std::cout << "0.1.1\n";
+      std::cout << "0.2.0\n";
       return 0;
     }
     std::string command = argv[1];
@@ -175,12 +176,15 @@ int main(int argc, char** argv) {
     };
     Summary summary;
     BackupService service;
+    std::signal(SIGINT, onSignal);
+    std::signal(SIGTERM, onSignal);
+    Operation operation{&stopped, {}};
     if (command == "backup") {
-      summary = service.backup(argv[2], argv[3], options, log);
+      summary = service.backup(argv[2], argv[3], options, log, operation);
     } else if (command == "restore") {
-      summary = service.restore(argv[2], argv[3], options.password, log);
+      summary = service.restore(argv[2], argv[3], options.password, log, operation);
     } else if (command == "list" || command == "verify") {
-      summary = service.inspect(argv[2], options.password, log, command == "list");
+      summary = service.inspect(argv[2], options.password, log, command == "list", operation);
       if (command == "list") {
         for (const auto& e : summary.items) {
           std::cout << typeName(e.type) << '\t' << e.size << '\t'
@@ -188,8 +192,6 @@ int main(int argc, char** argv) {
         }
       }
     } else {
-      std::signal(SIGINT, onSignal);
-      std::signal(SIGTERM, onSignal);
       Scheduler::run(argv[2], argv[3], options, schedule, stopped, log);
       return 0;
     }
@@ -197,6 +199,9 @@ int main(int argc, char** argv) {
               << " source_bytes=" << summary.bytes << " archive_bytes=" << summary.archive_bytes
               << '\n';
     return 0;
+  } catch (const Cancelled&) {
+    std::cerr << "Cancelled; incomplete output removed.\n";
+    return 130;
   } catch (const std::exception& error) {
     std::cerr << "ERROR: " << error.what() << '\n';
     return 1;

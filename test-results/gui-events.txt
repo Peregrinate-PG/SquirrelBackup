@@ -1,0 +1,40 @@
+[12:06:24] 请检查目录；间隔须为 1–8640000 的整数，保留份数须为 1–10000 的整数。
+[12:06:24] 请先填写源目录和备份文件路径。
+[12:06:24] 正在备份…
+[12:06:24] 扫描完成，共 2 个条目
+[12:06:24] 已归档：中文.txt
+[12:06:24] 备份完成：/Users/lixiang/Documents/Codex/2026-10-29/qi/work/gui-020-test-3/backup.sqbk
+[12:06:24] 条目 2  ·  文件 1  ·  原始数据 21 B  ·  备份大小 348 B
+[12:06:24] 正在验证并恢复…
+[12:06:24] 密码不正确，或备份文件已损坏。请检查密码和文件来源。
+详细原因：Wrong password or damaged backup (authentication failed)
+[12:06:24] 正在验证并恢复…
+[12:06:25] 恢复完成：/Users/lixiang/Documents/Codex/2026-10-29/qi/work/gui-020-test-3/restored
+[12:06:25] 条目 2  ·  文件 1  ·  原始数据 21 B  ·  备份大小 348 B
+[12:06:25] 正在验证备份…
+[12:06:25] 验证通过，共 2 个条目
+[12:06:25] directory  .
+[12:06:25] file  中文.txt
+[12:06:25] 条目 2  ·  文件 1  ·  原始数据 21 B  ·  备份大小 348 B
+[12:06:25] 正在验证备份…
+[12:06:25] 验证通过，共 2 个条目
+[12:06:25] 条目 2  ·  文件 1  ·  原始数据 21 B  ·  备份大小 348 B
+[12:06:25] 自动任务运行中 · 可点击停止任务
+[12:06:25] 本任务目录：/Users/lixiang/Documents/Codex/2026-10-29/qi/work/gui-020-test-3/repository/squirrel-job-J3ZGy1
+[12:06:25] 扫描完成，共 2 个条目
+[12:06:25] 已归档：中文.txt
+[12:06:25] 备份完成：/Users/lixiang/Documents/Codex/2026-10-29/qi/work/gui-020-test-3/repository/squirrel-job-J3ZGy1/snapshot-1.sqbk
+[12:06:26] 扫描完成，共 2 个条目
+[12:06:26] 已归档：中文.txt
+[12:06:26] 备份完成：/Users/lixiang/Documents/Codex/2026-10-29/qi/work/gui-020-test-3/repository/squirrel-job-J3ZGy1/snapshot-2.sqbk
+[12:06:27] 扫描完成，共 2 个条目
+[12:06:27] 已归档：中文.txt
+[12:06:27] 备份完成：/Users/lixiang/Documents/Codex/2026-10-29/qi/work/gui-020-test-3/repository/squirrel-job-J3ZGy1/snapshot-3.sqbk
+[12:06:27] 已淘汰旧快照：snapshot-1.sqbk
+[12:06:27] 已请求取消。未完成的结果会清理，已经完成的备份会保留。
+[12:06:27] 任务已停止，已完成快照数：3
+[12:06:27] 自动任务已停止。备份文件已保留。
+[12:06:27] 正在备份…
+[12:06:27] 已请求取消。未完成的结果会清理，已经完成的备份会保留。
+[12:06:27] 正在结束当前操作，完成清理后自动关闭。
+[12:06:27] 操作已取消，未完成的临时文件已清理。

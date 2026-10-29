@@ -1,120 +1,107 @@
-// Local editable OOXML fallback. The managed Artifact Tool runtime is unavailable on this Mac.
-import fs from 'node:fs';
+import fs from 'node:fs/promises';
 import path from 'node:path';
-import {fileURLToPath} from 'node:url';
-import {execFileSync} from 'node:child_process';
-const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
-const build=path.join(root,'.preflight/ppt-build');
-const out=path.join(root,'presentations');
-fs.mkdirSync(build,{recursive:true});fs.mkdirSync(out,{recursive:true});
-const summary=JSON.parse(fs.readFileSync(path.join(root,'test-results/summary.json')));
-const unit=Number(fs.readFileSync(path.join(root,'test-results/unit.xml'),'utf8').match(/<testsuites[^>]*tests="(\d+)"/)[1]);
-const integration=JSON.parse(fs.readFileSync(path.join(root,'test-results/integration.json'))).length;
-const security=JSON.parse(fs.readFileSync(path.join(root,'test-results/security.json'))).length;
-const count=unit+integration+security;
-const C={paper:'F7F6F2',ink:'222D32',muted:'687375',accent:'B8512F',white:'FFFFFF',rule:'D6DDDC',pale:'EDEEE8'};
-const font='Arial Unicode MS';
-const slides=[];
-function slide(title,note,{dark=false}={}){
- const s={title,note,bg:dark?C.ink:C.paper,elements:[]};slides.push(s);
- if(title)text(s,title,64,48,1152,70,44,dark?C.white:C.ink,true);
- if(slides.length>1)text(s,String(slides.length),1175,665,40,24,17,dark?'A9B1B1':C.muted);
- return s;
+import {createRequire} from 'node:module';
+import {pathToFileURL,fileURLToPath} from 'node:url';
+const require=createRequire(import.meta.url);
+const modules=process.env.ARTIFACT_NODE_MODULES;
+if(!modules)throw new Error('Set ARTIFACT_NODE_MODULES to the supplied artifact runtime modules.');
+const {Presentation,PresentationFile}=await import(pathToFileURL(require.resolve('@oai/artifact-tool',{paths:[modules]})).href);
+const root=path.resolve(process.env.SQUIRREL_ROOT||path.join(path.dirname(fileURLToPath(import.meta.url)),'..'));
+const build=path.resolve(process.env.PPT_BUILD_DIR||path.join(root,'.preflight/ppt-build'));
+await fs.mkdir(build,{recursive:true});
+const summary=JSON.parse(await fs.readFile(path.join(root,'test-results/summary.json')));
+const gui=JSON.parse(await fs.readFile(path.join(root,'test-results/gui-selftest.json')));
+const p=Presentation.create({slideSize:{width:1280,height:720}});
+const C={paper:'#F7F6F2',ink:'#222D32',muted:'#667274',accent:'#AC4B30',teal:'#386B6C',line:'#B8C2C1',white:'#FFFFFF'};
+const font='PingFang SC';const notes=[];
+function text(s,value,x,y,w,h,size=28,color=C.ink,bold=false,align='left'){
+ const v=s.shapes.add({geometry:'textbox',position:{left:x,top:y,width:w,height:h},fill:'none',line:{fill:'none',width:0}});
+ v.text=value;v.text.style={typeface:font,fontSize:size,bold,color,alignment:align,verticalAlignment:'top',wrap:"square",lineSpacing:1.18,insets:0};return v;
 }
-function text(s,value,x,y,w,h,size=26,color=C.ink,bold=false){s.elements.push({kind:'text',text:value,x,y,w,h,size,color,bold});}
-function table(s,rows,widths,x,y,rowHeights,size=24){s.elements.push({kind:'table',rows,widths,x,y,w:widths.reduce((a,b)=>a+b),h:rowHeights.reduce((a,b)=>a+b),rowHeights,size});}
-function image(s,file,x,y,w,h){s.elements.push({kind:'image',file,x,y,w,h});}
-let s=slide('', '建议 15 秒。介绍课程项目与平台。成员 A/B/C 为建议分工角色，演示前替换为真实姓名。强调这是本机可运行初版，不承诺未验收的平台。',{dark:true});
-text(s,'松鼠备份',64,135,580,100,68,C.white,true);
-text(s,'Squirrel Backup',68,246,560,55,35,'C9CFCC');
-text(s,'软件开发综合实验',68,326,560,42,27,'E5AE94');
-text(s,'macOS 原生应用\nC++17 业务核心 · GUI 与 CLI',68,394,540,100,26,C.white);
-text(s,'三人协作方案与项目演示',68,597,550,36,21,'BBC4C1');
-image(s,'docs/screenshots/page-0.png',650,148,576,421.33);
-s=slide('已实现的本地备份功能','建议 25 秒。A 介绍基本闭环及文件类型和筛选，B 补充算法。实时是元数据轮询，不是内核事件或无限实时保证。依赖库和限制在后续页面明确。');
-text(s,'基础流程',65,150,520,44,32,C.accent,true);
-text(s,'目录树备份与安全还原\n完整性检查与内容查看\n已有目标拒绝覆盖',65,215,540,190,30);
-text(s,'文件与选项',680,150,520,44,32,C.accent,true);
-text(s,'软硬链接、FIFO、基础元数据\n路径／类型／名字／时间／尺寸／UID 筛选\n自定义打包、Huffman、密码保护',680,215,530,200,26);
-text(s,'自动任务',65,450,520,44,32,C.accent,true);
-text(s,'定时完整快照、任务内保留与淘汰\n轮询变化检测，稳定后自动备份',65,515,1135,100,28);
-s=slide('一个 C++ 核心服务两个入口','建议 25 秒。A 说明 CLI 与 GUI 不是两套复制的备份逻辑。此页为文字化模块说明，不是 UML 图。说明备份先扫描、再打包压缩、再封装，恢复先验证，再写私有暂存，最后不覆盖发布。');
-text(s,'入口',64,150,235,45,32,C.accent,true);
-text(s,'Cocoa GUI\n命令行 CLI',64,222,250,130,32);
-text(s,'核心接口',390,150,460,45,32,C.accent,true);
-text(s,'BackupService\nbackup · inspect · restore\nScheduler 复用同一核心',390,222,760,155,30);
-text(s,'备份',64,445,230,40,29,C.accent,true);
-text(s,'扫描与筛选 → 树记录／分块压缩 → 摘要或密码封装 → 发布',285,443,920,86,25);
-text(s,'恢复',64,555,230,40,29,C.accent,true);
-text(s,'验证与解密 → 私有目录解包 → 元数据恢复 → 新目录发布',285,553,920,58,25);
-text(s,'macOS 15.7.9 · Apple Clang 17 · Makefile · VS Code',65,632,1090,32,22,C.muted);
-s=slide('算法选择与库使用边界','建议 25 秒。B 解释自研打包与 Huffman，以及先压缩后加密。密码方案使用系统库，不宣称自研 AES；按教师规则说明扩展分可能折半。GUI 也使用系统框架。');
-table(s,[['功能','实现方式','依赖申报'],['打包／解包','自定义 SQBK / SQTREE 格式','本项目实现'],['压缩／解压','分块 Huffman，收益不足存原始块','本项目实现'],['密码保护','AES-256-CBC + PBKDF2 + HMAC','CommonCrypto / Security'],['图形界面','macOS 原生控件与后台任务','Cocoa / AppKit']],[205,565,370],68,154,[52,76,76,76,76],23);
-text(s,'先压缩后加密；加密备份先认证、后解密。系统库使用如实写入报告。',68,570,1135,70,24,C.muted);
-s=slide('测试结果与验证范围',`建议 25 秒。C 解释 ${count} 项是命名测试用例数量，12 项是 GUI 内部动作断言，不能混加。持续运行只有十分钟，不是整夜稳定性证明。文件选择器与真实点击还需要人工验收。十分钟稳定运行与变异输入数字来自初版记录；本轮 72 项包含新增调度回归。`);
-text(s,`${count} / ${count}`,65,150,530,120,86,C.accent,true);
-text(s,'自动测试用例通过',72,276,450,50,30);
-text(s,'git 本地版本管理\nclang-format + cpplint 代码规范',72,348,450,80,22,C.muted);
-table(s,[['测试层次','数量'],['GoogleTest 单元测试',String(unit)],['CLI 集成测试',String(integration)],['畸形归档与并发测试',String(security)]],[470,180],560,157,[52,72,72,72],24);
-text(s,'另有 12 项 GUI 内部动作断言、Sanitizer 检查\n60 秒变异测试约 15.8 万次输入；十分钟任务完成 275 份快照',70,443,1140,110,26);
-text(s,'真实点击、文件选择器、跨机器兼容性仍待人工验收。',70,590,1140,52,23,C.muted);
-s=slide('三人各负责实现、测试与文档','建议 30 秒。用角色代号说明建议分工，各 30 点，约各三分之一；不是已发生贡献。A 文件与恢复，B 格式与算法，C 界面与自动任务。公共接口一起评审，三人都要能独立构建和演示。');
-table(s,[['成员','技术主责','配套工作'],['A','扫描筛选、安全恢复、CLI','需求与用例、模块测试'],['B','归档格式、Huffman、密码封装','设计与类图、算法测试'],['C','GUI、自动任务、集成发布','测试汇总、动态建模']],[130,565,445],70,160,[55,98,98,98],24);
-text(s,'推进计划：接手复现 → 模块复核 → 手工建模、人工验收与演示',70,522,1140,34,21,C.muted);
-text(s,'每人 30 个计划工作量点：代码 14 + 测试 5 + 文档建模 5 + 复核演示 6',70,566,1140,60,24,C.accent);
-text(s,'角色代号请替换姓名学号；实际完成情况另行登记。',70,630,1120,30,19,C.muted);
-s=slide('现场演示以安全恢复为主线','建议 25 秒。A 操作基础流程，B 补充压缩加密，C 展示自动任务和测试。演示使用 scripts/demo.sh 的独立副本，恢复目标必须是新目录。不要备份真实个人文件或在截图中展示密码。');
-text(s,'1  选择演示源目录，创建新备份\n\n2  验证内容并恢复到新目录\n\n3  展示错误密码与不覆盖保护\n\n4  启动自动任务，检查保留份数',65,168,575,400,27);
-image(s,'docs/screenshots/page-1.png',662,167,560,409.63);
-text(s,'GUI 离屏预览；真实文件选择器需现场复核',670,597,550,40,18,C.muted);
-s=slide('初版边界与下一轮验收','建议 10 秒。简要说明已知边界与接下来三人各自承担的验收。源码、可执行程序和构建脚本已经具备。UML 按指导手工完成，PPT 为本轮提供的可编辑初稿；个人信息、视频和证书由本人补充。',{dark:true});
-text(s,'接下来',65,160,500,50,34,'E5AE94',true);
-text(s,'完成真实 GUI 操作与手工 UML\n填写姓名、学号和真实贡献\n共同排练并录制课程演示视频',65,240,1120,210,31,C.white);
-text(s,'当前限制',65,502,500,45,27,'E5AE94',true);
-text(s,'任务需保持进程运行；暂不支持网盘、增量、完整 ACL 与后台常驻。',65,566,1140,70,25,'D2D9D6');
-const NS={p:'http://schemas.openxmlformats.org/presentationml/2006/main',a:'http://schemas.openxmlformats.org/drawingml/2006/main',r:'http://schemas.openxmlformats.org/officeDocument/2006/relationships'};
-const e=v=>String(v).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
-const emu=v=>Math.round(v*9525);
-const wrap=(name,body)=>`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><${name} xmlns:p="${NS.p}" xmlns:a="${NS.a}" xmlns:r="${NS.r}">${body}</${name}>`;
-const group='<p:nvGrpSpPr><p:cNvPr id="1" name=""/><p:cNvGrpSpPr/><p:nvPr/></p:nvGrpSpPr><p:grpSpPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="0" cy="0"/><a:chOff x="0" y="0"/><a:chExt cx="0" cy="0"/></a:xfrm></p:grpSpPr>';
-const fill=c=>`<a:solidFill><a:srgbClr val="${c}"/></a:solidFill>`;
-const pos=t=>`<a:xfrm><a:off x="${emu(t.x)}" y="${emu(t.y)}"/><a:ext cx="${emu(t.w)}" cy="${emu(t.h)}"/></a:xfrm>`;
-function paragraphs(value,size,color,bold=false){return value.split('\n').map(line=>`<a:p><a:pPr algn="l"><a:lnSpc><a:spcPts val="${Math.round(size*1.42*75)}"/></a:lnSpc><a:buNone/></a:pPr><a:r><a:rPr lang="zh-CN" sz="${Math.round(size*75)}" b="${bold?1:0}">${fill(color)}<a:latin typeface="${font}"/><a:ea typeface="${font}"/><a:cs typeface="${font}"/></a:rPr><a:t xml:space="preserve">${e(line)}</a:t></a:r><a:endParaRPr lang="zh-CN" sz="${Math.round(size*75)}"/></a:p>`).join('');}
-function textbox(t,id){return `<p:sp><p:nvSpPr><p:cNvPr id="${id}" name="Text ${id}"/><p:cNvSpPr txBox="1"/><p:nvPr/></p:nvSpPr><p:spPr>${pos(t)}<a:prstGeom prst="rect"><a:avLst/></a:prstGeom><a:noFill/><a:ln><a:noFill/></a:ln></p:spPr><p:txBody><a:bodyPr wrap="square" lIns="0" tIns="0" rIns="0" bIns="0" anchor="t"><a:noAutofit/></a:bodyPr><a:lstStyle/>${paragraphs(t.text,t.size,t.color,t.bold)}</p:txBody></p:sp>`;}
-function nativeTable(t,id){const rows=t.rows.map((r,index)=>`<a:tr h="${emu(t.rowHeights[index])}">${r.map(cell=>`<a:tc><a:txBody><a:bodyPr wrap="square"/><a:lstStyle/>${paragraphs(cell,t.size,index?C.ink:C.white,index===0)}</a:txBody><a:tcPr marL="114300" marR="114300" marT="76200" marB="76200" anchor="ctr"><a:lnB w="6350">${fill(C.rule)}<a:prstDash val="solid"/></a:lnB>${fill(index?(index%2?C.white:C.pale):C.ink)}</a:tcPr></a:tc>`).join('')}</a:tr>`).join('');return `<p:graphicFrame><p:nvGraphicFramePr><p:cNvPr id="${id}" name="Editable table ${id}"/><p:cNvGraphicFramePr/><p:nvPr/></p:nvGraphicFramePr><p:xfrm><a:off x="${emu(t.x)}" y="${emu(t.y)}"/><a:ext cx="${emu(t.w)}" cy="${emu(t.h)}"/></p:xfrm><a:graphic><a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/table"><a:tbl><a:tblPr firstRow="1" bandRow="1"/><a:tblGrid>${t.widths.map(w=>`<a:gridCol w="${emu(w)}"/>`).join('')}</a:tblGrid>${rows}</a:tbl></a:graphicData></a:graphic></p:graphicFrame>`;}
-function picture(t,id,rid){return `<p:pic><p:nvPicPr><p:cNvPr id="${id}" name="Product preview ${id}" descr="松鼠备份应用离屏预览"/><p:cNvPicPr><a:picLocks noChangeAspect="1"/></p:cNvPicPr><p:nvPr/></p:nvPicPr><p:blipFill><a:blip r:embed="${rid}"/><a:stretch><a:fillRect/></a:stretch></p:blipFill><p:spPr>${pos(t)}<a:prstGeom prst="rect"><a:avLst/></a:prstGeom></p:spPr></p:pic>`;}
-const parts=new Map();const put=(name,value)=>parts.set(name,Buffer.from(value));
-const rels=items=>`<?xml version="1.0" encoding="UTF-8"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">${items.map(([id,type,target])=>`<Relationship Id="${id}" Type="${NS.r}/${type}" Target="${target}"/>`).join('')}</Relationships>`;
-for(let i=0;i<slides.length;i++){
- const s=slides[i];let id=2;let rel=[['rId1','slideLayout','../slideLayouts/slideLayout1.xml'],['rId2','notesSlide',`../notesSlides/notesSlide${i+1}.xml`]];let objs='';
- for(const t of s.elements){if(t.kind==='text')objs+=textbox(t,id++);else if(t.kind==='table')objs+=nativeTable(t,id++);else {const name=`image-${i+1}-${id}.png`,rid=`rId${rel.length+1}`;parts.set('ppt/media/'+name,fs.readFileSync(path.join(root,t.file)));rel.push([rid,'image','../media/'+name]);objs+=picture(t,id++,rid);}}
- put(`ppt/slides/slide${i+1}.xml`,wrap('p:sld',`<p:cSld name="${e(s.title||'松鼠备份')}"><p:bg><p:bgPr>${fill(s.bg)}<a:effectLst/></p:bgPr></p:bg><p:spTree>${group}${objs}</p:spTree></p:cSld><p:clrMapOvr><a:masterClrMapping/></p:clrMapOvr>`));
- put(`ppt/slides/_rels/slide${i+1}.xml.rels`,rels(rel));
- const note={text:s.note+`\n依据：项目源码；test-results/summary.json、unit.xml、integration.json、security.json；docs/07_三人分工与协作方案.md。截图为应用自身离屏预览。`,x:40,y:100,w:640,h:700,size:18,color:C.ink};
- put(`ppt/notesSlides/notesSlide${i+1}.xml`,wrap('p:notes',`<p:cSld><p:spTree>${group}<p:sp><p:nvSpPr><p:cNvPr id="2" name="Speaker notes"/><p:cNvSpPr/><p:nvPr><p:ph type="body" idx="1"/></p:nvPr></p:nvSpPr><p:spPr/> <p:txBody><a:bodyPr/><a:lstStyle/>${paragraphs(note.text,18,C.ink)}</p:txBody></p:sp></p:spTree></p:cSld><p:clrMapOvr><a:masterClrMapping/></p:clrMapOvr>`));
- put(`ppt/notesSlides/_rels/notesSlide${i+1}.xml.rels`,rels([['rId1','notesMaster','../notesMasters/notesMaster1.xml'],['rId2','slide',`../slides/slide${i+1}.xml`]]));
+function line(s,x,y,w,color=C.line){s.shapes.add({geometry:'line',position:{left:x,top:y,width:w,height:0},line:{fill:color,width:1.2}});}
+function slide(title,note,dark=false){
+ const s=p.slides.add();s.background.fill=dark?C.ink:C.paper;
+ if(title)text(s,title,64,45,1148,70,44,dark?C.white:C.ink,true);
+ if(p.slides.items.length>1)text(s,String(p.slides.items.length).padStart(2,'0'),1175,661,45,28,19,dark?'#CCD4D2':C.muted,false,'right');
+ s.speakerNotes.text=note;notes.push({title:title||'松鼠备份',note});return s;
 }
-const clrMap='<p:clrMap bg1="lt1" tx1="dk1" bg2="lt2" tx2="dk2" accent1="accent1" accent2="accent2" accent3="accent3" accent4="accent4" accent5="accent5" accent6="accent6" hlink="hlink" folHlink="folHlink"/>';
-put('ppt/slideMasters/slideMaster1.xml',wrap('p:sldMaster',`<p:cSld name="Squirrel Master"><p:spTree>${group}</p:spTree></p:cSld>${clrMap}<p:sldLayoutIdLst><p:sldLayoutId id="2147483649" r:id="rId2"/></p:sldLayoutIdLst><p:txStyles><p:titleStyle/><p:bodyStyle/><p:otherStyle/></p:txStyles>`));
-put('ppt/slideMasters/_rels/slideMaster1.xml.rels',rels([['rId1','theme','../theme/theme1.xml'],['rId2','slideLayout','../slideLayouts/slideLayout1.xml']]));
-put('ppt/slideLayouts/slideLayout1.xml',wrap('p:sldLayout',`<p:cSld name="Blank"><p:spTree>${group}</p:spTree></p:cSld><p:clrMapOvr><a:masterClrMapping/></p:clrMapOvr>`).replace('<p:sldLayout ','<p:sldLayout type="blank" preserve="1" '));
-put('ppt/slideLayouts/_rels/slideLayout1.xml.rels',rels([['rId1','slideMaster','../slideMasters/slideMaster1.xml']]));
-put('ppt/notesMasters/notesMaster1.xml',wrap('p:notesMaster',`<p:cSld><p:spTree>${group}</p:spTree></p:cSld>${clrMap}<p:notesStyle/>`));
-put('ppt/notesMasters/_rels/notesMaster1.xml.rels',rels([['rId1','theme','../theme/theme1.xml']]));
-const scheme=Object.entries({dk1:C.ink,lt1:C.white,dk2:C.muted,lt2:C.paper,accent1:C.accent,accent2:'547A6D',accent3:'A88A51',accent4:'4E6C88',accent5:'92718E',accent6:'7A8C55',hlink:C.accent,folHlink:'804026'}).map(([k,v])=>`<a:${k}><a:srgbClr val="${v}"/></a:${k}>`).join('');
-put('ppt/theme/theme1.xml',`<?xml version="1.0" encoding="UTF-8"?><a:theme xmlns:a="${NS.a}" name="Squirrel"><a:themeElements><a:clrScheme name="Squirrel">${scheme}</a:clrScheme><a:fontScheme name="Squirrel"><a:majorFont><a:latin typeface="${font}"/><a:ea typeface="${font}"/><a:cs typeface="${font}"/></a:majorFont><a:minorFont><a:latin typeface="${font}"/><a:ea typeface="${font}"/><a:cs typeface="${font}"/></a:minorFont></a:fontScheme><a:fmtScheme name="Squirrel"><a:fillStyleLst>${fill(C.white).repeat(3)}</a:fillStyleLst><a:lnStyleLst>${`<a:ln w="12700">${fill(C.ink)}<a:prstDash val="solid"/></a:ln>`.repeat(3)}</a:lnStyleLst><a:effectStyleLst>${'<a:effectStyle><a:effectLst/></a:effectStyle>'.repeat(3)}</a:effectStyleLst><a:bgFillStyleLst>${fill(C.paper).repeat(3)}</a:bgFillStyleLst></a:fmtScheme></a:themeElements></a:theme>`);
-put('ppt/presentation.xml',wrap('p:presentation',`<p:sldMasterIdLst><p:sldMasterId id="2147483648" r:id="rId1"/></p:sldMasterIdLst><p:notesMasterIdLst><p:notesMasterId r:id="rId${slides.length+2}"/></p:notesMasterIdLst><p:sldIdLst>${slides.map((_,i)=>`<p:sldId id="${256+i}" r:id="rId${i+2}"/>`).join('')}</p:sldIdLst><p:sldSz cx="12192000" cy="6858000" type="screen16x9"/><p:notesSz cx="6858000" cy="9144000"/>`));
-put('ppt/_rels/presentation.xml.rels',rels([['rId1','slideMaster','slideMasters/slideMaster1.xml'],...slides.map((_,i)=>[`rId${i+2}`,'slide',`slides/slide${i+1}.xml`]),[`rId${slides.length+2}`,'notesMaster','notesMasters/notesMaster1.xml']]));
-put('_rels/.rels',`<?xml version="1.0"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="${NS.r}/officeDocument" Target="ppt/presentation.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties" Target="docProps/core.xml"/><Relationship Id="rId3" Type="${NS.r}/extended-properties" Target="docProps/app.xml"/></Relationships>`);
-put('docProps/core.xml',`<?xml version="1.0" encoding="UTF-8"?><cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" xmlns:dc="http://purl.org/dc/elements/1.1/"><dc:title>松鼠备份课程演示</dc:title><dc:creator>Squirrel Backup course project</dc:creator><dc:description>八页可编辑演示，含讲者备注和建议三人分工</dc:description></cp:coreProperties>`);
-put('docProps/app.xml',`<?xml version="1.0"?><Properties xmlns="http://schemas.openxmlformats.org/officeDocument/2006/extended-properties"><Application>Squirrel Backup Presentation Builder</Application><PresentationFormat>On-screen Show (16:9)</PresentationFormat><Slides>${slides.length}</Slides><Notes>${slides.length}</Notes></Properties>`);
-const types=[['/ppt/presentation.xml','application/vnd.openxmlformats-officedocument.presentationml.presentation.main+xml'],['/ppt/slideMasters/slideMaster1.xml','application/vnd.openxmlformats-officedocument.presentationml.slideMaster+xml'],['/ppt/slideLayouts/slideLayout1.xml','application/vnd.openxmlformats-officedocument.presentationml.slideLayout+xml'],['/ppt/theme/theme1.xml','application/vnd.openxmlformats-officedocument.theme+xml'],['/ppt/notesMasters/notesMaster1.xml','application/vnd.openxmlformats-officedocument.presentationml.notesMaster+xml'],['/docProps/core.xml','application/vnd.openxmlformats-package.core-properties+xml'],['/docProps/app.xml','application/vnd.openxmlformats-officedocument.extended-properties+xml'],...slides.flatMap((_,i)=>[[`/ppt/slides/slide${i+1}.xml`,'application/vnd.openxmlformats-officedocument.presentationml.slide+xml'],[`/ppt/notesSlides/notesSlide${i+1}.xml`,'application/vnd.openxmlformats-officedocument.presentationml.notesSlide+xml']])];
-put('[Content_Types].xml',`<?xml version="1.0"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Default Extension="png" ContentType="image/png"/>${types.map(([p,t])=>`<Override PartName="${p}" ContentType="${t}"/>`).join('')}</Types>`);
-const manifest={width:1280,height:720,font,slides};
-fs.writeFileSync(path.join(build,'slides.json'),JSON.stringify(manifest,null,2));
-const partsDir=path.join(build,'parts');fs.rmSync(partsDir,{recursive:true,force:true});
-for(const [name,data] of parts){const target=path.join(partsDir,name);fs.mkdirSync(path.dirname(target),{recursive:true});fs.writeFileSync(target,data);}
-const finalPath=path.join(out,'松鼠备份_三分钟演示.pptx');
-execFileSync('python3',['-c','from pathlib import Path; from zipfile import ZipFile, ZIP_DEFLATED; import sys; r=Path(sys.argv[1]); z=ZipFile(sys.argv[2],"w",ZIP_DEFLATED); [z.write(p,p.relative_to(r).as_posix()) for p in sorted(r.rglob("*")) if p.is_file()]; z.close()',partsDir,finalPath]);
-fs.writeFileSync(path.join(out,'演示讲稿.md'),'# 松鼠备份演示讲稿\n\n'+slides.map((s,i)=>`## 第 ${i+1} 页 ${s.title||'松鼠备份'}\n\n${s.note}\n`).join('\n'));
-console.log(finalPath);
+function box(s,label,x,y,w,h,color=C.paper,size=26){
+ const v=s.shapes.add({geometry:'rect',position:{left:x,top:y,width:w,height:h},fill:color,line:{fill:C.teal,width:1.5}});
+ v.text=label;v.text.style={typeface:font,fontSize:size,color:C.ink,alignment:'center',verticalAlignment:'middle',insets:12,lineSpacing:1.16};return v;
+}
+function arrow(s,a,b,from='right',to='left'){
+ return s.shapes.connect(a,b,{kind:'straight',fromSide:from,toSide:to,line:{fill:C.teal,width:2},tail:{type:'triangle',width:'sm',length:'sm'}});
+}
+async function img(s,file,x,y,w,h){const b=await fs.readFile(path.join(root,file));return s.images.add({blob:b.buffer.slice(b.byteOffset,b.byteOffset+b.byteLength),contentType:'image/png',alt:'松鼠备份 0.2.0 真实应用离屏运行状态',fit:'contain',position:{left:x,top:y,width:w,height:h}});}
+function table(s,rows,widths,x,y,heights,size=25){
+ const t=s.tables.add({rows:rows.length,columns:widths.length,left:x,top:y,width:widths.reduce((a,b)=>a+b),height:heights.reduce((a,b)=>a+b),columnWidths:widths,values:rows});
+ t.borders.assign({fill:C.line,width:.8});
+ t.cells.block({row:0,column:0,rowCount:rows.length,columnCount:widths.length}).assign({fill:C.paper,textStyle:{typeface:font,fontSize:size,color:C.ink,alignment:'left'},margins:{left:14,right:14,top:10,bottom:10},anchor:'center'});
+ for(let r=0;r<rows.length;r++){t.rows[r].height=heights[r];for(let c=0;c<widths.length;c++){
+ const cell=t.getCell(r,c);cell.text.style={typeface:font,fontSize:size,bold:r===0,color:r===0?C.white:C.ink,alignment:'left',verticalAlignment:'middle'};cell.fill=r===0?C.ink:C.paper;
+ }}return t;
+}
+let s=slide('', '10秒。杨梦宇：我们第3组的项目是松鼠备份，目标是把本机目录保存成可验证、可安全恢复的归档。当前演示版本为0.2.0，使用C++核心与macOS原生界面。',true);
+text(s,'松鼠备份',72,154,1100,110,78,C.white,true);
+text(s,'Squirrel Backup  0.2.0',77,280,1000,60,34,'#B7C9C5');
+text(s,'软件开发综合实验 · 第3组',77,393,1120,50,29,'#E4B29B');
+text(s,'杨梦宇  2023150901002  组长\n郭畅     2023040904017\n李想     2023150901012',78,505,1060,142,25,C.white);
+s=slide('本地目录备份与恢复','20秒。杨梦宇：从一个目录生成单个备份文件，再恢复到新目录。可选六类筛选、压缩和密码保护。自动任务定时创建完整快照，也能轮询目录变化。已有备份与恢复目录不会被覆盖。截图来源：docs/screenshots/01-backup-completed.png，后台调用真实AppKit操作处理流程，未操作系统文件选择器。');
+text(s,'目录 → 归档 → 新目录',64,151,1120,55,34,C.accent,true);
+text(s,'保留软硬链接、FIFO\n以及基础文件元数据',65,245,430,104,29);
+text(s,'路径、类型、名称、时间、\n大小、UID组合筛选',65,377,430,104,29);
+text(s,'定时快照与目录变化检测\n按任务保留最近N份',65,509,430,104,29);
+await img(s,'docs/screenshots/01-backup-completed.png',580,206,627,459);
+s=slide('共享核心与模块职责','25秒。杨梦宇：GUI和CLI都调用BackupService，调度器也复用它。扫描、归档格式、压缩、密码封装分开承担职责。Operation传入停止标志和进度回调，工作线程不直接修改AppKit控件。对应源码：include/squirrel/backup.h、src/service.cpp、src/scheduler.cpp、src/gui.mm；完整UML见docs/uml/SquirrelBackup.mdj。');
+const guiBox=box(s,'Cocoa GUI',76,168,244,76),cliBox=box(s,'CLI',76,281,244,76),schedule=box(s,'Scheduler\n定时 / 轮询',76,394,244,98);
+const service=box(s,'BackupService\nbackup / inspect / restore',418,273,423,120,'#E5EEEB',29);
+arrow(s,guiBox,service);arrow(s,cliBox,service);arrow(s,schedule,service);
+const scan=box(s,'FileScanner\n扫描与筛选',939,149,264,84),archive=box(s,'ArchiveWriter\nArchiveReader',939,268,264,105,C.paper,23),codec=box(s,'HuffmanCodec\n分块压缩',939,408,264,84),crypto=box(s,'CryptoEnvelope\n摘要 / 认证加密',939,527,264,84);
+arrow(s,service,scan);arrow(s,service,archive);arrow(s,archive,codec,'bottom','top');arrow(s,service,crypto);
+text(s,'Operation：协作取消与阶段进度',416,469,457,82,27,C.teal,true);
+text(s,'C++17 · macOS 13.0 arm64 · Apple Clang 14.0.3',65,636,1075,32,22,C.muted);
+s=slide('归档格式与算法选择','20秒。郭畅：SQBK是外层封装，SQTREE描述目录树。Huffman按1MiB分块处理，压缩没有收益就保存原始块，单符号和空块单独处理。密码保护使用系统库完成PBKDF2、AES和HMAC，项目实现封装与边界检查，不把系统密码算法说成自研。源码：src/archive.cpp、src/huffman.cpp、src/crypto.cpp；依赖声明：THIRD_PARTY.md。');
+table(s,[['部分','实现','依赖'],['文件树归档','自定义SQBK / SQTREE\n明确长度、类型与结束标志','项目实现'],['Huffman压缩','1 MiB分块；收益不足回退原始块','项目实现'],['密码封装','PBKDF2 + AES-256-CBC\nHMAC-SHA256认证','CommonCrypto\nSecurity']],[215,610,320],65,159,[55,112,105,124],25);
+text(s,'先压缩，再加密；恢复时先认证，再解密',68,591,1120,50,31,C.accent,true);
+s=slide('安全恢复与停止操作','25秒。郭畅：恢复先完成验证，再写私有暂存目录，恢复元数据后以不覆盖方式发布。错误密码、畸形路径和取消都应清理暂存，不留下貌似完成的目录。0.2.0增加阶段取消和发布前源目录复查；读取后的变化仍可能发生，所以它不等于文件系统原子快照。源码：src/service.cpp、src/archive.cpp、src/scanner.cpp；回归：tests/core_test.cpp。');
+text(s,'恢复路径',66,155,1100,40,29,C.accent,true);
+const steps=['认证与校验','私有目录解包','恢复元数据','不覆盖发布'];const nodes=steps.map((v,i)=>box(s,v,66+i*293,223,255,89,i===3?'#E5EEEB':C.paper,27));
+for(let i=0;i<3;i++)arrow(s,nodes[i],nodes[i+1]);
+text(s,'失败或取消：清理暂存，保留原备份',66,362,1130,52,33,C.teal,true);
+line(s,66,449,1140);
+text(s,'停止检查进入扫描、分块读写、元数据与发布前阶段。\n备份发布前重新扫描，发现源目录变化则拒绝发布。',66,488,1140,115,29);
+text(s,'能力边界：不提供多文件事务快照或断电持久性保证',66,632,1120,34,22,C.muted);
+s=slide('当前版本测试结果','25秒。李想：97是命名自动测试用例数量，四层相加为97，Sanitizer重复执行不额外计数。GUI53项是内部断言，单独报告。新旧版本明文与加密的双向恢复共4种组合通过。20小时定时和watch联合测试尚在运行，最终数值以报告刷新为准；系统选择器仍需人工检查。来源：test-results/summary.json、gui-selftest.json、compatibility-020.json、sanitize-020.log。');
+text(s,`${summary.passed} / ${summary.total}`,65,155,485,126,85,C.accent,true);
+text(s,'命名自动测试通过',69,291,470,44,30);
+text(s,'ASan / UBSan复测通过\n旧版与新版双向恢复：4种组合',69,388,480,110,25);
+table(s,[['测试层次','通过'],['单元测试','52'],['CLI集成','21'],['异常归档与并发','18'],['工作流回归','6']],[470,140],604,162,[51,65,65,65,65],25);
+text(s,'另有53项GUI内部断言；系统文件选择器仍待人工验收。',69,562,1135,42,25);
+text(s,'20小时持续测试正在运行，未记为通过。',69,615,1135,40,25,C.muted);
+s=slide('三人职责与复核安排','20秒。李想：按文件与恢复、格式与算法、界面与任务分配，每人30个相对工作量点，均承担代码、测试、文档与演示。这里是接手与复核安排，不把自动生成或自动执行内容写成个人已完成工作。实际贡献以三人确认和后续提交记录为准。来源：docs/07_三人分工与协作方案.md。');
+table(s,[['成员','主责模块','配套工作'],['杨梦宇','扫描、筛选、安全恢复、CLI','需求与用例、文件测试'],['郭畅','归档、Huffman、密码封装','设计与类图、算法测试'],['李想','GUI、自动任务、构建发布','测试汇总、动态建模']],[205,565,375],65,157,[56,96,96,96],26);
+text(s,'每人30点：实现14 + 测试5 + 文档建模5 + 复核演示6',65,548,1140,52,28,C.accent,true);
+text(s,'交叉复核：杨梦宇 → 郭畅 → 李想 → 杨梦宇',65,618,1140,40,25,C.muted);
+s=slide('答辩前推进计划','15秒。李想：以10月29日为起点安排接手复现、真实界面验收、材料复核和排练，11月18日答辩。甘特图是后续计划，尚未发生的日期不写成完成记录。在线Git仓库需要成员账号完成发布，个人证书各自完成。来源：课程9.pdf第38至40页，docs/planning/后续计划.csv及docs/10_学习证书办理说明.md。');
+const gx=367,gy=225,unit=39,rows=[['接手与复现',0,3],['界面与边界验收',3,5],['文档与模型复核',8,4],['演示与答辩排练',12,5],['最终检查与提交准备',17,3]];
+for(const [label,day]of[['10/29',0],['11/1',3],['11/6',8],['11/10',12],['11/15',17],['11/18',20]]){text(s,label,gx+day*unit-28,161,88,40,23,C.muted);s.shapes.add({geometry:'line',position:{left:gx+day*unit,top:211,width:0,height:359},line:{fill:'#DDE2DF',width:1}});}
+for(let i=0;i<rows.length;i++){const[label,start,duration]=rows[i];text(s,label,67,gy+i*70,283,43,26);s.shapes.add({geometry:'rect',position:{left:gx+start*unit,top:gy+i*70+5,width:duration*unit-5,height:30},fill:C.teal,line:{fill:'none',width:0}});}
+text(s,'2026年11月18日上午答辩；当日23:59前提交成电慕课',66,618,1150,40,26,C.accent,true);
+s=slide('现场演示：验证后恢复到新目录','20秒。杨梦宇：现场从准备好的独立数据目录开始，展示备份、验证、恢复和原文件哈希比对，再展示错误密码与任务保留、停止。不会使用个人真实文件。PPT讲解控制3分钟，现场操作7分钟，提交视频不超过2分钟。程序尚不支持网络、增量、系统守护与重启续跑。截图来源：docs/screenshots/03-restored.png，真实应用离屏状态。');
+await img(s,'docs/screenshots/03-restored.png',64,161,731,535);
+text(s,'1  创建加密备份\n\n2  验证并恢复\n\n3  检查错误密码\n\n4  展示任务保留与停止',835,181,390,375,27);
+text(s,'本地完整备份\n暂不支持网络、增量与后台常驻',835,583,380,85,22,C.muted);
+const speech=JSON.parse(await fs.readFile(path.join(root,'presentations/讲稿数据.json')));
+for(let i=0;i<speech.length;i++) {
+ const source=notes[i].note;
+ notes[i].note=`${speech[i].speaker}，约${speech[i].seconds}秒。\n\n${speech[i].text}\n\n备查说明（不朗读）：${source}`;
+ p.slides.items[i].speakerNotes.text=notes[i].note;
+}
+await fs.writeFile(path.join(build,'演示讲稿.md'),'# 松鼠备份三分钟讲稿\n\n总计约180秒；实际朗读后微调。\n\n'+notes.map((x,i)=>`## 第${i+1}页 ${x.title} · ${speech[i].speaker} · ${speech[i].seconds}秒\n\n${speech[i].text}\n`).join('\n'));
+await (await PresentationFile.exportPptx(p)).save(path.join(build,'candidate.pptx'));
+for(const [i,s]of p.slides.items.entries()){
+ const name=`slide-${String(i+1).padStart(2,'0')}`;
+ await fs.writeFile(path.join(build,name+'.png'),new Uint8Array(await (await p.export({slide:s,format:'png',scale:1})).arrayBuffer()));
+ await fs.writeFile(path.join(build,name+'.layout.json'),await (await s.export({format:'layout'})).text());
+}
+console.log(JSON.stringify({candidate:path.join(build,'candidate.pptx'),slides:p.slides.items.length,font},null,2));

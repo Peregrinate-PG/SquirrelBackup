@@ -338,5 +338,126 @@ TEST_F(BackupTest, RetentionFailureDoesNotRepeatSnapshot) {
   EXPECT_TRUE(fs::is_regular_file(job / "snapshot-2.sqbk"));
   EXPECT_EQ(service.inspect(job / "snapshot-2.sqbk").files, 3ULL);
 }
+class CancelBackupTest : public BackupTest, public ::testing::WithParamInterface<Phase> {};
+TEST_P(CancelBackupTest, LeavesNoPublishedOrTemporaryFiles) {
+  std::atomic<bool> stop{false};
+  BackupOptions options;
+  options.compress = false;
+  options.password = "cancellation-test";
+  bool reached = false;
+  Operation operation{&stop, [&](const ProgressInfo& info) {
+    bool in_block = info.phase == Phase::Pack || info.phase == Phase::Seal;
+    if (info.phase == GetParam() && (!in_block || info.completed >= kBlockSize)) {
+      reached = true;
+      stop.store(true);
+    }
+  }};
+  EXPECT_THROW(service.backup(source, archive, options, {}, operation), Cancelled);
+  EXPECT_TRUE(reached);
+  EXPECT_FALSE(fs::exists(archive));
+  for (const auto& child : fs::directory_iterator(temp.path)) {
+    EXPECT_EQ(child.path(), source);
+  }
+  EXPECT_EQ(contents(source / "中文.txt"), "hello\n");
+}
+INSTANTIATE_TEST_SUITE_P(EachStage, CancelBackupTest,
+    ::testing::Values(Phase::Scan, Phase::Pack, Phase::Seal, Phase::CheckSource, Phase::Publish));
+
+class CancelRestoreTest : public BackupTest, public ::testing::WithParamInterface<Phase> {};
+TEST_P(CancelRestoreTest, LeavesNoDestinationAndPreservesArchive) {
+  BackupOptions options;
+  options.compress = false;
+  options.password = "cancellation-test";
+  ASSERT_EQ(::chmod(source.c_str(), 0555), 0);
+  service.backup(source, archive, options);
+  const auto original = contents(archive);
+  std::atomic<bool> stop{false};
+  bool reached = false;
+  Operation operation{&stop, [&](const ProgressInfo& info) {
+    bool in_block = info.phase == Phase::Authenticate || info.phase == Phase::Decode ||
+                    info.phase == Phase::Read;
+    if (info.phase == GetParam() && (!in_block || info.completed >= kBlockSize)) {
+      reached = true;
+      stop.store(true);
+    }
+  }};
+  EXPECT_THROW(service.restore(archive, restored, options.password, {}, operation), Cancelled);
+  EXPECT_TRUE(reached);
+  EXPECT_FALSE(fs::exists(restored));
+  EXPECT_EQ(contents(archive), original);
+  for (const auto& child : fs::directory_iterator(temp.path)) {
+    EXPECT_TRUE(child.path() == source || child.path() == archive);
+  }
+}
+INSTANTIATE_TEST_SUITE_P(EachStage, CancelRestoreTest,
+    ::testing::Values(Phase::Authenticate, Phase::Decode, Phase::Read, Phase::Metadata,
+                      Phase::Publish));
+
+TEST_F(BackupTest, SourceAdditionAfterPackingPreventsPublication) {
+  Operation operation{nullptr, [&](const ProgressInfo& info) {
+    if (info.phase == Phase::CheckSource) {
+      std::ofstream(source / "late-file") << "created during backup";
+    }
+  }};
+  EXPECT_THROW(service.backup(source, archive, {}, {}, operation), Error);
+  EXPECT_FALSE(fs::exists(archive));
+}
+TEST_F(BackupTest, SourceDeletionAfterPackingPreventsPublication) {
+  Operation operation{nullptr, [&](const ProgressInfo& info) {
+    if (info.phase == Phase::CheckSource) {
+      fs::remove(source / "empty");
+    }
+  }};
+  EXPECT_THROW(service.backup(source, archive, {}, {}, operation), Error);
+  EXPECT_FALSE(fs::exists(archive));
+}
+TEST_F(BackupTest, SourceMetadataChangeAfterPackingPreventsPublication) {
+  Operation operation{nullptr, [&](const ProgressInfo& info) {
+    if (info.phase == Phase::CheckSource) {
+      ASSERT_EQ(::chmod((source / "nested").c_str(), 0500), 0);
+    }
+  }};
+  EXPECT_THROW(service.backup(source, archive, {}, {}, operation), Error);
+  EXPECT_FALSE(fs::exists(archive));
+}
+TEST_F(BackupTest, CancelledJobKeepsPreviousSnapshot) {
+  auto repo = temp.path / "repository";
+  fs::create_directory(repo);
+  ScheduleOptions schedule;
+  schedule.interval_seconds = 1;
+  schedule.keep = 1;
+  schedule.max_runs = 2;
+  std::atomic<bool> stop{false};
+  int published = 0;
+  fs::path first;
+  Log log = [&](const std::string& line) {
+    if (line.find("Backup complete: ") == 0) {
+      ++published;
+      first = line.substr(17);
+    }
+  };
+  Progress progress = [&](const ProgressInfo& info) {
+    if (published == 1 && info.phase == Phase::Pack && info.completed >= kBlockSize) {
+      stop.store(true);
+    }
+  };
+  EXPECT_NO_THROW(Scheduler::run(source, repo, {}, schedule, stop, log, progress));
+  EXPECT_TRUE(stop.load());
+  EXPECT_EQ(published, 1);
+  ASSERT_TRUE(fs::is_regular_file(first));
+  EXPECT_EQ(service.inspect(first).files, 3ULL);
+  for (const auto& child : fs::directory_iterator(first.parent_path())) {
+    EXPECT_EQ(child.path(), first);
+  }
+}
+TEST_F(BackupTest, PreCancelledOperationDoesNotTouchFilesystem) {
+  std::atomic<bool> stop{true};
+  Operation operation{&stop, {}};
+  EXPECT_THROW(service.backup("missing", archive, {}, {}, operation), Cancelled);
+  EXPECT_THROW(service.restore("missing", restored, "", {}, operation), Cancelled);
+  EXPECT_THROW(service.inspect("missing", "", {}, true, operation), Cancelled);
+  EXPECT_FALSE(fs::exists(archive));
+  EXPECT_FALSE(fs::exists(restored));
+}
 }  // namespace
 }  // namespace squirrel

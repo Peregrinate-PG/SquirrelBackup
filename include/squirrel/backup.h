@@ -20,6 +20,35 @@ constexpr uint32_t kBlockSize = 1024 * 1024;
 struct Error : std::runtime_error {
   using std::runtime_error::runtime_error;
 };
+struct Cancelled : Error {
+  Cancelled() : Error("Operation cancelled") {}
+};
+enum class Phase { Scan, Pack, Seal, Authenticate, Decode, Read, Metadata, CheckSource, Publish };
+struct ProgressInfo {
+  Phase phase;
+  uint64_t completed = 0, total = 0;
+  std::string path;
+};
+using Progress = std::function<void(const ProgressInfo&)>;
+// Callbacks run on the operation's thread. Cancellation is cooperative: the final
+// publication is indivisible, and a completed archive is never removed by cancel.
+struct Operation {
+  const std::atomic<bool>* stop = nullptr;
+  Progress progress;
+  void check() const {
+    if (stop && stop->load()) {
+      throw Cancelled{};
+    }
+  }
+  void checkpoint(Phase phase, uint64_t completed = 0, uint64_t total = 0,
+                  const std::string& path = "") const {
+    check();
+    if (progress) {
+      progress({phase, completed, total, path});
+    }
+    check();
+  }
+};
 enum class FileType : uint8_t { Directory = 1, Regular = 2, Symlink = 3, Hardlink = 4, Fifo = 5 };
 struct Filter {
   std::vector<std::string> excludes;
@@ -61,31 +90,36 @@ class HuffmanCodec {
 };
 class FileScanner {
  public:
-  static std::vector<Entry> scan(const fs::path& root, const Filter& filter, const Log& log = {});
+  static std::vector<Entry> scan(const fs::path& root, const Filter& filter, const Log& log = {},
+                                 const Operation& operation = {});
 };
 class CryptoEnvelope {
  public:
-  static void seal(const fs::path& plain, const fs::path& output, const std::string& password);
-  static void open(const fs::path& archive, const fs::path& plain, const std::string& password);
+  static void seal(const fs::path& plain, const fs::path& output, const std::string& password,
+                   const Operation& operation = {});
+  static void open(const fs::path& archive, const fs::path& plain, const std::string& password,
+                   const Operation& operation = {});
 };
 class ArchiveWriter {
  public:
   static void write(const fs::path& source, const std::vector<Entry>& entries,
-                    const fs::path& output, bool compress, const Log& log);
+                    const fs::path& output, bool compress, const Log& log,
+                    const Operation& operation = {});
 };
 class ArchiveReader {
  public:
   static Summary read(const fs::path& plain, const fs::path* destination, const Log& log,
-                      bool collect = true);
+                      bool collect = true, const Operation& operation = {});
 };
 class BackupService {
  public:
   Summary backup(const fs::path& source, const fs::path& archive, const BackupOptions& options = {},
-                 const Log& log = {}) const;
+                 const Log& log = {}, const Operation& operation = {}) const;
   Summary inspect(const fs::path& archive, const std::string& password = "", const Log& log = {},
-                  bool collect = true) const;
+                  bool collect = true, const Operation& operation = {}) const;
   Summary restore(const fs::path& archive, const fs::path& destination,
-                  const std::string& password = "", const Log& log = {}) const;
+                  const std::string& password = "", const Log& log = {},
+                  const Operation& operation = {}) const;
 };
 struct ScheduleOptions {
   uint32_t interval_seconds = 300, keep = 5, poll_seconds = 2;
@@ -95,7 +129,8 @@ struct ScheduleOptions {
 class Scheduler {
  public:
   static void run(const fs::path& source, const fs::path& repository, const BackupOptions& backup,
-                  const ScheduleOptions& options, const std::atomic<bool>& stop, const Log& log);
+                  const ScheduleOptions& options, const std::atomic<bool>& stop, const Log& log,
+                  const Progress& progress = {});
 };
 std::string typeName(FileType type);
 }  // namespace squirrel

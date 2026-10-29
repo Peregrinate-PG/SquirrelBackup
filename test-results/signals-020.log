@@ -1,0 +1,86 @@
+encrypted-backup-SIGINT
+Scanned 2 entries
+Cancelled; incomplete output removed.
+
+encrypted-backup-SIGTERM
+Scanned 2 entries
+Cancelled; incomplete output removed.
+
+encrypted-list-SIGINT
+Cancelled; incomplete output removed.
+
+encrypted-list-SIGTERM
+Cancelled; incomplete output removed.
+
+encrypted-restore-SIGINT
+Cancelled; incomplete output removed.
+
+encrypted-restore-SIGTERM
+Cancelled; incomplete output removed.
+
+encrypted-verify-SIGINT
+Cancelled; incomplete output removed.
+
+encrypted-verify-SIGTERM
+Cancelled; incomplete output removed.
+
+plain-backup-SIGINT
+Scanned 2 entries
+Cancelled; incomplete output removed.
+
+plain-backup-SIGTERM
+Scanned 2 entries
+Cancelled; incomplete output removed.
+
+plain-list-SIGINT
+Cancelled; incomplete output removed.
+
+plain-list-SIGTERM
+Cancelled; incomplete output removed.
+
+plain-restore-SIGINT
+Cancelled; incomplete output removed.
+
+plain-restore-SIGTERM
+Cancelled; incomplete output removed.
+
+plain-verify-SIGINT
+Cancelled; incomplete output removed.
+
+plain-verify-SIGTERM
+Cancelled; incomplete output removed.
+
+schedule-active-SIGINT
+Job repository: /Users/lixiang/Documents/Codex/2026-10-29/qi/work/signals-020-test/signal-fixture-kl0r38m4/schedule-active-SIGINT/squirrel-job-vauHIv
+Scanned 2 entries
+Packed: data.bin
+Backup complete: /Users/lixiang/Documents/Codex/2026-10-29/qi/work/signals-020-test/signal-fixture-kl0r38m4/schedule-active-SIGINT/squirrel-job-vauHIv/snapshot-1.sqbk
+Scanned 2 entries
+Job stopped; completed snapshots: 1
+
+schedule-active-SIGTERM
+Job repository: /Users/lixiang/Documents/Codex/2026-10-29/qi/work/signals-020-test/signal-fixture-kl0r38m4/schedule-active-SIGTERM/squirrel-job-EmtIob
+Scanned 2 entries
+Packed: data.bin
+Backup complete: /Users/lixiang/Documents/Codex/2026-10-29/qi/work/signals-020-test/signal-fixture-kl0r38m4/schedule-active-SIGTERM/squirrel-job-EmtIob/snapshot-1.sqbk
+Scanned 2 entries
+Job stopped; completed snapshots: 1
+
+watch-active-SIGINT
+Job repository: /Users/lixiang/Documents/Codex/2026-10-29/qi/work/signals-020-test/signal-fixture-kl0r38m4/watch-active-SIGINT/squirrel-job-otJyai
+Scanned 2 entries
+Packed: data.bin
+Backup complete: /Users/lixiang/Documents/Codex/2026-10-29/qi/work/signals-020-test/signal-fixture-kl0r38m4/watch-active-SIGINT/squirrel-job-otJyai/snapshot-1.sqbk
+Scanned 3 entries
+Packed: change.txt
+Job stopped; completed snapshots: 1
+
+watch-active-SIGTERM
+Job repository: /Users/lixiang/Documents/Codex/2026-10-29/qi/work/signals-020-test/signal-fixture-kl0r38m4/watch-active-SIGTERM/squirrel-job-ggdsyF
+Scanned 3 entries
+Packed: change.txt
+Packed: data.bin
+Backup complete: /Users/lixiang/Documents/Codex/2026-10-29/qi/work/signals-020-test/signal-fixture-kl0r38m4/watch-active-SIGTERM/squirrel-job-ggdsyF/snapshot-1.sqbk
+Scanned 3 entries
+Packed: change.txt
+Job stopped; completed snapshots: 1

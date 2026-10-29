@@ -1,0 +1,20 @@
+[
+  {
+    "workload": "repeated",
+    "source_bytes": 33554432,
+    "archive_bytes": 33356,
+    "backup_seconds": 0.9400092500000028,
+    "restore_seconds": 0.019393874987144955,
+    "max_rss_bytes": null,
+    "sha256_equal": true
+  },
+  {
+    "workload": "random",
+    "source_bytes": 8388608,
+    "archive_bytes": 8388980,
+    "backup_seconds": 0.20210216598934494,
+    "restore_seconds": 0.04660512499685865,
+    "max_rss_bytes": null,
+    "sha256_equal": true
+  }
+]

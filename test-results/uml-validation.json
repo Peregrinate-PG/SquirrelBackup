@@ -1,0 +1,48 @@
+{
+  "staruml_version": "7.1.1 arm64 official trial",
+  "method": "headless official CLI image export",
+  "model_sha256": "f844f5b3ec2f76e2a95d88100758c4500798be27aa4066d9a4e7fe79a92bf58b",
+  "diagram_count": 7,
+  "trial_watermarks_preserved": true,
+  "model_structure": {
+    "unique_ids": 1066,
+    "dangling_references": 0,
+    "diagrams": [
+      {
+        "name": "01_系统用例图",
+        "type": "UMLUseCaseDiagram",
+        "views": 20
+      },
+      {
+        "name": "02_核心服务类图",
+        "type": "UMLClassDiagram",
+        "views": 16
+      },
+      {
+        "name": "03_配置与记录类图",
+        "type": "UMLClassDiagram",
+        "views": 7
+      },
+      {
+        "name": "04_系统构件图",
+        "type": "UMLComponentDiagram",
+        "views": 15
+      },
+      {
+        "name": "05_创建备份顺序图",
+        "type": "UMLSequenceDiagram",
+        "views": 17
+      },
+      {
+        "name": "06_验证恢复顺序图",
+        "type": "UMLSequenceDiagram",
+        "views": 17
+      },
+      {
+        "name": "07_自动任务状态图",
+        "type": "UMLStatechartDiagram",
+        "views": 17
+      }
+    ]
+  }
+}

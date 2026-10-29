@@ -1,170 +1,98 @@
-<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>松鼠备份复核结论与后续安排</title><style>body{max-width:900px;margin:48px auto;padding:0 32px;font:16px/1.85 -apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif;color:#202833}h1{color:#111;font-size:30px;line-height:1.5;margin-bottom:32px}h2{margin-top:36px;font-size:23px}h3{margin-top:24px;font-size:19px}table{border-collapse:collapse;width:100%;font-size:13px;line-height:1.65;margin:18px 0}th,td{border:1px solid #dde1e4;padding:8px 10px;text-align:left;vertical-align:top;overflow-wrap:anywhere}th{background:#edf0f1}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f4f5f6;padding:16px}code{font-size:.9em}a{color:#914321}nav{margin-bottom:28px;color:#777}footer{margin-top:44px;color:#777;font-size:12px}@media print{body{margin:0;padding:0;font-size:10pt}nav{display:none}h1,h2,h3,h4{break-after:avoid}tr{break-inside:avoid}thead{display:table-header-group}@page{size:A4;margin:18mm}}</style><nav><a href="index.html">文档目录</a></nav><main><h1>松鼠备份复核结论与后续安排</h1>
-<p>复核日期 2026年10月29日。输入为课程资料压缩包、SquirrelBackup 0.1.0 发布包及剩余事项截图。此次在独立副本上整理 0.1.1 修订版，保留原始压缩包。</p>
-<p>现有项目已具备完整本地备份流程、独立源码、构建脚本、自动测试和较完整的报告草稿。当前没有必要推倒重写，也不建议为了扩大功能清单立即增加网盘或增量备份。最有价值的工作是修复已复现缺陷，然后把人工验收、建模、在线协作和个人材料补齐。</p>
-<h2>一 原版到底完成了什么</h2>
-<p>原版使用 C++17 实现扫描筛选、归档、Huffman 编解码和任务调度，使用 Cocoa 提供原生 GUI，使用系统密码库提供加密。恢复有私有暂存目录、不覆盖已有目标和归档校验；源码包含 GoogleTest、CLI 集成和畸形归档测试。原有 33 项单元、21 项集成、18 项异常及并发测试，本轮在改代码前复跑均通过。</p>
-<p>72 项通过是既有测试范围内的结果。它不能证明图形文件选择器、现场点击、所有权限组合和长期运行已经验收。现有三个界面图片属于离屏预览。原版 PPT、个人心得和 A/B/C 分工仍是待完善草稿。</p>
-<h2>二 本轮修订重点</h2>
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>松鼠备份复核结论与后续安排</title><style>body{max-width:900px;margin:48px auto;padding:0 32px;font:16px/1.85 -apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif;color:#202833}h1{color:#111;font-size:30px;line-height:1.5;margin-bottom:32px}h2{margin-top:36px;font-size:23px}h3{margin-top:24px;font-size:19px}table{border-collapse:collapse;width:100%;font-size:13px;line-height:1.65;margin:18px 0}th,td{border:1px solid #dde1e4;padding:8px 10px;text-align:left;vertical-align:top;overflow-wrap:anywhere}th{background:#edf0f1}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f4f5f6;padding:16px}code{font-size:.9em}a{color:#914321}nav{margin-bottom:28px;color:#777}footer{margin-top:44px;color:#777;font-size:12px}@media print{body{margin:0;padding:0;font-size:10pt}nav{display:none}h1,h2,h3,h4{break-after:avoid}tr{break-inside:avoid}thead{display:table-header-group}@page{size:A4;margin:18mm}}</style><nav><a href="index.html">文档目录</a></nav><main><style>img{max-width:100%;height:auto}</style><h1>松鼠备份复核结论与后续安排</h1>
+<p>本轮从课程资料和SquirrelBackup0.1.0发布包开始复核，形成0.2.0工作版本。原包及0.1.1发布仍保留用于追溯；新版以docs/03_软件测试报告.md和test-results中的实际结果为准。</p>
+<h2>1 原有基础与本轮改进</h2>
+<p>原版已有C++核心、原生GUI、CLI、自定义归档、Huffman、系统密码库封装、定时和变化检测。改动前的72项测试在本轮复跑通过，记录保存在baseline-0.1.0.log。0.1.1的82项用例属于此前修订；0.2.0为97项命名用例，GUI内部53项断言另计。</p>
 <table>
 <thead>
 <tr>
-<th>问题</th>
-<th>修订后的处理</th>
-<th>核验方式</th>
+<th>发现的问题</th>
+<th>处理方法</th>
+<th>对应检查</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>只读源根目录可备份但恢复发布失败</td>
-<td>发布前保留暂存根目录所需权限，成功发布后恢复归档权限</td>
-<td>新增只读根目录恢复回归</td>
+<td>只读根目录恢复失败，失败暂存不易清理</td>
+<td>构建暂存时保留必要权限，发布后恢复根权限；清理不跟随外部链接</td>
+<td>只读恢复与异常清理回归</td>
 </tr>
 <tr>
-<td>恢复失败可能遗留含明文的只读暂存子树</td>
-<td>异常清理先处理本工具私有暂存目录的权限，不跟随外部软链接</td>
-<td>新增失败清理回归</td>
+<td>等尺寸改写后恢复mtime可能漏检</td>
+<td>扫描与变化指纹加入纳秒ctime；读前读后检查文件状态</td>
+<td>保留mtime改写和源变化测试</td>
 </tr>
 <tr>
-<td>等长修改后恢复原 mtime，实时任务漏备</td>
-<td>指纹加入纳秒 ctime，归档格式保持兼容</td>
-<td>修改内容并恢复 mtime，验证新快照内容</td>
+<td>自动任务错误参数进入反复重试</td>
+<td>启动前验证源类型、参数适用范围和完整整数输入</td>
+<td>CLI及GUI参数测试</td>
 </tr>
 <tr>
-<td>扫描后源文件发生变化仍可能继续归档</td>
-<td>普通文件读前读后增加 ctime 一致性检查</td>
-<td>扫描后修改内容的回归</td>
+<td>单次操作和当前快照无法取消</td>
+<td>Operation贯穿扫描、块处理、元数据和发布；取消清理未完成输出</td>
+<td>备份、恢复各5阶段取消与任务停止</td>
 </tr>
 <tr>
-<td>自动任务源路径为普通文件时反复重试</td>
-<td>创建任务目录之前检查源目录类型</td>
-<td>schedule 与 watch 分别验证立即失败</td>
+<td>打包后目录又变化仍发布</td>
+<td>封装后重新扫描并比较选定源树，不比较读取影响的atime</td>
+<td>新增、删除、改元数据回归</td>
 </tr>
 <tr>
-<td>界面把小数或带字母的间隔当整数</td>
-<td>校验完整输入和上下界</td>
-<td>GUI 内部动作断言</td>
+<td>界面缺少进度，忙碌时可修改输入</td>
+<td>显示阶段、当前路径和进度，禁用相关输入；常见日志中文化</td>
+<td>AppKit内部状态与真实运行截图</td>
 </tr>
 <tr>
-<td>CLI 接受当前模式不使用的参数</td>
-<td>拒绝 schedule 的 --poll 和 watch 的 --every</td>
-<td>CLI 回归</td>
+<td>关闭、退出与停止时机不清楚</td>
+<td>请求取消，清理结束后完成关闭或退出</td>
+<td>代理方法断言；实际窗口操作待人工</td>
 </tr>
 <tr>
-<td>停止按钮和忙碌退出行为不清楚</td>
-<td>仅运行自动任务时可停止，关闭或退出请求等待当前操作完成后兑现</td>
-<td>内部状态验证，真实窗口操作待人工</td>
-</tr>
-<tr>
-<td>重开应用需要重复填写设置</td>
-<td>保存路径、筛选、周期等非密码表单项，不保存密码</td>
-<td>白名单断言，重启实际体验待人工</td>
-</tr>
-<tr>
-<td>发布目录可能混入旧文件或父目录仓库历史</td>
-<td>打包时清理目标版本目录，只归档项目自身仓库，移除发布应用调试符号目录</td>
-<td>新发布包校验</td>
+<td>资料版本不一致</td>
+<td>统一程序、设计、报告、UML、PPT、讲稿和视频</td>
+<td>版本检查、渲染检查与最终包复核</td>
 </tr>
 </tbody>
 </table>
-<p>最终测试数量、运行环境和具体用例见 03_软件测试报告。不能把 GUI 断言数、Sanitizer 再次运行次数或稳定性循环次数加进命名用例总数。</p>
-<p>仍保留的边界：自动任务只在应用运行时有效；停止会等待当前快照完成，尚未实现大文件中途取消；实时监测仍是轮询，不能保证捕获两次采样之间产生又消失的变化；不支持网络、增量、ACL、设备文件和完整 macOS 元数据；不同属主恢复可能因权限不足产生警告。格式上限不是实测容量。</p>
-<h2>三 图片中需要调整的判断</h2>
-<ol>
-<li>先完成程序修复和回归，再按最终接口绘制 UML，避免画完又改。</li>
-<li>课程要求 UML 建模和掌握 StarUML；材料中的“不要生成 UML”属于历史任务口吻，不是本轮用户指令。本次完善绘图指导，模型和正式图仍待小组制作、核对。</li>
-<li>用例编号已统一，需求、设计和绘图指导应使用同一组编号。不能照原来两套编号分别画图。</li>
-<li>在线 GitHub/Gitee 版本库是第 2 讲的项目要求，Teambition 或类似工具是鼓励使用。不要伪造历史协作记录，应记录接下来真实的分支、提交、评审和合并。</li>
-<li>报告模板和答辩要求均提到甘特图。现有阶段列表不足以代替有日期、负责人、里程碑的甘特图。没有证据的历史日期保留待核实，后续安排可以作为计划。</li>
-<li>PDF 报告已经有基础；课程包没有明确要求必须只交 Word。若最终平台要求 DOCX，再按给定模板转换，并检查分页和图表。</li>
-<li>“程序、材料已具备”应理解为初稿齐全，不能直接视为正式可提交。</li>
-</ol>
-<h2>四 包内讲义明确的时间与提交方式</h2>
+<p>当前代码还通过-Wall -Wextra -Wpedantic -Werror编译、cpplint检查与Sanitizer复测。Huffman随机输入测试单列次数，不计入97项。长期测试实际状态、性能测量和兼容组合见03报告，避免多份文件中的时间采样互相冲突。</p>
+<h2>2 对截图建议的调整</h2>
+<p>程序先修订并验证，再按真实接口整理模型和报告。现有7张UML图已保存为可编辑StarUML模型，官方7.1.1 CLI成功读取并导出，结构检查为1066个唯一标识、0个悬空引用。报告插图由项目模型直接渲染，官方试用导出的水印原图完整保留在docs/uml/staruml-export。三人仍需熟悉模型，能够解释关系与流程。</p>
+<p>Word报告已经套入课程原模板，保留封面、页面设置和表格结构；另有PDF和Markdown。9页PPT已填组号、姓名学号、算法依赖、测试、均衡主责和有日期的计划。115秒实际应用后台演示已生成，并完成全片解码及关键画面检查。它不是人工鼠标验收，系统选择器仍需单独操作。</p>
+<p>不继续堆叠网络或增量等新功能。当前重点是正确性、取消反馈、资料一致性，以及三人能实际复现和讲清楚已有实现。</p>
+<h2>3 仍需完成的工作</h2>
 <table>
 <thead>
 <tr>
-<th>事项</th>
-<th>第 9 讲要求</th>
+<th>责任范围</th>
+<th>具体事项</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>PPT 介绍</td>
-<td>3 分钟，不能超时</td>
+<td>自动化工作</td>
+<td>等持续运行测试实际结束，刷新最终报告和PPT；从最终ZIP独立解压、离线重建和校验</td>
 </tr>
 <tr>
-<td>现场软件操作</td>
-<td>7 分钟，老师或助教在学生指导下操作并提问</td>
+<td>三人共同</td>
+<td>按08清单点击验收，检查答辩电脑的启动和放映；阅读代码、UML，计时排练</td>
 </tr>
 <tr>
-<td>提交视频</td>
-<td>不超过 2 分钟</td>
+<td>组长协调</td>
+<td>补课程在线分组信息与在线Git仓库，整理最终命名和平台提交</td>
 </tr>
 <tr>
-<td>小组提交</td>
-<td>报告、PPT、源码、可执行程序、构建脚本、视频，由组长打包提交成电慕课</td>
+<td>每人本人</td>
+<td>确认实际贡献和个人体会，补本人开发/AI使用截图，完成学习实践与证书审核</td>
 </tr>
 <tr>
-<td>AI 学习证书</td>
-<td>每位同学自行提交成电慕课</td>
-</tr>
-<tr>
-<td>答辩</td>
-<td>2026 年 11 月 18 日上午上课时</td>
-</tr>
-<tr>
-<td>材料截止</td>
-<td>2026 年 11 月 18 日 23:59</td>
+<td>信息填写</td>
+<td>报告中的实验室名称按实际补充</td>
 </tr>
 </tbody>
 </table>
-<p>这些信息直接来自随包的第 9 讲第 39–40 页。第 0 讲的三分钟视频和邮箱口径较早；本轮按第 9 讲准备。如课程在这些材料之后另发通知，以更新通知为准。</p>
-<h2>五 接下来按这个顺序推进</h2>
-<table>
-<thead>
-<tr>
-<th>阶段</th>
-<th>具体交付</th>
-<th>完成标准</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>先验收修订版</td>
-<td>使用 08 清单操作 GUI，覆盖备份、恢复、错误密码、只读目录、定时、实时、停止和退出</td>
-<td>逐项写实际结果；失败先修复再录像</td>
-</tr>
-<tr>
-<td>固定设计</td>
-<td>StarUML 可编辑模型、用例图、类图、构件图、备份与恢复顺序图、任务状态图</td>
-<td>对得上 0.1.1 代码和统一 UC 编号</td>
-</tr>
-<tr>
-<td>并行补个人材料</td>
-<td>姓名学号、实验室、真实贡献、学习证书、本人 AI 工具使用截图</td>
-<td>内容真实，证书本人提交</td>
-</tr>
-<tr>
-<td>补协作证据</td>
-<td>在线仓库、实际提交与分支、在线分组信息、有日期甘特图</td>
-<td>能说明每个人实际做了什么</td>
-</tr>
-<tr>
-<td>更新答辩材料</td>
-<td>原 PPT 第 5 页替换新版测试结果，第 6 页补真实分工和日期甘特图；按清单调整末页</td>
-<td>3 分钟试讲，成员能解释自己负责的核心实现</td>
-</tr>
-<tr>
-<td>录屏与最终打包</td>
-<td>不超过 2 分钟视频、最终报告、PPT、源码和可执行程序</td>
-<td>从最终 ZIP 解压重建，检查版本与校验和，再提交</td>
-</tr>
-</tbody>
-</table>
-<p>无需等到所有个人材料齐全才开始 GUI 验收、代码阅读或模型制作。UML、实际操作和报告证据直接影响设计、测试与演示评价，优先级高于继续堆可选功能。</p>
-<h2>六 交付物如何使用</h2>
-<p>修订版 ZIP 包含 0.1.1 原生应用、命令行、源码、构建脚本、当前测试记录及修订报告。先读本文件，再读 08_提交前验收清单。</p>
-<p>在 source 目录运行 make all 和 make test 可离线构建与验证核心程序；制作人工验收数据可运行 python3 scripts/prepare_acceptance.py 后接一个尚不存在的目录路径。所需父目录须已存在。脚本生成演示数据和内容 SHA256，不接触个人文件。</p>
-<p>presentations 目录保留输入包中的 0.1.0 可编辑 PPT 和 PDF，已明确标为原始草稿。本轮没有把未经核验的人员信息、UML、视频或学习证书做成“已完成”。本地签名应用未经 Apple 公证，其他电脑上的启动和文件系统行为需实测。</p>
-<h2>七 依据位置</h2>
-<p>课程总要求、算法与库评分口径：0.pdf 第 3–6 页。在线版本库与项目协作：2.pdf 第 38 页。测试类型及至少 15 个用例：3.pdf 第 38 页。UML：1.pdf 第 40 页及小组实验报告模板。答辩、视频、平台和截止：9.知识拓展与项目完善.pdf 第 38–40 页。</p>
-<p>评分不能仅将功能分相加。第 0 讲还规定完成情况、难度分及封顶关系；报告、模型、证书、答辩和演示都会影响最终结果。本轮不承诺具体成绩。</p></main><footer>松鼠备份 0.1.1 · 请以源码和测试结果为准</footer></html>
+<p>均衡职责是安排，不代替真实贡献记录；未来甘特图是计划，不补造历史工期。在线GitHub/Gitee属于课程要求，Teambition等看板是鼓励项。证书是每人完成指定AI学习与实践后审核获得的学习证明，办理步骤见10说明。</p>
+<h2>4 提交口径</h2>
+<p>依据第9讲第38–40页：PPT3分钟，现场老师或助教操作7分钟，视频不超过2分钟；2026年11月18日上午答辩，当日23:59前组长提交报告、PPT、源码、程序、构建脚本和视频至成电慕课，证书每人单独提交。第0讲较早的3分钟视频与邮箱口径不作为本次准备标准；若老师另发新通知，再按通知调整。</p>
+<p>课程出处：功能与库依赖评分见0.pdf第3–6页；在线仓库见2.pdf第38页；至少两类测试和15个用例见3.pdf第38页；UML见1.pdf第40页及报告模板；答辩和提交见9.知识拓展与项目完善.pdf第38–40页。完成可选功能不等于已经取得对应分数，最终以课程验收为准。</p>
+<h2>5 验证的实际范围</h2>
+<p>发布前复查不是多文件原子快照，协作取消不承诺固定时限，轮询不能捕获两次采样之间短暂出现的变化。应用不提供网络、增量、ACL、设备节点或完整macOS元数据；不同属主恢复可能产生权限警告。系统选择器、跨机器、外置卷、磁盘耗尽、强制终止和掉电仍有验证空缺。</p>
+<p>源码检查最后只修改了头文件包含、等价类型转换与长字符串排版；重建前后Mach-O各文件映射节内容一致，记录见lint-rebuild-comparison.json。长期测试继续使用原冻结二进制，完整哈希单独保存；不把签名、调试信息和完整文件哈希的差异隐去。</p></main><footer>松鼠备份 0.2.0 · 请以源码和测试结果为准</footer></html>

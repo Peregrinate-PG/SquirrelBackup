@@ -1,0 +1,7 @@
+{
+  "pages": 9,
+  "all_pages_raster_equal": true,
+  "pdf_sha256": "3e472c1f88ecb033fe8995fc675f9e9e85ec1f2eccfd8ce0a0f96de9758f14bb",
+  "method": "Headless LibreOffice using repository render_presentation.sh, task-local fontconfig; compared all 9 page raster hashes against visually reviewed PDF.",
+  "desktop_input": false
+}

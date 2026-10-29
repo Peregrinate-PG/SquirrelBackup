@@ -1,47 +1,68 @@
-[
-  {
-    "name": "01_需求分析说明书",
-    "pages": 5,
-    "bounds_warnings": []
-  },
-  {
-    "name": "02_系统设计文档",
-    "pages": 5,
-    "bounds_warnings": []
-  },
-  {
-    "name": "03_软件测试报告",
-    "pages": 9,
-    "bounds_warnings": []
-  },
-  {
-    "name": "04_StarUML绘图指导",
-    "pages": 6,
-    "bounds_warnings": []
-  },
-  {
-    "name": "05_实验报告",
-    "pages": 20,
-    "bounds_warnings": []
-  },
-  {
-    "name": "06_演示与答辩指南",
-    "pages": 3,
-    "bounds_warnings": []
-  },
-  {
-    "name": "07_三人分工与协作方案",
-    "pages": 4,
-    "bounds_warnings": []
-  },
-  {
-    "name": "08_提交前验收清单",
-    "pages": 3,
-    "bounds_warnings": []
-  },
-  {
-    "name": "09_复核结论与后续安排",
-    "pages": 3,
-    "bounds_warnings": []
-  }
-]
+{
+  "version": "0.2.0",
+  "documents": [
+    {
+      "name": "01_需求分析说明书",
+      "pages": 6,
+      "bounds_warnings": [],
+      "pdf_sha256": "aa5f640c0291ad37149fbb6a4d6a54c14c7961f172f0aa8c90d136298251aaa0"
+    },
+    {
+      "name": "02_系统设计文档",
+      "pages": 9,
+      "bounds_warnings": [],
+      "pdf_sha256": "d0cb37dbd1792d4d471fc003ba8839690124a016b80a7c25118c36faf90bcbb6"
+    },
+    {
+      "name": "03_软件测试报告",
+      "pages": 4,
+      "bounds_warnings": [],
+      "pdf_sha256": "70a9ecdaae3c533dc6b645499e7da8bc77c332076bc8e76ac5c498e712e8ae58"
+    },
+    {
+      "name": "04_StarUML绘图指导",
+      "pages": 2,
+      "bounds_warnings": [],
+      "pdf_sha256": "7613c46fabb154bc3a307a8c807d581fe6b868db343c3aad8435ca387f5ca193"
+    },
+    {
+      "name": "05_实验报告",
+      "pages": 21,
+      "bounds_warnings": [],
+      "pdf_sha256": "0f200778cac38b3092123857f76e18c40c1c1265a7ac9964af444c79b4da244d"
+    },
+    {
+      "name": "06_演示与答辩指南",
+      "pages": 2,
+      "bounds_warnings": [],
+      "pdf_sha256": "4a6abb7616565d1b384ac0e279c9940daeab43ba7f816bcad7bec489e4722f80"
+    },
+    {
+      "name": "07_三人分工与协作方案",
+      "pages": 4,
+      "bounds_warnings": [],
+      "pdf_sha256": "5e843104e1bb41a6cbb169326329dede13bf6616d04b026099ee6997b9659978"
+    },
+    {
+      "name": "08_提交前验收清单",
+      "pages": 2,
+      "bounds_warnings": [],
+      "pdf_sha256": "0ebe6e5dae4d64fdd4466299ccd9b00ab8177d036f6361af45fc58f89204b2f5"
+    },
+    {
+      "name": "09_复核结论与后续安排",
+      "pages": 2,
+      "bounds_warnings": [],
+      "pdf_sha256": "9b231ee0111d9b08e5167a5ee29322e60f22833676f2bf87d62f75088724fccf"
+    },
+    {
+      "name": "10_学习证书办理说明",
+      "pages": 1,
+      "bounds_warnings": [],
+      "pdf_sha256": "837e14762de0cda63d1d4268adeed499d4877e9848bab219efa6a5d7d5837663"
+    }
+  ],
+  "pages": 53,
+  "visual_review": "All pages checked in contact sheets; no clipping, missing figures or isolated headings observed.",
+  "report_docx_qa": "report-visual-qa.json"
+}

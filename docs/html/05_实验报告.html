@@ -1,146 +1,28 @@
-<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>软件开发综合实验小组报告</title><style>body{max-width:900px;margin:48px auto;padding:0 32px;font:16px/1.85 -apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif;color:#202833}h1{color:#111;font-size:30px;line-height:1.5;margin-bottom:32px}h2{margin-top:36px;font-size:23px}h3{margin-top:24px;font-size:19px}table{border-collapse:collapse;width:100%;font-size:13px;line-height:1.65;margin:18px 0}th,td{border:1px solid #dde1e4;padding:8px 10px;text-align:left;vertical-align:top;overflow-wrap:anywhere}th{background:#edf0f1}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f4f5f6;padding:16px}code{font-size:.9em}a{color:#914321}nav{margin-bottom:28px;color:#777}footer{margin-top:44px;color:#777;font-size:12px}@media print{body{margin:0;padding:0;font-size:10pt}nav{display:none}h1,h2,h3,h4{break-after:avoid}tr{break-inside:avoid}thead{display:table-header-group}@page{size:A4;margin:18mm}}</style><nav><a href="index.html">文档目录</a></nav><main><h1>软件开发综合实验小组报告</h1>
-<p>电子科技大学 计算机科学与工程学院</p>
-<p>课程名称 软件开发综合实验</p>
-<p>实验项目 文件备份软件 松鼠备份 Squirrel Backup</p>
-<p>版本 0.1.1 修订稿</p>
-<p>小组 待填写</p>
-<p>组长姓名与学号 待填写</p>
-<p>组员姓名与学号 待填写 不足三人请按实际删除</p>
-<p>本报告按提供的《小组提交文档-实验报告模板》栏目组织，需求、系统设计和测试内容与独立文档一致。本轮提供修订后的StarUML指导，模型和导出图尚待完成，需冻结接口后补入相应位置。人员信息、真实分工、甘特图及本人学习和演示材料仍需补齐；本报告不是已完成最终提交的声明。原72项测试属于0.1.0基线，0.1.1结果以嵌入的测试报告明确标注为准。</p>
-<p>按第9讲第38–40页：完善在线分组文档；PPT介绍3分钟，老师/助教操作演示7分钟，视频不超过2分钟。2026年11月18日上午上课时答辩，当日23:59前由组长将报告、PPT、源码与程序及构建脚本、视频打包交成电慕课；AI学习证书每人单独提交。若随后有课程通知，以通知更新上述安排。第2讲第38页要求在线Github/Gitee版本库，Teambition或类似看板为鼓励项，当前在线协作材料仍待本人补齐。</p>
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>软件开发综合实验小组报告</title><style>body{max-width:900px;margin:48px auto;padding:0 32px;font:16px/1.85 -apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif;color:#202833}h1{color:#111;font-size:30px;line-height:1.5;margin-bottom:32px}h2{margin-top:36px;font-size:23px}h3{margin-top:24px;font-size:19px}table{border-collapse:collapse;width:100%;font-size:13px;line-height:1.65;margin:18px 0}th,td{border:1px solid #dde1e4;padding:8px 10px;text-align:left;vertical-align:top;overflow-wrap:anywhere}th{background:#edf0f1}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f4f5f6;padding:16px}code{font-size:.9em}a{color:#914321}nav{margin-bottom:28px;color:#777}footer{margin-top:44px;color:#777;font-size:12px}@media print{body{margin:0;padding:0;font-size:10pt}nav{display:none}h1,h2,h3,h4{break-after:avoid}tr{break-inside:avoid}thead{display:table-header-group}@page{size:A4;margin:18mm}}</style><nav><a href="index.html">文档目录</a></nav><main><style>img{max-width:100%;height:auto}</style><h1>软件开发综合实验小组报告</h1>
+<p>电子科技大学 计算机科学与工程学院 · 第3组 · 松鼠备份0.2.0</p>
+<p>组长：杨梦宇 2023150901002；组员：郭畅 2023040904017、李想 2023150901012。</p>
+<p>本阅读稿与课程Word报告共用需求、设计、测试和总结正文；封面、原表格和教师评分栏保留在Word版本。个人职责与技术复核稿供本人确认。</p>
 <h2>一 实验室名称</h2>
-<p>待填写。</p>
+<p><strong><em>_</em></strong><strong><em>_</em></strong>__（按实际填写）</p>
 <h2>二 实验项目名称</h2>
-<p>文件备份软件 松鼠备份。</p>
+<p>文件备份软件 松鼠备份 Squirrel Backup。</p>
 <h2>三 实验目的</h2>
-<p>综合运用 C/C++ 程序设计、数据结构与算法、软件工程和操作系统文件接口，完成从需求分析、面向对象设计、实现到测试与发布的生命周期实践。掌握目录树表示、自定义文件协议、无损压缩、密码封装、资源管理和自动化验证；通过真实交付形成对正确性、易用性及健壮性的工程认识。</p>
+<p>综合运用C/C++、数据结构、软件工程和操作系统文件接口，完成需求分析、设计、实现、测试与发布。练习文件树表示、自定义格式、无损压缩、密码封装和资源管理，并用实际结果核对需求。</p>
 <h2>四 实验内容</h2>
-<p>实现 macOS 上的单机备份与还原软件，具备源代码、原生 GUI、CLI、Makefile 和测试。选择的扩展功能覆盖特殊文件、基础元数据、六类筛选、自定义打包、Huffman 压缩、密码加密、GUI、定时备份、轮询实时备份和任务内淘汰。网络备份等未实现功能不纳入完成情况。</p>
-<h3>评分点与实现证据</h3>
-<p>下表列出课程给出的分值口径，不是教师评分结果。特殊文件和元数据仅覆盖声明范围，是否给满分由验收决定；加密使用系统库按折半保守申报，GUI 使用系统框架也应如实说明。</p>
-<table>
-<thead>
-<tr>
-<th>评分项</th>
-<th>课程分值</th>
-<th>实现与证据</th>
-<th>当前边界</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>备份与还原</td>
-<td>基础 40</td>
-<td>BackupService、往返及内容哈希测试</td>
-<td>不覆盖已有目标</td>
-</tr>
-<tr>
-<td>文件类型</td>
-<td>最高 10</td>
-<td>普通、目录、软硬链接、FIFO</td>
-<td>设备节点和 socket 不支持</td>
-</tr>
-<tr>
-<td>元数据</td>
-<td>最高 10</td>
-<td>权限、atime/mtime、UID/GID 记录、xattrs</td>
-<td>跨属主恢复尽力而为；无 ACL/flags</td>
-</tr>
-<tr>
-<td>自定义筛选</td>
-<td>六类各 3</td>
-<td>路径、类型、名字、时间、尺寸、UID</td>
-<td>CLI 全部可用，GUI 暴露常用子集</td>
-</tr>
-<tr>
-<td>打包解包</td>
-<td>每算法 10</td>
-<td>自定义 SQTREE/SQBK 流式格式</td>
-<td>未调用 tar/zip 实现业务</td>
-</tr>
-<tr>
-<td>压缩解压</td>
-<td>每算法 10</td>
-<td>自编 Huffman，分块并原始回退</td>
-<td>只实现一种算法</td>
-</tr>
-<tr>
-<td>加密解密</td>
-<td>每算法 10，库实现折半</td>
-<td>CommonCrypto AES-256-CBC，PBKDF2 与 HMAC</td>
-<td>保守按 5 分口径申报，非自研 AES</td>
-</tr>
-<tr>
-<td>GUI</td>
-<td>最高 10</td>
-<td>Cocoa 原生三页面</td>
-<td>使用系统框架；真实点击验收待完成</td>
-</tr>
-<tr>
-<td>定时与淘汰</td>
-<td>最高 10</td>
-<td>Scheduler、保留两份与无关文件测试</td>
-<td>应用运行期间，任务间不合并淘汰</td>
-</tr>
-<tr>
-<td>实时备份</td>
-<td>最高 15</td>
-<td>元数据轮询、稳定检测、变化集成测试</td>
-<td>非内核事件，持续变化时延迟</td>
-</tr>
-<tr>
-<td>网络备份</td>
-<td>依子功能</td>
-<td>未实现</td>
-<td>不申报得分</td>
-</tr>
-<tr>
-<td>需求文档</td>
-<td>完成情况 10</td>
-<td>需求编号、用例、范围、计划</td>
-<td>UML 待手工补图</td>
-</tr>
-<tr>
-<td>系统设计文档</td>
-<td>完成情况 20</td>
-<td>真实类、格式、算法、动态流程</td>
-<td>UML 待手工补图</td>
-</tr>
-<tr>
-<td>测试报告</td>
-<td>完成情况 20</td>
-<td>单元、黑盒、安全、内存与性能证据</td>
-<td>GUI 人工验收待补</td>
-</tr>
-<tr>
-<td>AI 训练证书</td>
-<td>完成情况 10</td>
-<td>待本人学习与审核</td>
-<td>不虚构证书</td>
-</tr>
-<tr>
-<td>源码质量／答辩／演示</td>
-<td>10／10／20</td>
-<td>源码检查、演示脚本、讲稿</td>
-<td>原八页PPT为0.1.0历史参考，需更新甘特图/真实分工/版本测试；视频待录制</td>
-</tr>
-</tbody>
-</table>
-<p>讲义还给出项目难度分与完成情况相乘的计算方式及上限。不能仅相加功能分就承诺最终 100 分；考勤、证书、文档、答辩和演示均影响最终成绩。当前版本保留已有本地扩展，重点完善交互、正确性和提交证据。</p>
+<p>实现macOS单机备份与恢复，提供GUI和CLI，共用C++业务核心。选做功能包括软硬链接、FIFO、基础元数据、六类筛选、打包压缩、密码加密、定时、变化检测和任务内保留策略。网络备份、增量备份与系统守护未实现。系统密码库和Cocoa的使用如实说明，不将库算法申报为自研。</p>
 <h2>五 实验器材</h2>
-<p>本轮宿主为Mac，macOS 13.0 arm64、Apple Clang 14.0.3与Command Line Tools，使用make和git；0.1.1部署目标为macOS 13.0。原版本磁盘余量和环境记录不能当作当前配置。测试数据为工作区和临时目录内的副本，不使用共享服务器和他人文件。</p>
+<p>macOS13.0、Apple Silicon、Apple Clang14.0.3、Command Line Tools、make、git、GoogleTest与Python；Cocoa/AppKit用于GUI。StarUML7.1.1用于模型读取与导出校验。</p>
 <h2>六 实验步骤及操作</h2>
-<p>以下依次嵌入需求分析说明书、系统设计文档和软件测试报告，便于与模板对照。需要的用例图、构件图、类图、顺序图和状态图在第 4 份指导中逐步列明，本报告不含生成图。</p>
 <h2>松鼠备份需求分析说明书</h2>
-<p>版本 0.1.1。本文依据《软件开发综合实验》的实验要求、讲义和报告模板，定义 macOS 本地备份软件当前范围，作为设计、编码、测试和验收的共同基线。优先级以数据正确性、原文件保护、操作易用性和扩展功能完整性为序。</p>
+<p>版本 0.2.0。本文依据《软件开发综合实验》的实验要求、讲义和报告模板，定义 macOS 本地备份软件当前范围，作为设计、编码、测试和验收的共同基线。优先级以数据正确性、原文件保护、操作易用性和扩展功能完整性为序。</p>
 <h3>1 任务概述</h3>
 <h4>1.1 引言</h4>
-<p>学生需要把一个目录树保存到独立备份文件，并在另一个位置恢复，解决实验资料、课程代码和个人文件的离线副本管理问题。项目以面向对象的软件工程方法推进，交付源码、可执行应用、构建脚本、需求分析、系统设计和软件测试文档。模板中的 UML 图由学生依据单独指导在 StarUML 中手工完成。</p>
+<p>学生需要把一个目录树保存到独立备份文件，并在另一个位置恢复，解决实验资料、课程代码和个人文件的离线副本管理问题。项目以面向对象的软件工程方法推进，交付源码、可执行应用、构建脚本、需求分析、系统设计和软件测试文档。用例、类、构件、顺序和状态模型随项目提供，模型元素按当前源码命名。</p>
 <h4>1.2 综合描述</h4>
 <p>产品是新建的独立单机应用，名称为松鼠备份。系统不依赖远端服务器或账号，包含 Cocoa GUI 与 CLI 两个入口，两者调用相同 C++ 核心。核心功能是扫描文件树、筛选、打包、可选压缩和加密、校验及恢复。自动任务在同一进程中运行，包含定时快照、轮询变化检测和任务内保留策略。</p>
 <p>普通用户主要使用 GUI 选择路径和密码；熟悉终端的用户通过 CLI 设置完整筛选条件和自动任务；开发和验收人员使用测试脚本检查正确性。无需登录产品账号，访问范围由当前 macOS 用户的文件权限决定。</p>
 <h4>1.3 运行环境</h4>
-<p>本轮复核宿主为 macOS 13.0、arm64、Apple Clang 14.0.3、Command Line Tools；0.1.1 的部署目标统一为 macOS 13.0。原0.1.0报告记录的平台不作为本轮实测环境，其他系统版本和机器仍需实测。使用本机磁盘，目标父目录必须存在。建议测试时预留原始数据数倍的可用空间，因为打包、加密和恢复暂存会产生中间文件。</p>
+<p>本轮复核宿主为 macOS 13.0、arm64、Apple Clang 14.0.3、Command Line Tools；0.2.0 的部署目标统一为 macOS 13.0。原0.1.0报告记录的平台不作为本轮实测环境，其他系统版本和机器仍需实测。使用本机磁盘，目标父目录必须存在。建议测试时预留原始数据数倍的可用空间，因为打包、加密和恢复暂存会产生中间文件。</p>
 <p>标准构建需要 clang++、SDK 和 make；GoogleTest 仅用于测试。普通使用不需要 Python。文档生成和黑盒测试使用 Python 开发工具，不参与备份后端。软件不需要网络；首次获取开发依赖可能需要网络。</p>
 <h3>2 功能需求</h3>
 <h4>2.1 功能划分与唯一编号</h4>
@@ -256,29 +138,40 @@
 <tr>
 <td>FR-21</td>
 <td>任务停止与退出</td>
-<td>SIGINT/SIGTERM 或 GUI 停止按钮请求停止；完成当前快照后退出；GUI记住忙碌期间的关闭/退出请求，操作完成后自动执行</td>
+<td>SIGINT/SIGTERM 或 GUI 停止按钮请求停止；在扫描、数据块处理和发布前检查取消；清理未完成结果后退出；GUI关闭/退出等待清理完成</td>
 </tr>
 <tr>
 <td>FR-22</td>
 <td>界面参数记忆</td>
 <td>保存白名单内的路径、筛选、间隔、份数及开关；密码不保存，重新启动不自动启动任务</td>
 </tr>
+<tr>
+<td>FR-23</td>
+<td>发布前源目录复查</td>
+<td>打包后新增、删除或元数据变化时拒绝发布；保留已有备份</td>
+</tr>
+<tr>
+<td>FR-24</td>
+<td>进度与取消反馈</td>
+<td>展示当前阶段与路径；单次任务可取消，已发布结果不回滚</td>
+</tr>
 </tbody>
 </table>
 <p>当前不包含网盘服务、用户管理、网络传输、增量、系统守护进程、设备节点、socket、ACL、文件 flags 或备份浏览器中的单文件提取。遇到不支持的特殊类型会失败并明确提示，不静默丢失。</p>
 <h4>2.2 系统用例</h4>
 <p>用例 UC-01 创建备份。参与者为本机用户，触发为点击“开始备份”或输入 backup 命令。前置条件是源为可读目录、输出父目录可写、输出路径不存在且位于源树之外。基本流程：收集路径和选项，校验参数，扫描并筛选，记录元数据，自定义打包并按块压缩，封装加密或摘要，刷写备份文件，以不覆盖方式发布输出。成功后产生完整 .sqbk 文件及摘要统计。源文件变化、磁盘不足、权限错误等均以失败结束，既有输出不受影响。</p>
-<p>用例 UC-02 恢复备份。参与者为本机用户。前置条件是备份可读，目标父目录可写，目标路径尚不存在。基本流程：验证格式和摘要／认证标签，解密至私有目录，校验记录并恢复数据及特殊文件，恢复元数据，检查结束标志，独占重命名发布目录。错误密码、损坏、越界或非法路径中止操作，不发布目标目录。不能写入新目录时保留原备份。</p>
+<p>用例 UC-02 恢复备份。参与者为本机用户。前置条件是备份可读，目标父目录可写，目标路径尚不存在。基本流程：验证格式和摘要／认证标签，解密至私有目录，校验记录并恢复数据、特殊文件及文件元数据，检查结束标志后逆序恢复目录元数据，最后独占重命名发布目录。错误密码、损坏、越界或非法路径中止操作，不发布目标目录。不能写入新目录时保留原备份。</p>
 <p>用例 UC-03 验证完整性。前置条件是备份可读；加密文件需提供密码。系统验证外层认证与全部内部记录，成功返回统计；格式、密码或完整性失败返回错误。操作不修改用户源数据和恢复目录，但会创建并清理私有临时文件。</p>
 <p>用例 UC-04 查看内容。前置条件同 UC-03。系统先完成验证，再显示条目和类型，CLI另列条目尺寸，GUI显示汇总；验证失败不显示成功清单。GUI 对超长列表限制显示数量，完整清单可通过 CLI list 获取。</p>
 <p>用例 UC-05 配置筛选。用户在创建备份前设置路径、类型、名字、时间、尺寸、UID及排除规则；完整选项由CLI提供，GUI提供常用子集。系统先判断排除，再对非目录条目应用 AND 条件，目录保留以满足树结构；选定硬链接的首次出现保存数据，之后只保存关系。非法范围拒绝。成功后只有满足组合条件的条目进入备份；更改配置本身不会启动备份。</p>
-<p>用例 UC-06 启动定时任务。前置条件是源目录可读、已有存储目录位于源树外，周期和保留份数有效。系统创建本次独立任务目录并立即备份，之后按周期生成快照，成功后淘汰超额旧快照；失败记录错误并重试，不淘汰上次成功快照。停止请求使任务在当前快照完成后退出，已发布快照保留。</p>
+<p>用例 UC-06 启动定时任务。前置条件是源目录可读、已有存储目录位于源树外，周期和保留份数有效。系统创建本次独立任务目录并立即备份，之后按周期生成快照，成功后淘汰超额旧快照；失败记录错误并重试，不淘汰上次成功快照。停止请求取消尚未完成的快照；清理后退出，已发布快照保留。</p>
 <p>用例 UC-07 启动实时任务。前置条件同 UC-06。系统立即备份，然后轮询被筛选目录的元数据；发现变化后等待下一次观察确认稳定，再执行备份。持续变化时继续等待；任务失败会重试。停止后的后置条件同 UC-06。不承诺内核事件级延迟或事务级文件系统一致性。</p>
-<p>用例 UC-08 停止自动任务。前置条件是自动任务正在运行。用户点击停止，或CLI接收SIGINT/SIGTERM后设置停止标志；等待阶段尽快退出，当前扫描/备份尚未完成时先等待安全返回，再结束循环。已发布快照保留，GUI重新允许业务操作；重复点击不重复提交停止。忙碌期间关闭窗口或退出应用会记住请求并在操作结束后执行；单次备份/恢复仍等待完成，不提供强制中断。</p>
-<p>用例图位置及元素安排见《StarUML 绘图指导》第 2 节，由学生绘制后插入模板 2.2 系统用例位置。</p>
+<p>用例 UC-08 取消操作或停止自动任务。前置条件是存在正在运行的操作。用户点击取消或停止，或 CLI 接收 SIGINT/SIGTERM 后设置停止标志。等待阶段以 100 ms 间隔检查；扫描、编解码和加密在工作单元之间检查。收到请求后抛出专用取消异常并清理私有暂存，不发布未完成结果。GUI 显示“已取消”或任务“已停止”，恢复输入控件。发布是不可分割的提交点，取消不会删除已经成功发布的备份。关闭窗口或退出应用先提出取消请求，完成清理后再关闭。</p>
+<p><img alt="图1 系统用例图" src="../uml/png/01_系统用例图.png" /></p>
+<p>模型文件位于 docs/uml/SquirrelBackup.mdj；用例编号与上述描述一致。</p>
 <h3>3 外部接口需求</h3>
 <h4>3.1 用户界面</h4>
-<p>GUI 采用 macOS 文件选择器、路径输入框、压缩和加密选项、密码框、动作按钮、状态指示和滚动日志。创建、恢复与自动任务分页面显示。密码不回显到日志。0.1.1 使用本机偏好设置保存14项明确列出的表单字段，密码字段不在其中；恢复这些参数不会自动启动任务。执行期间禁用新的业务动作，避免并行写同一任务；错误以日志和状态栏提示。CLI 成功返回 0，失败返回 1，进度写 stderr，结果写 stdout。文件名含换行时 CLI list 使用引号和转义显示。</p>
+<p>GUI 采用 macOS 文件选择器、路径输入框、压缩和加密选项、密码框、动作按钮、状态指示和滚动日志。创建、恢复与自动任务分页面显示。密码不回显到日志。0.2.0 使用本机偏好设置保存14项明确列出的表单字段，密码字段不在其中；恢复这些参数不会自动启动任务。执行期间禁用新的业务动作，避免并行写同一任务；错误以日志和状态栏提示。CLI 成功返回 0，普通失败返回 1，单次操作被取消返回 130；自动任务正常停止返回 0。进度写 stderr，结果写 stdout。文件名含换行时 CLI list 使用引号和转义显示。</p>
 <h4>3.2 硬件接口</h4>
 <p>通过操作系统文件系统接口读写本地存储，无自定义硬件协议。软件不直接访问块设备，不要求管理员权限。外置卷的元数据能力和授权不属于当前实测范围。</p>
 <h4>3.3 软件接口</h4>
@@ -286,75 +179,74 @@
 <h3>4 其它非功能性需求</h3>
 <p>正确性 NFR-01：测试数据恢复后的 SHA256 应与源一致；空目录和特殊文件结构正确。安全性 NFR-02：拒绝绝对路径、父路径跳转、重复路径、非目录父节点和非法硬链接，且备份和恢复不覆盖已有目标。可维护性 NFR-03：算法、文件扫描、格式、封装、调度和 UI 分离，避免复制两套业务逻辑。</p>
 <p>资源 NFR-04：普通文件按 1 MiB 块处理，内存还包含全量条目与元数据列表，不宣称总体常量内存。格式设定单文件 1 TiB、条目数 100 万、文本字段 64 KiB、每条目 xattrs 总计 64 MiB 的上限；这些是防御性边界，不是已完成的容量测试指标。性能 NFR-05：提供本机实测时间、输入输出大小和哈希比对结果，不把缓存条件下的测量作为吞吐承诺。</p>
-<p>健壮性 NFR-06：采用私有暂存目录和不覆盖发布，磁盘不足、截断、密码错误应给出错误。0.1.1源文件变化检测基于大小、device/inode、mtime和ctime纳秒值的前后对比，不能等同于 APFS 一致性快照。系统断电或强制 kill 后可能遗留临时目录，不保证安全擦除或电源故障后的持久性。</p>
+<p>健壮性 NFR-06：采用私有暂存目录和不覆盖发布，磁盘不足、截断、密码错误应给出错误。源文件变化检测基于大小、device/inode、mtime和ctime纳秒值的前后对比，并在发布前重新扫描选定目录树，不能等同于 APFS 一致性快照。系统断电或强制 kill 后可能遗留临时目录，不保证安全擦除或电源故障后的持久性。需要多文件一致性时，应先暂停源目录的写入，或先取得系统快照再归档；运行中的数据库等数据不在当前一致性保证范围。</p>
 <h3>5 项目规划</h3>
 <h4>5.1 人员分工</h4>
-<p>按三人方案建议：A 负责文件扫描筛选、安全恢复、CLI 与需求文档；B 负责归档格式、Huffman、密码封装与系统设计；C 负责原生界面、自动任务、集成发布与测试汇总。每人同时承担对应测试、建模和演示，计划各 30 个工作量点。详见《三人分工与协作方案》。成员代号待替换为真实姓名学号，计划分工不等于已完成贡献，最终按实际调整。AI 辅助使用需按模板第七节说明。</p>
+<p>第3组组长杨梦宇（2023150901002）负责扫描、筛选、安全恢复与 CLI；郭畅（2023040904017）负责归档协议、Huffman 与密码封装；李想（2023150901012）负责原生界面、自动任务和集成发布。每人还承担对应测试、建模、文档和演示，按30个相对工作量点均衡安排。任务点是后续分工尺度，不是已经发生的工时或历史贡献比例。具体交付标准见三人分工方案。</p>
 <h4>5.2 总体规划</h4>
+<p>已有代码和自动测试作为接手基线。以下为2026年10月29日起至答辩前的计划，实际完成时间应由成员根据提交和复核记录更新。</p>
 <table>
 <thead>
 <tr>
 <th>阶段</th>
-<th>交付物</th>
-<th>初版状态</th>
+<th>计划日期</th>
+<th>主责与交付</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>需求与环境</td>
-<td>需求编号、模板提取、工具探针</td>
-<td>已完成</td>
+<td>接手与复现</td>
+<td>10月29日至10月31日</td>
+<td>三人分别构建、阅读并复现主责模块</td>
 </tr>
 <tr>
-<td>总体设计</td>
-<td>类接口、格式、错误策略</td>
-<td>已完成初版</td>
+<td>功能与异常验收</td>
+<td>11月1日至11月5日</td>
+<td>各自执行模块用例并交叉复核；李想汇总GUI人工验收</td>
 </tr>
 <tr>
-<td>核心实现</td>
-<td>备份、恢复、压缩、加密</td>
-<td>已实现并自动测试</td>
+<td>文档和模型复核</td>
+<td>11月6日至11月9日</td>
+<td>杨梦宇核对需求，郭畅核对算法和格式，李想核对动态流程</td>
 </tr>
 <tr>
-<td>界面与自动任务</td>
-<td>原生 GUI、调度与淘汰</td>
-<td>已实现；GUI 点击待人工验收</td>
+<td>视频与答辩排练</td>
+<td>11月10日至11月14日</td>
+<td>三人共同演示和互问，核对程序、报告、PPT版本</td>
 </tr>
 <tr>
-<td>质量验证</td>
-<td>单元、集成、安全、内存与性能结果</td>
-<td>见测试报告</td>
+<td>最终检查与提交准备</td>
+<td>11月15日至11月17日</td>
+<td>组长汇总，三人核对身份、学习证书、文件命名和可运行性</td>
 </tr>
 <tr>
-<td>文档与发布</td>
-<td>报告、绘图指导、源码与程序包</td>
-<td>随版本交付</td>
-</tr>
-<tr>
-<td>个人验收</td>
-<td>人员信息、手工 UML、视频和学习证书</td>
-<td>待本人完成</td>
+<td>答辩与提交</td>
+<td>11月18日</td>
+<td>上午答辩；当日23:59前由组长提交小组材料</td>
 </tr>
 </tbody>
 </table>
-<p>0.1.1 已实现非密码参数记忆及操作完成后自动关闭/退出；真实点击验收仍待完成，不能把内部动作断言当成人工通过。下一步先完成验收、真实人员和协作记录、UML与甘特图，再评估协作取消、任务恢复和完整元数据支持。原72项是0.1.0基线，当前测试以03测试报告中明确标记的0.1.1结果为准。</p>
-<p>模板5.2及第9讲第39页要求甘特图。上表仅为阶段概览，尚不满足有日期甘特图；应补真实起止日期、责任人、里程碑和计划/实际状态，没有证据的过去日期不补造。第2讲第38页要求在线Github/Gitee仓库；Teambition或类似看板是鼓励项。最终时限与验收清单见08_提交前验收清单.md。</p>
+<p><img alt="图2 后续实施计划" src="../planning/gantt.png" /></p>
+<p>在线 GitHub/Gitee 仓库是课程要求，Teambition 或类似看板属于鼓励项。目前仅本地 Git 历史已核验；在线仓库地址和成员的实际协作记录须补齐。每位成员的 AI 学习与证书另行提交。</p>
 <h2>松鼠备份系统设计文档</h2>
-<p>版本 0.1.1。本设计对应需求 FR-01 至 FR-22，说明已实现的 C++ 类、文件协议、恢复安全边界和调度逻辑。文档中的方法名以 include/squirrel/backup.h 为准；UML 图由用户根据指导手工绘制，不在本交付物中生成。</p>
+<p>版本 0.2.0。本设计对应需求 FR-01 至 FR-24，说明已实现的 C++ 类、文件协议、恢复安全边界和调度逻辑。文档中的方法名以 include/squirrel/backup.h 为准；对应的可编辑UML模型及插图位于docs/uml。</p>
 <h3>1 开发环境和工具</h3>
 <h4>1.1 开发环境</h4>
-<p>本轮构建宿主为 macOS 13.0 arm64、Apple Clang 14.0.3与系统SDK；0.1.1部署目标为macOS 13.0。使用C++17、Objective-C++、make与git。原0.1.0开发环境记录保留在历史材料，不替代本轮环境。通过 -Wall -Wextra -Wpedantic -Werror 编译业务源码；CommonCrypto 的系统废弃声明告警单独屏蔽，不视为算法自研。GoogleTest 执行白盒测试；Python 驱动 CLI 黑盒和性能测试；AddressSanitizer 与 UndefinedBehaviorSanitizer 用于动态检查，适配本机平台而不强行安装 Linux 的 perf 或 valgrind。</p>
+<p>本轮构建宿主为 macOS 13.0 arm64、Apple Clang 14.0.3与系统SDK；0.2.0部署目标为macOS 13.0。使用C++17、Objective-C++、make与git。原0.1.0开发环境记录保留在历史材料，不替代本轮环境。通过 -Wall -Wextra -Wpedantic -Werror 编译业务源码；CommonCrypto 的系统废弃声明告警单独屏蔽，不视为算法自研。GoogleTest 执行白盒测试；Python 驱动 CLI 黑盒和性能测试；AddressSanitizer 与 UndefinedBehaviorSanitizer 用于动态检查，适配本机平台而不强行安装 Linux 的 perf 或 valgrind。</p>
 <h4>1.2 依赖库</h4>
 <p>GUI 使用 Cocoa/AppKit，密码封装使用 CommonCrypto/Security。打包、Huffman、筛选和调度由本项目编写。GoogleTest 只链接测试程序。详细来源、许可和扩展功能计分说明见 THIRD_PARTY.md。</p>
 <h3>2 总体设计</h3>
 <h4>2.1 系统结构设计</h4>
 <p>入口层由 cli.cpp 和 gui.mm 构成。CLI 解析参数、读取密码环境变量并处理退出码；GUI 收集输入，在后台队列调用业务服务，在主队列更新日志。业务层由 BackupService 统一编排，Scheduler 提供循环快照。基础模块分为 FileScanner、ArchiveWriter、ArchiveReader、HuffmanCodec 和 CryptoEnvelope。</p>
-<p>构建时核心源文件生成 libsquirrel.a，GUI 和 CLI 静态链接同一核心。当前不提供对外稳定 C ABI 或动态库；若后续需要脚本 UI 或插件，才考虑增加不传播 C++ 异常的 C 接口。组件图需要展示两个入口对同一核心库的依赖及核心库对文件系统、密码库的依赖，具体绘图步骤见指导第 4 节。</p>
+<p>构建时核心源文件生成 libsquirrel.a，GUI 和 CLI 静态链接同一核心。当前不提供对外稳定 C ABI 或动态库；若后续需要脚本 UI 或插件，才考虑增加不传播 C++ 异常的 C 接口。组件图需要展示两个入口对同一核心库的依赖及核心库对文件系统、密码库的依赖，模型中的构件依赖与本节一致。</p>
+<p><img alt="图3 系统构件图" src="../uml/png/04_系统构件图.png" /></p>
 <p>备份子系统接收源目录和 BackupOptions，输出单个封装文件与 Summary。恢复子系统接收备份和新目标路径，验证后输出新树和统计。自动任务复用 BackupService，不单独复制打包逻辑。</p>
 <h3>3 静态建模</h3>
 <h4>3.1 系统对象模型</h4>
 <p>核心类关系以静态工具方法依赖为主：BackupService 依赖 FileScanner、ArchiveWriter、ArchiveReader、CryptoEnvelope；ArchiveWriter 和 ArchiveReader 依赖 HuffmanCodec；Scheduler 依赖 BackupService、BackupOptions 与 ScheduleOptions。它们不通过继承形成多态层次，不应在类图中臆造父类。</p>
 <p>值对象组合关系：BackupOptions 拥有 1 个 Filter、压缩开关和密码；Entry 拥有路径、链接、类型、权限、属主、时间、尺寸和 0..<em> 个 xattr 键值；Summary 拥有统计和 0..</em> 个 Entry（仅收集模式返回列表）。Filter 拥有 0..* 条排除规则。服务类本身不长期保存 UI 状态。GUI 控制器负责窗口及任务停止标志，异步操作期间保持控制器存活。</p>
+<p><img alt="图4 核心服务类图" src="../uml/png/02_核心服务类图.png" /></p>
+<p><img alt="图5 配置与记录类图" src="../uml/png/03_配置与记录类图.png" /></p>
 <h4>3.2 类及方法描述</h4>
 <table>
 <thead>
@@ -393,7 +285,7 @@
 <tr>
 <td>FileScanner</td>
 <td>无持久状态</td>
-<td>scan(root,filter,log) 返回 vector<Entry>，失败抛异常</td>
+<td>scan(...) 返回 vector<Entry>，失败抛异常</td>
 <td>扫描和排除测试</td>
 </tr>
 <tr>
@@ -405,19 +297,19 @@
 <tr>
 <td>ArchiveWriter</td>
 <td>无持久状态</td>
-<td>write(source,entries,output,compress,log)，安全打开文件并按块写</td>
+<td>write(...) 安全打开源文件，按块写入归档</td>
 <td>跨块大文件</td>
 </tr>
 <tr>
 <td>ArchiveReader</td>
 <td>无持久状态</td>
-<td>read(plain,destination,log,collect)，destination 为空时仅检查</td>
+<td>read(...)；destination 为空时仅检查</td>
 <td>恢复与恶意归档测试</td>
 </tr>
 <tr>
 <td>CryptoEnvelope</td>
 <td>无持久状态</td>
-<td>seal(plain,output,password)、open(archive,plain,password)</td>
+<td>seal(...) 封装；open(...) 认证并解封</td>
 <td>错误密码、损坏、加密往返</td>
 </tr>
 <tr>
@@ -435,32 +327,51 @@
 <tr>
 <td>Scheduler</td>
 <td>局部基线、候选指纹、快照队列</td>
-<td>run(source,repo,options,schedule,stop,log)，串行快照</td>
+<td>run(...,stop,log,progress)，串行快照</td>
 <td>淘汰、监测、停止测试</td>
+</tr>
+<tr>
+<td>Operation</td>
+<td>stop、progress</td>
+<td>check()检查取消；checkpoint()通知阶段和进度后再次检查</td>
+<td>各阶段取消回归</td>
+</tr>
+<tr>
+<td>ProgressInfo</td>
+<td>phase、completed、total、path</td>
+<td>数值单位随阶段区分为字节或条目，回调在工作线程执行</td>
+<td>GUI进度与取消状态</td>
 </tr>
 </tbody>
 </table>
-<p>方法返回值包括完整统计；错误统一以 squirrel::Error 或标准文件系统异常传递。CLI 捕获后返回 1；GUI 捕获后显示日志并解除忙碌状态。Log 回调只用于记录进展，调用方负责线程切换。</p>
-<p>内部 RAII 对象 Fd 在作用域结束关闭文件描述符；TempDir 创建 0700 临时目录，正常异常退出时尝试 remove_all 清理；Cipher 释放 CCCryptorRef。这些是资源管理辅助类，不对外暴露。</p>
+<p>完整签名见include/squirrel/backup.h。scan、write、read、seal、open以及BackupService的三个方法均接收可选Operation参数，使取消和进度贯穿一次操作。Scheduler接收停止标志与进度回调，在每次快照中构造Operation。</p>
+<p>业务方法返回Summary统计；错误统一以squirrel::Error或标准文件系统异常传递。普通错误由CLI返回1，单次操作取消返回130，自动任务收到停止信号后正常返回0；GUI分别显示失败、取消或已停止。Log和Progress回调由工作线程调用，GUI负责切换到主线程更新控件。</p>
+<p>内部 RAII 对象 Fd 在作用域结束关闭文件描述符；TempDir 创建 0700 临时目录，正常或异常退出时在不跟随符号链接的前提下临时恢复目录访问权限并清理；Cipher 释放 CCCryptorRef。这些是资源管理辅助类，不对外暴露。</p>
 <h4>3.3 扫描与文件类型</h4>
 <p>扫描对目录子项排序，保证相同目录状态下顺序稳定。lstat 避免把符号链接当目标文件展开，readlink 记录链接字符串。普通文件通过 device/inode 对识别硬链接：被选中的第一次出现保存数据，后续记录引用该路径。FIFO 只记录类型和元数据，不打开读取。遇到 socket 或设备节点直接报错。</p>
 <p>路径与名字通配符通过 fnmatch 实现，不是正则表达式。规则不跟随符号链接。全量 Entry 列表在内存保存，因此内存复杂度为 O(条目及扩展属性总量)，文件内容处理额外为 O(1 MiB)。</p>
 <h3>4 动态建模</h3>
 <h4>4.1 场景一 创建备份</h4>
-<p>顺序为：入口收集参数，BackupService 校验根目录和输出位置，FileScanner 生成条目，ArchiveWriter 编写树记录并调用 HuffmanCodec，CryptoEnvelope 封装完整性或加密，fsync 备份文件，link 独占发布输出，返回 Summary。压缩发生在加密之前。</p>
-<p>普通文件由 openSource 逐级 openat 并启用 O_NOFOLLOW 打开，避免父路径被替换为符号链接后跟随读取。0.1.1在打开后和内容读取后比对size、device/inode、mtime与ctime纳秒值；变化则失败。ctime只用于扫描与变化检测，不写入SQTREE01，归档版本和布局不变；这补强了同尺寸改写后恢复mtime的检测，但仍不提供多文件事务一致性。</p>
+<p>顺序为：入口收集参数，BackupService校验根目录和输出位置，FileScanner生成条目；创建私有暂存区，ArchiveWriter编写树记录并调用HuffmanCodec，CryptoEnvelope封装完整性或加密；重新扫描并比较选定源目录，fsync备份文件，最后检查取消，link独占发布输出，返回Summary。压缩发生在加密之前。</p>
+<p>普通文件由 openSource 逐级 openat 并启用 O_NOFOLLOW 打开，避免父路径被替换为符号链接后跟随读取。0.2.0在打开后和内容读取后比对size、device/inode、mtime与ctime纳秒值；变化则失败。ctime只用于扫描与变化检测，不写入SQTREE01，归档版本和布局不变；这补强了同尺寸改写后恢复mtime的检测，但仍不提供多文件事务一致性。</p>
+<p>发布前复查会比较条目数量、相对路径、类型、设备与inode、尺寸、权限、属主、mtime/ctime、链接目标和xattrs；atime不参与比较，避免读取引发误报。备份结束后的修改仍可能发生，因此这项检查不能代替文件系统快照。</p>
+<p><img alt="图6 创建备份顺序图" src="../uml/png/05_创建备份顺序图.png" /></p>
 <h4>4.2 场景二 验证与恢复</h4>
 <p>CryptoEnvelope 用一个 O_NOFOLLOW 文件描述符读取备份，先验证完整 payload 的摘要或 HMAC，再解密／复制至私有临时文件。第二遍读取再次计算摘要，检测两遍之间的内容变化。ArchiveReader 随后校验树并恢复至私有暂存目录。目录临时权限为 0700，普通文件以 O_EXCL/O_NOFOLLOW 和 0600 创建；链接父节点必须是已知目录，硬链接只能指向先前普通文件。</p>
-<p>每个非目录条目创建后应用元数据，目录在全部内容处理后按逆序恢复。顺序为属主/组、扩展属性、权限、时间，避免前面的操作影响最终元数据；0.1.1把chmod和时间恢复失败作为错误，属主/xattr失败仍按原策略给出警告。读取完整结束标志并确认无尾随数据后，用 macOS renamex_np(RENAME_EXCL) 将暂存目录发布到新目标。失败不覆盖既有文件。</p>
+<p>每个非目录条目创建后应用元数据，目录在全部内容处理后按逆序恢复。顺序为属主/组、扩展属性、权限、时间，避免前面的操作影响最终元数据；0.2.0把chmod和时间恢复失败作为错误，属主/xattr失败仍按原策略给出警告。读取完整结束标志并确认无尾随数据后，用 macOS renamex_np(RENAME_EXCL) 将暂存目录发布到新目标。失败不覆盖既有文件。</p>
+<p><img alt="图7 验证恢复顺序图" src="../uml/png/06_验证恢复顺序图.png" /></p>
 <h4>4.3 场景三 自动任务</h4>
 <p>Scheduler 创建本次专属 squirrel-job- 随机目录，生成 snapshot-1.sqbk 等完整快照。成功快照登记到 owned 队列，超过 keep 才删除最旧文件。新快照发布后立即更新计时与监测基线；淘汰失败只记录警告并在后续轮询重试，不重复生成快照或绕过 max_runs。非法密码和筛选配置在任务创建前拒绝。备份失败日志不触发淘汰。定时模式以单调时钟判断距上次完成的间隔；不补跑睡眠期间错过的周期。</p>
 <p>实时模式每 poll_seconds 扫描一次，根据路径、类型、大小、device/inode、mtime、ctime、权限、UID/GID、链接目标和 xattrs 构造状态字符串，不包含 atime，避免备份读取触发自身循环。状态与基线不同且与上次候选相同才备份，即等待两个连续稳定观察。使用轮询并非 FSEvents 内核通知，实现简单但大目录扫描开销较高。</p>
 <h4>4.4 状态与线程</h4>
-<p>界面状态为就绪、执行中、完成、失败；自动任务增加等待与停止请求。执行中禁止新的业务操作，停止标志仅用于自动任务循环，不会中断正在写入的备份。因此停止响应时间包含当前快照耗时。0.1.1 在忙碌期间记录窗口关闭/退出请求，自动任务同时提出停止；当前操作结束后自动关闭窗口或退出，不要求用户再次点击。单次备份/恢复没有立即取消接口，仍需等待当前操作完成。</p>
-<p>状态图和两个顺序图的逐条消息清单见 StarUML 指导；尚未绘制的图不作为已完成建模成果申报。</p>
+<p>界面同一时间只运行一个业务操作，工作在线程池执行，所有AppKit更新切回主队列。执行期间禁用输入和新动作，导航仍可使用；切页不会抹掉完成或失败结果。进度通知按150 ms节流，显示扫描、打包、验证、元数据处理和发布等阶段。</p>
+<p>Operation借用原子停止标志，扫描条目、1 MiB数据块、目录元数据处理和最终发布前均有取消检查。取消异常沿调用栈展开，由RAII清理暂存；最终发布已经成功时不再把操作改报为取消，也不删除完成结果。GUI关闭和退出同样请求取消，等待工作线程返回后关闭。</p>
+<p>取消是协作式处理：一次文件系统调用、PBKDF2派生或单块Huffman计算仍需返回后才能响应。未提供固定毫秒级时限，也未使用强制线程终止。</p>
+<p><img alt="图8 自动任务状态图" src="../uml/png/07_自动任务状态图.png" /></p>
+<p>图中“已停止”表示本次Scheduler调用结束，已经发布的快照保留。状态在内存中，不会在应用重启后自动恢复。达到max_runs的判断在本轮成功备份及淘汰之后进行。</p>
 <h3>5 数据持久化与文件格式</h3>
 <h4>5.1 持久化选择</h4>
-<p>当前无数据库。备份自身存储元数据；任务运行时状态在内存，生成的备份留在独立目录。0.1.1 使用 NSUserDefaults 的 SquirrelBackup.FormSettings.v1 保存14项白名单表单字段：10项路径/筛选/间隔/保留文本，4项压缩/加密/实时开关。密码字段不进入偏好设置；预览和内部自测模式不读写真实用户设置。启动时按类型恢复表单，执行操作及正常关闭/退出时保存；不支持跨进程恢复运行中的调度计划，也不会因恢复开关而自动运行任务。</p>
+<p>当前无数据库。备份自身存储元数据；任务运行时状态在内存，生成的备份留在独立目录。0.2.0 使用 NSUserDefaults 的 SquirrelBackup.FormSettings.v1 保存14项白名单表单字段：10项路径/筛选/间隔/保留文本，4项压缩/加密/实时开关。密码字段不进入偏好设置；预览和内部自测模式不读写真实用户设置。启动时按类型恢复表单，执行操作及正常关闭/退出时保存；不支持跨进程恢复运行中的调度计划，也不会因恢复开关而自动运行任务。</p>
 <h4>5.2 外层 SQBK 版本 1</h4>
 <p>所有多字节整数均小端，文本和二进制长度显式指定，禁止直接写入 C++ struct 的平台内存布局。外层头固定 44 字节：8 字节 ASCII SQBK0001，1 字节加密标志（0/1），3 字节保留零，16 字节 salt，16 字节 IV；其后为 payload，最后 32 字节为 tag。未加密时 salt/IV 为零，tag 是 header+payload 的 SHA256。加密时 tag 是 header+ciphertext 的 HMAC-SHA256。</p>
 <p>PBKDF2-HMAC-SHA256 固定 200000 轮，派生 64 字节，前 32 字节为 AES-256 密钥，后 32 字节为 HMAC 密钥。salt 和 IV 分别由安全随机数生成，AES 使用 CBC 与 PKCS7 补齐。认证标签逐字节异或累计后判断，先验证后解密，不把密码摘要直接保存成可用于解密的密钥。密码最低 8 UTF-8 字节，并不代表强度保证；不存在找回机制。</p>
@@ -472,611 +383,263 @@
 <p>拒绝路径中的 NUL、绝对路径、空分量、点或父目录分量、重复条目、缺失父目录、非目录父节点、未知类型、非法权限和时间纳秒值。读取长度前设置文本、条目数、xattr 和块的上限。相对或绝对软链接目标可原样保留，但不能作为恢复其他记录的父路径；用户恢复后手动跟随链接可能访问源树外位置，应按普通文件系统链接理解。</p>
 <h3>6 风险与迭代</h3>
 <p>UID/GID 记录和异属主恢复分开处理，无权限只警告。xattrs 设置失败警告；ACL、出生时间、flags 不支持。原始块和加密中间数据会暂存磁盘，使用权限隔离而非安全擦除。强制中止可能留下 .squirrel- 前缀私有目录；不可自动删除不属于本次运行的路径。</p>
-<p>备份发布前刷写单文件，但未实现所有恢复文件及父目录的 fsync 链，因此不承诺断电事务持久性。跨卷、跨平台和超大容量仍需实测。本轮变更的自动验证以03测试报告为准；仍需GUI真实点击、重启后参数记忆、密码为空及忙碌关闭/退出的交互验收。后续再评估协作取消、可恢复调度状态、扫描竞态强化与更完整元数据支持。</p>
+<p>备份发布前刷写单文件，但未实现所有恢复文件及父目录的 fsync 链，因此不承诺断电事务持久性。跨卷、跨平台和超大容量仍需实测。本轮变更的自动验证以03测试报告为准；仍需GUI真实点击、重启后参数记忆、密码为空及忙碌关闭/退出的交互验收。后续可评估可恢复调度状态、事件驱动监测和更完整元数据支持。</p>
 <h2>松鼠备份软件测试报告</h2>
-<p>版本 0.1.1。结果生成时间 2026-10-29T10:06:59+08:00。本报告依据 test-results 中的 GoogleTest XML、集成与安全测试 JSON、Sanitizer 日志和性能实测生成。测试对象为本机编译的 C++ 核心与 CLI；另有 GUI 离屏渲染和内部动作测试，本轮未进行文件选择器与鼠标点击验收，不能将内部动作测试等同于完整 GUI 验收。</p>
-<h3>1 引言</h3>
-<p>目标是验证备份内容、目录结构、扩展功能及异常情况下的原文件保护，满足讲义至少两种测试类型、15 个以上用例的要求。平台为 macOS 13.0 arm64、Apple clang version 14.0.3 (clang-1403.0.22.14.1)、C++17。测试数据通过临时目录隔离，普通文件恢复后用 SHA256 或完整字节比较，特殊文件用 lstat、read_symlink 和 inode 关系验证。测试人员栏请由执行并复核的学生填写；本轮由 AI 编程会话自动执行，不冒填真人。</p>
-<h3>2 功能测试</h3>
-<p>本轮共有 37 项 GoogleTest 测试、21 项 CLI 黑盒测试和 18 项异常归档与并发测试，另有 6 项调度回归，合计 82 项，通过 82 项。单元和黑盒集成两种类型均有源码和可复现命令。安全测试是附加异常验证，不代替渗透测试或安全审计。</p>
-<h4>2.1 全部用例结果</h4>
+<p>版本 0.2.0。整理时间 2026年10月29日 12:46（北京时间）。本轮命名测试 97 项，通过 97 项。结果来自可复现的测试程序及其 XML、JSON 和日志。GUI 内部断言与核心用例分开统计；未完成的长期测试不写成通过。</p>
+<h3>1 测试环境与方法</h3>
+<p>测试宿主为 macOS 13.0 arm64，编译器为 Apple clang version 14.0.3 (clang-1403.0.22.14.1)。业务代码使用C++17；测试工具包括GoogleTest、Python、AddressSanitizer和UndefinedBehaviorSanitizer。</p>
+<p>所有源目录、备份与恢复目标都在测试临时目录内。普通文件用完整字节或SHA256比较；链接用目标字符串和inode关系检查；FIFO只检查类型；元数据按权限、时间和扩展属性逐项比对。报告中的执行结果由本次编程会话自动取得，学生复核签名另行填写。</p>
 <table>
 <thead>
 <tr>
-<th>编号</th>
-<th>层次与名称</th>
-<th>实际结果</th>
+<th>类型</th>
+<th>用例数量</th>
+<th>通过数量</th>
+<th>原始证据</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>UT-01</td>
-<td>Huffman.Empty</td>
-<td>通过</td>
+<td>单元</td>
+<td>52</td>
+<td>52</td>
+<td>test-results/unit.xml</td>
 </tr>
 <tr>
-<td>UT-02</td>
-<td>Huffman.SingleSymbol</td>
-<td>通过</td>
+<td>CLI集成</td>
+<td>21</td>
+<td>21</td>
+<td>test-results/integration.json</td>
 </tr>
 <tr>
-<td>UT-03</td>
-<td>Huffman.AllSymbols</td>
-<td>通过</td>
+<td>异常归档与并发</td>
+<td>18</td>
+<td>18</td>
+<td>test-results/security.json</td>
 </tr>
 <tr>
-<td>UT-04</td>
-<td>Huffman.RandomRoundtrip</td>
-<td>通过</td>
-</tr>
-<tr>
-<td>UT-05</td>
-<td>Huffman.Compression</td>
-<td>通过</td>
-</tr>
-<tr>
-<td>UT-06</td>
-<td>Huffman.RejectTruncation</td>
-<td>通过</td>
-</tr>
-<tr>
-<td>UT-07</td>
-<td>Huffman.RejectFrequency</td>
-<td>通过</td>
-</tr>
-<tr>
-<td>UT-08</td>
-<td>Huffman.RejectOversize</td>
-<td>通过</td>
-</tr>
-<tr>
-<td>UT-09</td>
-<td>Huffman.RejectTrailing</td>
-<td>通过</td>
-</tr>
-<tr>
-<td>UT-10</td>
-<td>BackupTest.Roundtrip</td>
-<td>通过</td>
-</tr>
-<tr>
-<td>UT-11</td>
-<td>BackupTest.RawRoundtrip</td>
-<td>通过</td>
-</tr>
-<tr>
-<td>UT-12</td>
-<td>BackupTest.EncryptedRoundtrip</td>
-<td>通过</td>
-</tr>
-<tr>
-<td>UT-13</td>
-<td>BackupTest.WrongPasswordLeavesNoOutput</td>
-<td>通过</td>
-</tr>
-<tr>
-<td>UT-14</td>
-<td>BackupTest.RejectShortPassword</td>
-<td>通过</td>
-</tr>
-<tr>
-<td>UT-15</td>
-<td>BackupTest.TamperDetection</td>
-<td>通过</td>
-</tr>
-<tr>
-<td>UT-16</td>
-<td>BackupTest.RejectTruncated</td>
-<td>通过</td>
-</tr>
-<tr>
-<td>UT-17</td>
-<td>BackupTest.NoOverwriteBackup</td>
-<td>通过</td>
-</tr>
-<tr>
-<td>UT-18</td>
-<td>BackupTest.NoOverwriteRestore</td>
-<td>通过</td>
-</tr>
-<tr>
-<td>UT-19</td>
-<td>BackupTest.RejectOutputInSource</td>
-<td>通过</td>
-</tr>
-<tr>
-<td>UT-20</td>
-<td>BackupTest.MissingSource</td>
-<td>通过</td>
-</tr>
-<tr>
-<td>UT-21</td>
-<td>BackupTest.SymlinkHardlinkFifo</td>
-<td>通过</td>
-</tr>
-<tr>
-<td>UT-22</td>
-<td>BackupTest.Metadata</td>
-<td>通过</td>
-</tr>
-<tr>
-<td>UT-23</td>
-<td>BackupTest.ReadOnlyRootRestoresWithOriginalPermissions</td>
-<td>通过</td>
-</tr>
-<tr>
-<td>UT-24</td>
-<td>BackupTest.RewritePreservingMtimeIsRejected</td>
-<td>通过</td>
-</tr>
-<tr>
-<td>UT-25</td>
-<td>BackupTest.PrivateCleanupHandlesUnreadableDirectoriesWithoutFollowingSymlinks</td>
-<td>通过</td>
-</tr>
-<tr>
-<td>UT-26</td>
-<td>BackupTest.FailedPublicationCleansReadOnlyRestoredDirectories</td>
-<td>通过</td>
-</tr>
-<tr>
-<td>UT-27</td>
-<td>BackupTest.ExcludePrunesDirectory</td>
-<td>通过</td>
-</tr>
-<tr>
-<td>UT-28</td>
-<td>BackupTest.NameFilter</td>
-<td>通过</td>
-</tr>
-<tr>
-<td>UT-29</td>
-<td>BackupTest.PathFilter</td>
-<td>通过</td>
-</tr>
-<tr>
-<td>UT-30</td>
-<td>BackupTest.SizeFilter</td>
-<td>通过</td>
-</tr>
-<tr>
-<td>UT-31</td>
-<td>BackupTest.TimeFilter</td>
-<td>通过</td>
-</tr>
-<tr>
-<td>UT-32</td>
-<td>BackupTest.OwnerFilter</td>
-<td>通过</td>
-</tr>
-<tr>
-<td>UT-33</td>
-<td>BackupTest.TypeFilter</td>
-<td>通过</td>
-</tr>
-<tr>
-<td>UT-34</td>
-<td>BackupTest.InvalidFilter</td>
-<td>通过</td>
-</tr>
-<tr>
-<td>UT-35</td>
-<td>BackupTest.EmptyTree</td>
-<td>通过</td>
-</tr>
-<tr>
-<td>UT-36</td>
-<td>BackupTest.UncompressedEncrypted</td>
-<td>通过</td>
-</tr>
-<tr>
-<td>UT-37</td>
-<td>BackupTest.RetentionFailureDoesNotRepeatSnapshot</td>
-<td>通过</td>
-</tr>
-<tr>
-<td>IT-01</td>
-<td>CLI-01 help</td>
-<td>通过</td>
-</tr>
-<tr>
-<td>IT-02</td>
-<td>CLI-02 backup</td>
-<td>通过</td>
-</tr>
-<tr>
-<td>IT-03</td>
-<td>CLI-03 verify</td>
-<td>通过</td>
-</tr>
-<tr>
-<td>IT-04</td>
-<td>CLI-04 list</td>
-<td>通过</td>
-</tr>
-<tr>
-<td>IT-05</td>
-<td>CLI-05 content hashes</td>
-<td>通过</td>
-</tr>
-<tr>
-<td>IT-06</td>
-<td>CLI-06 restore no-clobber</td>
-<td>通过</td>
-</tr>
-<tr>
-<td>IT-07</td>
-<td>CLI-07 backup no-clobber</td>
-<td>通过</td>
-</tr>
-<tr>
-<td>IT-08</td>
-<td>CLI-08 reject self-backup</td>
-<td>通过</td>
-</tr>
-<tr>
-<td>IT-09</td>
-<td>CLI-09 unknown option</td>
-<td>通过</td>
-</tr>
-<tr>
-<td>IT-10</td>
-<td>CLI-10 missing value</td>
-<td>通过</td>
-</tr>
-<tr>
-<td>IT-11</td>
-<td>CLI-11 invalid numeric option</td>
-<td>通过</td>
-</tr>
-<tr>
-<td>IT-12</td>
-<td>CLI-12 combined filters</td>
-<td>通过</td>
-</tr>
-<tr>
-<td>IT-13</td>
-<td>CLI-13 encrypted CLI</td>
-<td>通过</td>
-</tr>
-<tr>
-<td>IT-14</td>
-<td>CLI-14 schedule retention isolation</td>
-<td>通过</td>
-</tr>
-<tr>
-<td>IT-15</td>
-<td>CLI-15 change detection</td>
-<td>通过</td>
-</tr>
-<tr>
-<td>IT-16</td>
-<td>CLI-16 graceful stop</td>
-<td>通过</td>
-</tr>
-<tr>
-<td>IT-17</td>
-<td>CLI-17 invalid type filter</td>
-<td>通过</td>
-</tr>
-<tr>
-<td>IT-18</td>
-<td>CLI-18 missing password env</td>
-<td>通过</td>
-</tr>
-<tr>
-<td>IT-19</td>
-<td>CLI-19 do not overwrite dangling symlink</td>
-<td>通过</td>
-</tr>
-<tr>
-<td>IT-20</td>
-<td>CLI-20 schedule rejects short password before starting</td>
-<td>通过</td>
-</tr>
-<tr>
-<td>IT-21</td>
-<td>CLI-21 schedule rejects invalid filters before starting</td>
-<td>通过</td>
-</tr>
-<tr>
-<td>SEC-01</td>
-<td>SEC-01 parent traversal</td>
-<td>通过</td>
-</tr>
-<tr>
-<td>SEC-02</td>
-<td>SEC-02 absolute path</td>
-<td>通过</td>
-</tr>
-<tr>
-<td>SEC-03</td>
-<td>SEC-03 repeated separators</td>
-<td>通过</td>
-</tr>
-<tr>
-<td>SEC-04</td>
-<td>SEC-04 dot component</td>
-<td>通过</td>
-</tr>
-<tr>
-<td>SEC-05</td>
-<td>SEC-05 duplicate path</td>
-<td>通过</td>
-</tr>
-<tr>
-<td>SEC-06</td>
-<td>SEC-06 symlink parent escape</td>
-<td>通过</td>
-</tr>
-<tr>
-<td>SEC-07</td>
-<td>SEC-07 hardlink external</td>
-<td>通过</td>
-</tr>
-<tr>
-<td>SEC-08</td>
-<td>SEC-08 unknown file type</td>
-<td>通过</td>
-</tr>
-<tr>
-<td>SEC-09</td>
-<td>SEC-09 oversized entry count</td>
-<td>通过</td>
-</tr>
-<tr>
-<td>SEC-10</td>
-<td>SEC-10 missing root</td>
-<td>通过</td>
-</tr>
-<tr>
-<td>SEC-11</td>
-<td>SEC-11 size overflow</td>
-<td>通过</td>
-</tr>
-<tr>
-<td>SEC-12</td>
-<td>SEC-12 invalid mode</td>
-<td>通过</td>
-</tr>
-<tr>
-<td>SEC-13</td>
-<td>SEC-13 trailing tree data</td>
-<td>通过</td>
-</tr>
-<tr>
-<td>SEC-14</td>
-<td>SEC-14 NUL filename</td>
-<td>通过</td>
-</tr>
-<tr>
-<td>SEC-15</td>
-<td>SEC-15 missing parent directory</td>
-<td>通过</td>
-</tr>
-<tr>
-<td>SEC-16</td>
-<td>SEC-16 bad Huffman block</td>
-<td>通过</td>
-</tr>
-<tr>
-<td>SEC-17</td>
-<td>SEC-17 short raw block</td>
-<td>通过</td>
-</tr>
-<tr>
-<td>SEC-18</td>
-<td>SEC-18 concurrent publication</td>
-<td>通过</td>
-</tr>
-<tr>
-<td>REG-01</td>
-<td>FLOW-01 schedule rejects a file source immediately</td>
-<td>通过</td>
-</tr>
-<tr>
-<td>REG-02</td>
-<td>FLOW-02 watch rejects a file source immediately</td>
-<td>通过</td>
-</tr>
-<tr>
-<td>REG-03</td>
-<td>FLOW-03 schedule rejects ineffective --poll</td>
-<td>通过</td>
-</tr>
-<tr>
-<td>REG-04</td>
-<td>FLOW-04 watch rejects ineffective --every</td>
-<td>通过</td>
-</tr>
-<tr>
-<td>REG-05</td>
-<td>FLOW-05 watch detects same-size edits with preserved mtime</td>
-<td>通过</td>
-</tr>
-<tr>
-<td>REG-06</td>
-<td>FLOW-06 watch does not generate snapshots for unchanged sources</td>
-<td>通过</td>
+<td>工作流回归</td>
+<td>6</td>
+<td>6</td>
+<td>test-results/workflow-regression.json</td>
 </tr>
 </tbody>
 </table>
-<h4>2.2 关键用例详细说明</h4>
-<p>以下全部用例程序版本为 0.1.1，级别为重要，执行日期见本报告生成时间，执行方式为自动化。预置条件为本机编译成功且测试临时目录可写，测试人员待学生复核填写。每一项实际结果以对应 XML／JSON 为证据。</p>
-<h5>TC-01 目录树往返</h5>
-<p>模块与证据：BackupTest.Roundtrip。</p>
-<p>预置与输入：源树含中文文件、空文件、空目录和跨块大文件。</p>
-<p>操作步骤：backup 后 restore 到新目录。</p>
-<p>预期结果：恢复内容逐字节一致，层级与空目录存在。</p>
-<p>实际结果：对应自动测试通过，符合该项断言；完整输出见 test-results。</p>
-<h5>TC-02 原始块模式</h5>
-<p>模块与证据：BackupTest.RawRoundtrip。</p>
-<p>预置与输入：关闭压缩。</p>
-<p>操作步骤：备份还原后比较大文件。</p>
-<p>预期结果：不经过 Huffman 仍正确恢复。</p>
-<p>实际结果：对应自动测试通过，符合该项断言；完整输出见 test-results。</p>
-<h5>TC-03 密码加密</h5>
-<p>模块与证据：BackupTest.EncryptedRoundtrip。</p>
-<p>预置与输入：设置至少 8 字节测试密码。</p>
-<p>操作步骤：先无密码检查，再用正确密码恢复。</p>
-<p>预期结果：无密码拒绝，正确密码还原成功。</p>
-<p>实际结果：对应自动测试通过，符合该项断言；完整输出见 test-results。</p>
-<h5>TC-04 错误密码</h5>
-<p>模块与证据：BackupTest.WrongPasswordLeavesNoOutput。</p>
-<p>预置与输入：已生成加密备份。</p>
-<p>操作步骤：使用不同密码恢复。</p>
-<p>预期结果：认证失败且新目标不存在。</p>
-<p>实际结果：对应自动测试通过，符合该项断言；完整输出见 test-results。</p>
-<h5>TC-05 备份损坏</h5>
-<p>模块与证据：BackupTest.TamperDetection。</p>
-<p>预置与输入：已生成完整备份。</p>
-<p>操作步骤：更改备份中间字节后恢复。</p>
-<p>预期结果：摘要不匹配，失败且无发布目标。</p>
-<p>实际结果：对应自动测试通过，符合该项断言；完整输出见 test-results。</p>
-<h5>TC-06 备份不覆盖</h5>
-<p>模块与证据：BackupTest.NoOverwriteBackup。</p>
-<p>预置与输入：输出备份已存在。</p>
-<p>操作步骤：再次使用同一文件名备份。</p>
-<p>预期结果：拒绝操作且原备份字节不变。</p>
-<p>实际结果：对应自动测试通过，符合该项断言；完整输出见 test-results。</p>
-<h5>TC-07 恢复不覆盖</h5>
-<p>模块与证据：BackupTest.NoOverwriteRestore。</p>
-<p>预置与输入：目标目录含 keep 文件。</p>
-<p>操作步骤：尝试恢复到已有目录。</p>
-<p>预期结果：拒绝操作且 keep 内容不变。</p>
-<p>实际结果：对应自动测试通过，符合该项断言；完整输出见 test-results。</p>
-<h5>TC-08 特殊文件</h5>
-<p>模块与证据：BackupTest.SymlinkHardlinkFifo。</p>
-<p>预置与输入：源树含软链接、断链、硬链接与 FIFO。</p>
-<p>操作步骤：备份后恢复并读取类型和链接关系。</p>
-<p>预期结果：目标字符串、硬链接 inode 关系和 FIFO 类型正确。</p>
-<p>实际结果：对应自动测试通过，符合该项断言；完整输出见 test-results。</p>
-<h5>TC-09 元数据</h5>
-<p>模块与证据：BackupTest.Metadata。</p>
-<p>预置与输入：测试文件为 0640，设置固定纳秒时间与 user.squirrel xattr。</p>
-<p>操作步骤：备份恢复后读取权限、时间及 xattr。</p>
-<p>预期结果：权限和时间精度正确，属性值为 value。</p>
-<p>实际结果：对应自动测试通过，符合该项断言；完整输出见 test-results。</p>
-<h5>TC-10 排除剪枝</h5>
-<p>模块与证据：BackupTest.ExcludePrunesDirectory。</p>
-<p>预置与输入：设置排除 nested。</p>
-<p>操作步骤：备份还原后检查树。</p>
-<p>预期结果：nested 整个目录不出现。</p>
-<p>实际结果：对应自动测试通过，符合该项断言；完整输出见 test-results。</p>
-<h5>TC-11 六类筛选</h5>
-<p>模块与证据：BackupTest.NameFilter / PathFilter / SizeFilter / TimeFilter / OwnerFilter / TypeFilter。</p>
-<p>预置与输入：分别设置名字、路径、尺寸、时间、UID、类型条件。</p>
-<p>操作步骤：读取备份条目统计及还原结果。</p>
-<p>预期结果：仅选择满足条件的非目录节点，目录结构保留。</p>
-<p>实际结果：对应自动测试通过，符合该项断言；完整输出见 test-results。</p>
-<h5>TC-12 压缩边界</h5>
-<p>模块与证据：Huffman.RandomRoundtrip / Empty / SingleSymbol / AllSymbols。</p>
-<p>预置与输入：固定随机种子及多种长度，包含 1 MiB。</p>
-<p>操作步骤：encode 后 decode。</p>
-<p>预期结果：字节一致，空和单符号块不出错。</p>
-<p>实际结果：对应自动测试通过，符合该项断言；完整输出见 test-results。</p>
-<h5>TC-13 任务淘汰</h5>
-<p>模块与证据：CLI-14 schedule retention isolation。</p>
-<p>预置与输入：独立存储目录内预置 keep-me.sqbk。</p>
-<p>操作步骤：每秒运行一次，成功三次，keep=2。</p>
-<p>预期结果：本任务保留两份，预置无关文件不变。</p>
-<p>实际结果：对应自动测试通过，符合该项断言；完整输出见 test-results。</p>
-<h5>TC-14 变化检测</h5>
-<p>模块与证据：CLI-15 change detection。</p>
-<p>预置与输入：watch poll=1，限定成功四次。</p>
-<p>操作步骤：依次新建、重命名并删除测试文件。</p>
-<p>预期结果：各阶段产生新快照，恢复后对应阶段的名字与删除状态正确。</p>
-<p>实际结果：对应自动测试通过，符合该项断言；完整输出见 test-results。</p>
-<h5>TC-15 停止任务</h5>
-<p>模块与证据：CLI-16 graceful stop。</p>
-<p>预置与输入：运行周期 300 秒任务。</p>
-<p>操作步骤：首个快照后发送 SIGINT。</p>
-<p>预期结果：进程正常退出，快照保留。</p>
-<p>实际结果：对应自动测试通过，符合该项断言；完整输出见 test-results。</p>
-<h5>TC-16 路径穿越防护</h5>
-<p>模块与证据：SEC-01 至 SEC-07。</p>
-<p>预置与输入：构造摘要正确但路径恶意的归档。</p>
-<p>操作步骤：restore 到新目录。</p>
-<p>预期结果：拒绝父路径、绝对路径、软链接父节点或外部硬链接，无外部文件发布。</p>
-<p>实际结果：对应自动测试通过，符合该项断言；完整输出见 test-results。</p>
-<h5>TC-17 并发发布</h5>
-<p>模块与证据：SEC-18 concurrent publication。</p>
-<p>预置与输入：两个进程向同一路径备份。</p>
-<p>操作步骤：并发启动后 verify 唯一输出。</p>
-<p>预期结果：一个成功、一个失败，最终备份可验证。</p>
-<p>实际结果：对应自动测试通过，符合该项断言；完整输出见 test-results。</p>
-<h5>TC-18 淘汰失败不重复备份</h5>
-<p>模块与证据：BackupTest.RetentionFailureDoesNotRepeatSnapshot。</p>
-<p>预置与输入：keep=1，max_runs=2，在第二份快照完成时将第一份路径替换成非空目录。</p>
-<p>操作步骤：模拟旧快照无法删除的错误。</p>
-<p>预期结果：记录警告并在两份成功快照后退出，不额外生成第三份。</p>
-<p>实际结果：对应自动测试通过，符合该项断言；完整输出见 test-results。</p>
-<h5>TC-19 任务参数前置校验</h5>
-<p>模块与证据：CLI-20 / CLI-21。</p>
-<p>预置与输入：短密码、反向尺寸范围和无效类型。</p>
-<p>操作步骤：启动 schedule 或 watch。</p>
-<p>预期结果：立即失败，未创建任务目录，不进入无限重试。</p>
-<p>实际结果：对应自动测试通过，符合该项断言；完整输出见 test-results。</p>
-<h4>2.3 原生界面内部验证</h4>
-<p>应用启动及三个页面离屏渲染已验证，预览位于 docs/screenshots。内部业务动作测试通过 32 项断言，覆盖空输入、加密开关、忙碌与按钮状态、备份、错误密码提示、恢复、列表、验证和自动任务停止。该结果与前述 82 项自动用例分开统计，不把断言数量当成独立测试用例。文件选择器、真实点击和完整 GUI 人工验收仍待完成。见 gui-selftest.json 与 gui-validation.md。</p>
-<h3>3 代码测试</h3>
-<p>本轮业务源码使用 -Wall -Wextra -Wpedantic -Werror 编译检查。原版曾记录 cpplint 与 clang-format，本轮没有重新运行它们，不能沿用旧版零告警作为新证据。</p>
-<p>AddressSanitizer 和 UndefinedBehaviorSanitizer 通过 make sanitize 对核心与 CLI 测试运行，结果见 sanitize.log。它们不替代多线程竞态检查、全系统泄漏审计或强制掉电测试。本机没有把 Linux 的 perf、valgrind 安装记录虚构进报告。</p>
-<h3>4 性能测试</h3>
-<p>方法为临时生成数据，使用单调高精度时钟统计 CLI 完整备份和恢复耗时，再比较恢复 SHA256。单次运行、同机本地卷、可能受文件系统缓存和负载影响，不作多次统计结论。本轮仅测墙钟时间，没有测峰值 RSS。</p>
+<p>命名用例逐项清单见 test-results/test-matrix.csv。参数化取消测试按不同阶段分别统计；Sanitizer再次运行同一用例不额外计数。</p>
+<h3>2 关键功能与异常用例</h3>
+<p>下表给出输入、操作和可判断的预期结果。版本与日期同报告首页；实际结果“通过”只表示相应自动断言成立。更详细的准备步骤可直接在tests目录对应函数中复现。</p>
+<table>
+<thead>
+<tr>
+<th>编号与检查项</th>
+<th>输入和操作步骤</th>
+<th>预期及实际结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>T01 目录树往返</td>
+<td>中文名、空文件、空目录和跨块文件；备份后恢复到新目录</td>
+<td>内容逐字节一致，层级完整；通过</td>
+</tr>
+<tr>
+<td>T02 原始块模式</td>
+<td>关闭压缩；备份并恢复同一文件树</td>
+<td>无需压缩仍可恢复；通过</td>
+</tr>
+<tr>
+<td>T03 加密往返</td>
+<td>使用测试密码创建备份，再以正确密码恢复</td>
+<td>认证成功且内容一致；通过</td>
+</tr>
+<tr>
+<td>T04 错误密码</td>
+<td>用另一密码恢复加密备份</td>
+<td>认证失败，目标目录不存在；通过</td>
+</tr>
+<tr>
+<td>T05 篡改与截断</td>
+<td>更改归档字节或截去尾部，再验证和恢复</td>
+<td>完整性检查拒绝损坏文件；通过</td>
+</tr>
+<tr>
+<td>T06 不覆盖备份</td>
+<td>预先创建目标文件，再执行backup</td>
+<td>拒绝发布，原文件内容不变；通过</td>
+</tr>
+<tr>
+<td>T07 不覆盖恢复</td>
+<td>目标目录内放入保留文件，再执行restore</td>
+<td>拒绝恢复，保留文件不变；通过</td>
+</tr>
+<tr>
+<td>T08 特殊文件</td>
+<td>建立软链接、断链、硬链接与FIFO，备份后恢复</td>
+<td>链接目标和inode关系正确，FIFO类型保留；通过</td>
+</tr>
+<tr>
+<td>T09 元数据</td>
+<td>设定0640权限、固定纳秒时间和user.squirrel属性</td>
+<td>恢复权限、时间及属性值符合断言；通过</td>
+</tr>
+<tr>
+<td>T10 只读目录</td>
+<td>根目录设为只读，备份后恢复</td>
+<td>可发布结果且最终目录仍为原权限；通过</td>
+</tr>
+<tr>
+<td>T11 排除剪枝</td>
+<td>源树含nested子目录；设置排除规则</td>
+<td>整个被排除子树不进入备份；通过</td>
+</tr>
+<tr>
+<td>T12 六类筛选</td>
+<td>分别设置路径、名字、类型、时间、大小、UID条件</td>
+<td>仅选入满足条件的非目录条目；通过</td>
+</tr>
+<tr>
+<td>T13 Huffman边界</td>
+<td>空、单符号、全字节取值、随机与1MiB输入，编码后解码</td>
+<td>字节一致，畸形频数和尾随数据被拒绝；通过</td>
+</tr>
+<tr>
+<td>T14 保留数量</td>
+<td>定时生成3份快照，keep=2；存储目录预置无关文件</td>
+<td>只保留本任务最新2份，无关文件不变；通过</td>
+</tr>
+<tr>
+<td>T15 变化检测</td>
+<td>watch运行后依次新建、改名、删除文件</td>
+<td>稳定变化生成新快照，恢复状态对应变化；通过</td>
+</tr>
+<tr>
+<td>T16 保留mtime改写</td>
+<td>改写同尺寸文件并恢复mtime；保持其它时间观测</td>
+<td>ctime变化可触发快照；通过</td>
+</tr>
+<tr>
+<td>T17 无变化等待</td>
+<td>启动watch后保持源树不变</td>
+<td>不重复生成相同状态快照；通过</td>
+</tr>
+<tr>
+<td>T18 任务参数</td>
+<td>输入小数间隔、短密码、反向范围或文件源路径</td>
+<td>启动前拒绝无效配置，不进入无限重试；通过</td>
+</tr>
+<tr>
+<td>T19 路径防护</td>
+<td>构造外层摘要正确、内部含父目录跳转等非法路径的备份</td>
+<td>解析器拒绝，未向目标外写文件；通过</td>
+</tr>
+<tr>
+<td>T20 并发发布</td>
+<td>两个进程向同一路径同时创建备份</td>
+<td>仅一个成功，最终文件可验证；通过</td>
+</tr>
+<tr>
+<td>T21 各阶段取消备份</td>
+<td>在扫描、打包、封装、源目录复查、发布前请求取消</td>
+<td>5种情况均不发布目标并清理暂存；通过</td>
+</tr>
+<tr>
+<td>T22 各阶段取消恢复</td>
+<td>在认证、解码、读取、元数据、发布前请求取消</td>
+<td>5种情况均不发布恢复目录且保留原备份；通过</td>
+</tr>
+<tr>
+<td>T23 发布前变化</td>
+<td>打包后分别新增、删除文件或更改元数据</td>
+<td>复查拒绝发生变化的目录树；通过</td>
+</tr>
+<tr>
+<td>T24 取消自动快照</td>
+<td>先完成一份快照，再取消下一份</td>
+<td>保留上一份完整快照，不留下半成品；通过</td>
+</tr>
+<tr>
+<td>T25 清理边界</td>
+<td>暂存中包含不可读目录和指向外部的符号链接</td>
+<td>能清理自身目录，不跟随链接清理外部路径；通过</td>
+</tr>
+<tr>
+<td>T26 淘汰失败</td>
+<td>让旧快照路径无法删除，并限定成功次数</td>
+<td>记录警告；不额外创建快照、不绕过max_runs；通过</td>
+</tr>
+</tbody>
+</table>
+<p>上述T编号是报告场景编号，可能对应一项或多项命名测试，不能再与总用例数相加。</p>
+<h3>3 原生界面验证</h3>
+<p>后台AppKit测试通过 53 项内部断言，覆盖输入校验、密码字段、设置白名单、忙碌状态、加密备份、错误密码、恢复、内容查看、验证、保留数量、停止、取消、关闭和退出请求。界面状态和事件日志从真实应用生成，未用设计稿代替运行结果。</p>
+<p>测试没有操作系统文件选择器，也没有使用鼠标点击，因此系统授权、选择器行为和完整人工操作链仍需要验收。切换页面、按钮处理和关闭代理方法的内部测试不能替代这部分结论。</p>
+<p><img alt="图9 恢复完成的应用状态" src="../screenshots/03-restored.png" /></p>
+<p>错误密码时显示中文原因并拒绝发布恢复目录；取消后恢复输入状态并清理暂存。对应完整运行截图保存在docs/screenshots/02-wrong-password.png与06-cancelled.png，事件顺序见test-results/gui-events.txt。</p>
+<h3>4 编译检查与动态内存检查</h3>
+<p>业务代码以-Wall -Wextra -Wpedantic -Werror编译通过。CommonCrypto系统接口的弃用告警按项目构建选项单独处理。make sanitize以AddressSanitizer与UndefinedBehaviorSanitizer运行相同的 97 项测试，未报告错误，原始日志为test-results/sanitize-020.log。</p>
+<p>这两类工具不覆盖所有数据竞争、系统资源泄漏和断电场景。工具未覆盖的情形继续保留为验证边界。</p>
+<p>操作系统信号补充测试通过20/20种组合：向正在读写的明文／加密backup、restore、verify、list进程发送SIGINT或SIGTERM，单次操作均返回130且清理暂存；定时与watch任务在下一份备份进行中停止，返回0并保留前一份可验证快照。源文件和原归档哈希未变。证据为signals-020.json，独立于核心命名用例统计。</p>
+<p>cpplint 2.0.2检查结果：通过。范围为Makefile列出的C++头文件、业务源码与测试，未包含Objective-C++；原始日志见lint-020.log。</p>
+<p>Huffman随机输入测试运行60.0秒、32353次，结果通过，固定种子20261029。它是随机输入驱动，并非覆盖率引导的libFuzzer；使用ASan/UBSan，次数不计入命名用例总数。证据为fuzz.json及fuzz.log。</p>
+<h3>5 性能与兼容性</h3>
+<p>单次本地测量如下。备份和恢复时间包含CLI进程开销，测量期间存在其它后台任务，文件系统缓存也可能影响结果；不据此给出稳定吞吐率承诺。</p>
 <table>
 <thead>
 <tr>
 <th>数据集</th>
-<th>原始字节</th>
-<th>备份字节</th>
+<th>输入字节</th>
+<th>归档字节</th>
 <th>备份秒</th>
 <th>恢复秒</th>
-<th>哈希</th>
+<th>SHA256</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>repeated</td>
+<td>重复单字节</td>
 <td>33554432</td>
 <td>33356</td>
-<td>0.2816</td>
+<td>0.9400</td>
 <td>0.0194</td>
 <td>一致</td>
 </tr>
 <tr>
-<td>random</td>
+<td>随机数据</td>
 <td>8388608</td>
 <td>8388980</td>
-<td>0.1864</td>
-<td>0.0500</td>
+<td>0.2021</td>
+<td>0.0466</td>
 <td>一致</td>
 </tr>
 </tbody>
 </table>
-<p>重复单字节数据主要验证单符号 Huffman 分支，压缩率不代表真实文档；随机数据验证自动回退原始块，输出略大于输入来自头部与记录开销。没有执行多 GiB 压力测试或整夜持续稳定性测试，不把格式上限作为实测容量。</p>
-<h3>5 健壮性与安全测试</h3>
-<p>已覆盖短密码、缺失密码变量、未知参数、无效数值、错误范围、截断、篡改、重复路径、非法类型、超大长度、路径跳转、畸形 Huffman、尾随数据和并发发布等情况。恶意归档带正确的未加密 SHA256，确保测试进入树解析器而非全部停在外层校验。</p>
-<p>没有完成：磁盘真实耗尽、掉电持久性、强制 kill 后清理、持续竞争修改源目录、超大 xattrs、多用户属主迁移、网络卷、外置文件系统兼容性，以及 GUI 文件选择器／按钮点击／窗口关闭人工验收。当前不提供后台守护、网络或增量功能，其对应测试不适用。</p>
-<h3>6 测试结果分析</h3>
-<p>已验证的核心路径形成从备份到验证、内容查看、安全恢复和自动任务的闭环。当前自动用例全部通过，修订版可进入人工验收与受控演示。GUI 已完成编译、签名、离屏渲染与内部动作验证；本轮未操作系统文件选择器，GUI 端到端人工验收仍属于待办，不填写为通过。</p>
-<p>重现命令：make test、make sanitize、python3 tests/benchmark.py build/squirrel。测试源码与 XML／JSON／日志随源码和发布包交付。后续修改格式或核心逻辑后需重新运行并重新生成报告。</p>
-<h3>7 持续运行与反复修改测试</h3>
-<p>运行 60.5 秒，原子替换源文件 149 次，完成 29 份快照。停止后保留 3 份，全部通过 verify，恢复固定文件 SHA256 一致。该结果是有界持续运行检查，不是整夜或长期可靠性证明。</p>
-<h3>8 修订版验收边界</h3>
-<p>原始压缩包的 72 项用例已在本轮修复前复跑通过。新版总数来自上表，GUI 断言、Sanitizer 重复运行和稳定性循环不叠加进命名用例总数。新版测试用于证明已覆盖场景，不能据此声称所有文件系统状态、磁盘故障和用户交互都已验收。</p>
-<p>本轮重点覆盖只读目录恢复、异常清理、扫描后源内容变化、自动任务源路径拒绝、无效模式选项、保留 mtime 的变化检测与无变化时不重复快照。完整命名和断言以源码及结果为准。另有新旧版本双向恢复的4个兼容场景（明文与加密）通过，见 compatibility.json；这4项未计入82项命名用例。</p>
-<h2>七 AI 开发工具使用总结</h2>
-<p>原0.1.0材料记录使用Codex辅助形成源码和文档；本轮继续用Codex审阅课程资料与源码、修订C++／Objective-C++实现和文档，并执行针对变更的验证。工具作用包括减少重复代码和命令操作、补充异常归档测试、在依赖或权限受限时调整执行方式。其输出经过编译、测试和结果文件核对；GUI 真实操作没有完成，不能依靠生成代码推断通过。</p>
-<p>按模板要求，最终提交前应由学生补充本人使用工具的截图、实际操作说明与评价；截图需要隐藏密码和其他私密信息。AI 学习证书需本人完成课程和审核，当前没有代领或生成。学生应自行阅读关键源代码，能够解释 Huffman、二进制格式、认证顺序、资源管理和测试断言。</p>
+<p>重复单字节数据主要覆盖Huffman单符号分支；随机数据主要验证压缩无收益时回退原始块。这里没有测峰值RSS，格式中的1TiB单文件上限也不等于已完成该容量实测。</p>
+<p>0.1.0与0.2.0之间的双向恢复已检查明文和加密共4种组合，均通过内容与链接关系比对。测试时间2026年10月29日 11:36（北京时间），见compatibility-020.json。这些兼容性场景单独列出，不并入核心命名用例总数。</p>
+<h3>6 持续运行测试</h3>
+<p>计划连续运行20小时，同时执行定时任务和加密watch任务，每5分钟检查保留份数、verify、恢复哈希、软硬链接、FIFO及只读目录。记录开始时间为2026年10月29日 10:54（北京时间）；报告读取时已运行1.84小时，完成22次检查。当前状态为running。</p>
+<p>尚未达到结束条件，当前不能写为“20小时通过”。最终报告应在进程结束后重新生成。</p>
+<p>长期测试冻结的CLI与本报告构建的CLI哈希不同，结论只适用于各自记录的二进制。完整SHA256分别保存在长期测试记录和test-results/summary.json中。</p>
+<p>长测启动后的源码整理仅为头文件包含、等价类型转换和长字符串换行。重建前后Mach-O文件映射节逐字节一致，见lint-rebuild-comparison.json；完整文件仍有调试或链接信息差异，因此保留两份哈希与适用范围。</p>
+<h3>7 结论和验收边界</h3>
+<p>已覆盖的备份、验证、恢复、取消和自动任务路径均满足对应断言。发布前复查能发现已测的源树变化，但不能提供多文件事务一致性；应用不支持网络备份、增量备份、系统守护和重启后自动续跑。</p>
+<p>仍需真实环境检查的项目包括系统文件选择器、跨机器运行、外置卷和网络卷、磁盘耗尽、强制终止、掉电持久性、异属主恢复、ACL与文件flags。未实现的功能不作为本轮通过项。</p>
+<p>复现方式：make test；make sanitize；python3 tests/benchmark.py build/squirrel；应用可执行文件加--self-test与一个新的测试目录路径。长期测试使用tests/soak.py，运行目录必须为新目录；不要将工作用文件夹作为压力测试数据。</p>
+<h2>七 AI开发工具使用总结</h2>
+<p>本轮使用Codex辅助读取课程资料、审阅C++与Objective-C++代码、修复恢复权限和变化检测问题、实现取消与进度、编写回归测试、整理UML模型及报告。实际命令由工具执行，编译输出、测试结果和修改差异保存在项目目录。</p>
+<p>工具生成的内容不能直接代替验证。比如，备份文件可生成并不等于可以在只读目录权限下正确恢复；停止按钮存在也不等于正在执行的任务会响应。相应问题分别通过失败复现、代码修订和回归断言检查。</p>
+<p>三位成员分别补充本人AI工具使用截图，说明问题、采用的修改及验证结果。自动执行记录归入项目证据，个人学习经历由本人确认。</p>
 <h2>八 实验结论</h2>
-<p>项目已形成目录树备份、单文件封装、可选压缩加密、验证查看、安全恢复以及自动快照的整体闭环。C++ 核心与原生 GUI、CLI 分离，源码和构建脚本可以在本机重建。自动测试证据与范围见前述测试报告。</p>
-<p>软件目前为0.1.1修订版。GUI 实际点击和文件选择器、跨机器兼容性、后台任务、完整元数据以及长期运行尚需后续验证和改进；没有把网络网盘或增量功能宣称为已完成。相关限制已写入独立文档和发布说明。</p>
+<p>项目已实现从目录扫描、筛选、归档、压缩与密码封装，到验证、内容查看、安全恢复及自动快照的完整流程。核心按职责拆分，两个入口共享业务逻辑；目标路径不覆盖，错误密码或损坏归档不发布恢复目录。</p>
+<p>当前97项命名自动测试通过，Sanitizer复测通过；GUI内部断言另行统计。长期测试状态见测试报告，未结束时不认定通过。实际系统选择器、跨机器运行、外置卷和故障注入仍有验证空缺，软件不承诺断电事务持久性。</p>
 <h2>九 总结及心得体会</h2>
-<p>本项目的工程重点是让需求、设计、实现和测试一致。一次成功的备份不仅是复制字节，还涉及软硬链接、时间权限、格式边界、密码错误和恢复路径安全。对已有目录采用不覆盖策略、把完整性检查放在恢复之前、通过同一业务核心支撑两个入口，降低了数据破坏风险和维护成本。</p>
-<p>原0.1.0材料记录了GUI自动操作、性能计时与文档依赖方面的限制；这些属于历史环境记录。本轮围绕实际代码问题和课程交付缺项推进，具体修复与验证以当前测试报告及变更说明为准。每位成员应补充自己的真实沟通、分工和学习体会，不能把AI会话过程直接作为个人经历。</p>
+<p>以下按均衡主责整理技术复核稿，供三位成员阅读代码、复现测试后确认和补充。</p>
+<h3>杨梦宇 文件与安全恢复</h3>
+<p>备份应同时保存内容和文件关系。软链接记录目标字符串，硬链接用device/inode识别；只读目录需先建立子项再恢复权限。复核时沿正常与失败路径检查暂存清理和不覆盖发布。</p>
+<h3>郭畅 文件格式与算法</h3>
+<p>二进制格式要明确字段长度和边界，不能直接写入C++结构体。Huffman需处理空输入、单符号和压缩变大的情况；相同频数必须能重建同一棵树。密码封装重点检查认证顺序与密钥用途，注明系统库来源。</p>
+<h3>李想 界面与自动任务</h3>
+<p>后台任务还需处理进度、输入禁用、取消和窗口关闭。调度器以成功发布的快照更新状态，淘汰失败不能触发重复备份；变化检测先等待稳定。复核时要同时看界面提示和实际文件，不能只看成功消息。</p>
 <h2>十 对实验过程与方法的改进建议</h2>
-<p>建议先固定最小格式与错误语义，再并行扩展 UI 和算法；每个功能同时写出可验证的验收标准。对于跨平台工具，应允许以 macOS Sanitizer、LLDB 和系统 SDK 替代 Linux 专用工具，报告如实说明差异。最终验收应准备异常备份和副本数据，避免仅演示顺利路径。</p>
-<p>0.1.1已加入非密码参数记忆和操作结束后自动执行关闭/退出；仍需真实GUI验收。后续再评估协作取消、可恢复任务状态及更加完整的文件元数据。最终材料还缺身份信息、真实分工、甘特图、在线协作记录、StarUML模型与图、更新后的PPT、录屏和学习证书，逐项状态见08_提交前验收清单.md。</p>
-<p>报告评分 待教师填写</p>
-<p>指导教师签字 待教师填写</p></main><footer>松鼠备份 0.1.1 · 请以源码和测试结果为准</footer></html>
+<p>后续开发宜先固定格式和错误语义，再扩展界面与自动任务。功能验收同时检查正常结果与失败后的状态，特别是不覆盖已有数据、取消不保留半成品。</p>
+<p>跨平台实验可按能力选择工具，例如macOS上的Sanitizer与系统调试器。答辩前由三人复现主责模块，交叉核对代码、报告和UML，并补齐证书、在线仓库及本人截图。</p>
+<p>报告评分、指导教师签字：由教师填写。</p></main><footer>松鼠备份 0.2.0 · 请以源码和测试结果为准</footer></html>

@@ -1,0 +1,41 @@
+{
+  "unique_ids": 1066,
+  "dangling_references": 0,
+  "diagrams": [
+    {
+      "name": "01_系统用例图",
+      "type": "UMLUseCaseDiagram",
+      "views": 20
+    },
+    {
+      "name": "02_核心服务类图",
+      "type": "UMLClassDiagram",
+      "views": 16
+    },
+    {
+      "name": "03_配置与记录类图",
+      "type": "UMLClassDiagram",
+      "views": 7
+    },
+    {
+      "name": "04_系统构件图",
+      "type": "UMLComponentDiagram",
+      "views": 15
+    },
+    {
+      "name": "05_创建备份顺序图",
+      "type": "UMLSequenceDiagram",
+      "views": 17
+    },
+    {
+      "name": "06_验证恢复顺序图",
+      "type": "UMLSequenceDiagram",
+      "views": 17
+    },
+    {
+      "name": "07_自动任务状态图",
+      "type": "UMLStatechartDiagram",
+      "views": 17
+    }
+  ]
+}

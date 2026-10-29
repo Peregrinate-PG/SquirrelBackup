@@ -2,31 +2,31 @@
   {
     "name": "FLOW-01 schedule rejects a file source immediately",
     "passed": true,
-    "seconds": 0.07040087498899084
+    "seconds": 0.07884262499283068
   },
   {
     "name": "FLOW-02 watch rejects a file source immediately",
     "passed": true,
-    "seconds": 0.0704528750065947
+    "seconds": 0.08039408299373463
   },
   {
     "name": "FLOW-03 schedule rejects ineffective --poll",
     "passed": true,
-    "seconds": 0.06610299999010749
+    "seconds": 0.08469620899995789
   },
   {
     "name": "FLOW-04 watch rejects ineffective --every",
     "passed": true,
-    "seconds": 0.07348387500678655
+    "seconds": 0.08378116699168459
   },
   {
     "name": "FLOW-05 watch detects same-size edits with preserved mtime",
     "passed": true,
-    "seconds": 2.2955522909905994
+    "seconds": 2.349778415999026
   },
   {
     "name": "FLOW-06 watch does not generate snapshots for unchanged sources",
     "passed": true,
-    "seconds": 2.6876371670077788
+    "seconds": 2.6983901250059716
   }
 ]

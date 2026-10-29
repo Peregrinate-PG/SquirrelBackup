@@ -5,3 +5,4 @@ reportlab==5.1.0
 pymupdf==1.28.2
 Markdown==3.10.3
 Pillow==12.3.0
+lxml>=5.3,<7

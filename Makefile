@@ -1,13 +1,14 @@
 CXX := clang++
 export MACOSX_DEPLOYMENT_TARGET := 13.0
 BUILD ?= build
+CPPLINT ?= .tools/venv/bin/cpplint
 CPPFLAGS := -Iinclude -Isrc
 CXXFLAGS := -std=c++17 -O2 -g -Wall -Wextra -Wpedantic -Werror -Wno-deprecated-declarations
 LDLIBS := -framework Security
 CORE := huffman scanner crypto archive service scheduler
 OBJECTS := $(addprefix $(BUILD)/,$(addsuffix .o,$(CORE)))
 GTEST := $(if $(wildcard vendor/googletest/googletest),vendor/googletest/googletest,.tools/src/googletest/googletest)
-.PHONY: all cli app test sanitize lint clean package fuzz
+.PHONY: all cli app test sanitize lint clean package fuzz gui-demo video-inspector
 all: cli app
 cli: $(BUILD)/squirrel
 $(BUILD):
@@ -24,6 +25,12 @@ $(BUILD)/SquirrelBackup.app/Contents/MacOS/SquirrelBackup: src/gui.mm $(BUILD)/l
 	cp resources/Info.plist $(BUILD)/SquirrelBackup.app/Contents/Info.plist
 	codesign --force --sign - $(BUILD)/SquirrelBackup.app
 app: $(BUILD)/SquirrelBackup.app/Contents/MacOS/SquirrelBackup
+$(BUILD)/gui_demo: tests/gui_demo.mm src/gui.mm $(BUILD)/libsquirrel.a
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -fobjc-arc tests/gui_demo.mm $(BUILD)/libsquirrel.a -framework Cocoa -framework AVFoundation -framework CoreVideo -framework CoreMedia $(LDLIBS) -o $@
+gui-demo: $(BUILD)/gui_demo
+$(BUILD)/video_inspect: scripts/video_inspect.mm | $(BUILD)
+	$(CXX) $(CXXFLAGS) -fobjc-arc $< -framework Cocoa -framework AVFoundation -framework CoreVideo -framework CoreMedia -o $@
+video-inspector: $(BUILD)/video_inspect
 $(BUILD)/gtest-all.o: $(GTEST)/src/gtest-all.cc | $(BUILD)
 	$(CXX) -std=c++17 -O1 -g -I$(GTEST)/include -I$(GTEST) -c $< -o $@
 $(BUILD)/tests: tests/core_test.cpp $(BUILD)/libsquirrel.a $(BUILD)/gtest-all.o
@@ -42,7 +49,7 @@ fuzz: $(BUILD)/huffman_fuzz
 	mkdir -p test-results
 	$(BUILD)/huffman_fuzz test-results/fuzz.json 60 > test-results/fuzz.log 2>&1
 lint:
-	.tools/venv/bin/cpplint --linelength=100 --root=include --filter=-build/c++17,-build/header_guard,-build/namespaces,-build/include_order,-build/include_subdir,-runtime/references include/squirrel/backup.h src/*.cpp src/internal.h tests/*.cpp
+	$(CPPLINT) --linelength=100 --root=include --filter=-build/c++17,-build/header_guard,-build/namespaces,-build/include_order,-build/include_subdir,-runtime/references include/squirrel/backup.h src/*.cpp src/internal.h tests/*.cpp
 package: all
 	bash scripts/package.sh
 clean:

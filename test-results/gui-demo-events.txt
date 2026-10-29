@@ -1,0 +1,81 @@
+[12:13:05] 演示开始：全部数据位于独立测试目录。
+[12:13:11] 正在备份…
+[12:13:11] 扫描完成，共 8 个条目
+[12:13:11] 已归档：中文.txt
+[12:13:11] 已归档：说明硬链接
+[12:13:11] 已归档：重复数据.bin
+[12:13:11] 备份完成：/Users/lixiang/Documents/Codex/2026-10-29/qi/work/gui-video-020/课程演示.sqbk
+[12:13:11] 条目 8  ·  文件 4  ·  原始数据 33554533 B  ·  备份大小 34140 B
+[12:13:21] 正在验证备份…
+[12:13:21] 验证通过，共 8 个条目
+[12:13:21] 条目 8  ·  文件 4  ·  原始数据 33554533 B  ·  备份大小 34140 B
+[12:13:30] 正在验证备份…
+[12:13:30] 验证通过，共 8 个条目
+[12:13:30] directory  .
+[12:13:30] file  中文.txt
+[12:13:30] fifo  示例管道
+[12:13:30] directory  空目录
+[12:13:30] file  说明硬链接
+[12:13:30] symlink  说明链接
+[12:13:30] file  重复数据.bin
+[12:13:30] hardlink  项目说明.txt
+[12:13:30] 条目 8  ·  文件 4  ·  原始数据 33554533 B  ·  备份大小 34140 B
+[12:13:39] 正在验证并恢复…
+[12:13:39] 密码不正确，或备份文件已损坏。请检查密码和文件来源。
+详细原因：Wrong password or damaged backup (authentication failed)
+[12:13:49] 正在验证并恢复…
+[12:13:49] 恢复完成：/Users/lixiang/Documents/Codex/2026-10-29/qi/work/gui-video-020/恢复副本
+[12:13:49] 条目 8  ·  文件 4  ·  原始数据 33554533 B  ·  备份大小 34140 B
+[12:14:00] 演示核对通过：文件逐字节一致，软链接、硬链接与FIFO类型正确。
+[12:14:06] 自动任务运行中 · 可点击停止任务
+[12:14:06] 本任务目录：/Users/lixiang/Documents/Codex/2026-10-29/qi/work/gui-video-020/repository/squirrel-job-vJkEd2
+[12:14:06] 扫描完成，共 8 个条目
+[12:14:06] 已归档：中文.txt
+[12:14:06] 已归档：说明硬链接
+[12:14:06] 已归档：重复数据.bin
+[12:14:06] 备份完成：/Users/lixiang/Documents/Codex/2026-10-29/qi/work/gui-video-020/repository/squirrel-job-vJkEd2/snapshot-1.sqbk
+[12:14:09] 扫描完成，共 8 个条目
+[12:14:09] 已归档：中文.txt
+[12:14:09] 已归档：说明硬链接
+[12:14:10] 已归档：重复数据.bin
+[12:14:10] 备份完成：/Users/lixiang/Documents/Codex/2026-10-29/qi/work/gui-video-020/repository/squirrel-job-vJkEd2/snapshot-2.sqbk
+[12:14:13] 扫描完成，共 8 个条目
+[12:14:13] 已归档：中文.txt
+[12:14:13] 已归档：说明硬链接
+[12:14:13] 已归档：重复数据.bin
+[12:14:13] 备份完成：/Users/lixiang/Documents/Codex/2026-10-29/qi/work/gui-video-020/repository/squirrel-job-vJkEd2/snapshot-3.sqbk
+[12:14:13] 已淘汰旧快照：snapshot-1.sqbk
+[12:14:16] 扫描完成，共 8 个条目
+[12:14:16] 已归档：中文.txt
+[12:14:16] 已归档：说明硬链接
+[12:14:16] 已归档：重复数据.bin
+[12:14:16] 备份完成：/Users/lixiang/Documents/Codex/2026-10-29/qi/work/gui-video-020/repository/squirrel-job-vJkEd2/snapshot-4.sqbk
+[12:14:16] 已淘汰旧快照：snapshot-2.sqbk
+[12:14:20] 扫描完成，共 8 个条目
+[12:14:20] 已归档：中文.txt
+[12:14:20] 已归档：说明硬链接
+[12:14:20] 已归档：重复数据.bin
+[12:14:20] 备份完成：/Users/lixiang/Documents/Codex/2026-10-29/qi/work/gui-video-020/repository/squirrel-job-vJkEd2/snapshot-5.sqbk
+[12:14:20] 已淘汰旧快照：snapshot-3.sqbk
+[12:14:22] 已请求取消。未完成的结果会清理，已经完成的备份会保留。
+[12:14:22] 任务已停止，已完成快照数：5
+[12:14:22] 自动任务已停止。备份文件已保留。
+[12:14:28] 自动任务运行中 · 可点击停止任务
+[12:14:28] 本任务目录：/Users/lixiang/Documents/Codex/2026-10-29/qi/work/gui-video-020/watch-repository/squirrel-job-4vVPXF
+[12:14:28] 扫描完成，共 8 个条目
+[12:14:28] 已归档：中文.txt
+[12:14:28] 已归档：说明硬链接
+[12:14:28] 已归档：重复数据.bin
+[12:14:28] 备份完成：/Users/lixiang/Documents/Codex/2026-10-29/qi/work/gui-video-020/watch-repository/squirrel-job-4vVPXF/snapshot-1.sqbk
+[12:14:39] 扫描完成，共 9 个条目
+[12:14:39] 已归档：中文.txt
+[12:14:39] 已归档：变化记录.txt
+[12:14:39] 已归档：说明硬链接
+[12:14:39] 已归档：重复数据.bin
+[12:14:39] 备份完成：/Users/lixiang/Documents/Codex/2026-10-29/qi/work/gui-video-020/watch-repository/squirrel-job-4vVPXF/snapshot-2.sqbk
+[12:14:46] 已请求取消。未完成的结果会清理，已经完成的备份会保留。
+[12:14:46] 任务已停止，已完成快照数：2
+[12:14:46] 自动任务已停止。备份文件已保留。
+[12:14:50] 正在备份…
+[12:14:50] 已请求取消。未完成的结果会清理，已经完成的备份会保留。
+[12:14:50] 操作已取消，未完成的临时文件已清理。

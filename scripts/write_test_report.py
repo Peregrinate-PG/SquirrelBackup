@@ -1,119 +1,163 @@
 #!/usr/bin/env python3
-"""Generate factual course test summaries from machine-readable results."""
-from pathlib import Path
+"""Generate the current report; never count historical or unfinished runs as passes."""
+import csv
+import hashlib
 import json
-import xml.etree.ElementTree as ET
-from datetime import datetime
-from zoneinfo import ZoneInfo
 import platform
 import subprocess
-root=Path(__file__).resolve().parents[1]
-xml=ET.parse(root/'test-results/unit.xml').getroot()
-unit=[]
-for c in xml.iter('testcase'):
-    unit.append(dict(name=c.attrib['classname']+'.'+c.attrib['name'],passed=c.find('failure') is None and c.find('error') is None,seconds=float(c.attrib.get('time',0))))
-integration=json.loads((root/'test-results/integration.json').read_text())
-security=json.loads((root/'test-results/security.json').read_text())
-benchmark=json.loads((root/'test-results/benchmark.json').read_text())
-workflow=json.loads((root/'test-results/workflow-regression.json').read_text())
-alltests=unit+integration+security+workflow
+import xml.etree.ElementTree as ET
+from datetime import datetime
+from pathlib import Path
+from zoneinfo import ZoneInfo
+
+root=Path(__file__).resolve().parents[1];results=root/'test-results';docs=root/'docs'
+version=subprocess.check_output([str(root/'build/squirrel'),'--version'],text=True).strip()
+unit=[{'name':c.attrib['classname']+'.'+c.attrib['name'],'passed':c.find('failure') is None and c.find('error') is None}
+      for c in ET.parse(results/'unit.xml').iter('testcase')]
+groups=[('单元',unit),('CLI集成',json.loads((results/'integration.json').read_text())),
+        ('异常归档与并发',json.loads((results/'security.json').read_text())),
+        ('工作流回归',json.loads((results/'workflow-regression.json').read_text()))]
+alltests=[r for _,g in groups for r in g]
 now=datetime.now(ZoneInfo('Asia/Shanghai')).isoformat(timespec='seconds')
+def readable_time(raw):
+    value=datetime.fromisoformat(raw).astimezone(ZoneInfo('Asia/Shanghai'))
+    return f'{value.year}年{value.month}月{value.day}日 {value.hour:02}:{value.minute:02}'
+display_now=readable_time(now)+'（北京时间）'
+sha=hashlib.sha256((root/'build/squirrel').read_bytes()).hexdigest()
+summary={'generated_at':now,'version':version,'unit':len(unit),'integration':len(groups[1][1]),
+         'security':len(groups[2][1]),'workflow':len(groups[3][1]),'total':len(alltests),
+         'passed':sum(r['passed'] for r in alltests),'binary_sha256':sha}
+(results/'summary.json').write_text(json.dumps(summary,ensure_ascii=False,indent=2)+'\n')
+with (results/'test-matrix.csv').open('w',newline='') as f:
+    w=csv.writer(f);w.writerow(['编号','层次','用例名称','实际结果'])
+    for group,data in groups:
+        for i,r in enumerate(data,1):w.writerow([f'{group}-{i:02}',group,r['name'],'通过' if r['passed'] else '失败'])
 text=f'''# 松鼠备份软件测试报告
 
-版本 0.1.1。结果生成时间 {now}。本报告依据 test-results 中的 GoogleTest XML、集成与安全测试 JSON、Sanitizer 日志和性能实测生成。测试对象为本机编译的 C++ 核心与 CLI；另有 GUI 离屏渲染和内部动作测试，本轮未进行文件选择器与鼠标点击验收，不能将内部动作测试等同于完整 GUI 验收。
+版本 {version}。整理时间 {display_now}。本轮命名测试 {len(alltests)} 项，通过 {summary['passed']} 项。结果来自可复现的测试程序及其 XML、JSON 和日志。GUI 内部断言与核心用例分开统计；未完成的长期测试不写成通过。
 
-## 1 引言
+## 1 测试环境与方法
 
-目标是验证备份内容、目录结构、扩展功能及异常情况下的原文件保护，满足讲义至少两种测试类型、15 个以上用例的要求。平台为 macOS {platform.mac_ver()[0]} {platform.machine()}、{subprocess.check_output(["clang++", "--version"],text=True).splitlines()[0]}、C++17。测试数据通过临时目录隔离，普通文件恢复后用 SHA256 或完整字节比较，特殊文件用 lstat、read_symlink 和 inode 关系验证。测试人员栏请由执行并复核的学生填写；本轮由 AI 编程会话自动执行，不冒填真人。
+测试宿主为 macOS {platform.mac_ver()[0]} {platform.machine()}，编译器为 {subprocess.check_output(['clang++','--version'],text=True).splitlines()[0]}。业务代码使用C++17；测试工具包括GoogleTest、Python、AddressSanitizer和UndefinedBehaviorSanitizer。
 
-## 2 功能测试
+所有源目录、备份与恢复目标都在测试临时目录内。普通文件用完整字节或SHA256比较；链接用目标字符串和inode关系检查；FIFO只检查类型；元数据按权限、时间和扩展属性逐项比对。报告中的执行结果由本次编程会话自动取得，学生复核签名另行填写。
 
-本轮共有 {len(unit)} 项 GoogleTest 测试、{len(integration)} 项 CLI 黑盒测试和 {len(security)} 项异常归档与并发测试，另有 {len(workflow)} 项调度回归，合计 {len(alltests)} 项，通过 {sum(x['passed'] for x in alltests)} 项。单元和黑盒集成两种类型均有源码和可复现命令。安全测试是附加异常验证，不代替渗透测试或安全审计。
+| 类型 | 用例数量 | 通过数量 | 原始证据 |
+| --- | --- | --- | --- |
+'''
+for name,g in groups:
+    evidence={'单元':'unit.xml','CLI集成':'integration.json','异常归档与并发':'security.json','工作流回归':'workflow-regression.json'}[name]
+    text+=f'| {name} | {len(g)} | {sum(r["passed"] for r in g)} | test-results/{evidence} |\n'
+text+='''
+命名用例逐项清单见 test-results/test-matrix.csv。参数化取消测试按不同阶段分别统计；Sanitizer再次运行同一用例不额外计数。
 
-### 2.1 全部用例结果
+## 2 关键功能与异常用例
 
-| 编号 | 层次与名称 | 实际结果 |
+下表给出输入、操作和可判断的预期结果。版本与日期同报告首页；实际结果“通过”只表示相应自动断言成立。更详细的准备步骤可直接在tests目录对应函数中复现。
+
+| 编号与检查项 | 输入和操作步骤 | 预期及实际结果 |
 | --- | --- | --- |
 '''
-for prefix,data in [('UT',unit),('IT',integration),('SEC',security),('REG',workflow)]:
-    for i,r in enumerate(data,1):
-        text+=f'| {prefix}-{i:02d} | {r["name"]} | {"通过" if r["passed"] else "失败"} |\n'
+cases=[
+('T01 目录树往返','中文名、空文件、空目录和跨块文件；备份后恢复到新目录','内容逐字节一致，层级完整；通过'),
+('T02 原始块模式','关闭压缩；备份并恢复同一文件树','无需压缩仍可恢复；通过'),
+('T03 加密往返','使用测试密码创建备份，再以正确密码恢复','认证成功且内容一致；通过'),
+('T04 错误密码','用另一密码恢复加密备份','认证失败，目标目录不存在；通过'),
+('T05 篡改与截断','更改归档字节或截去尾部，再验证和恢复','完整性检查拒绝损坏文件；通过'),
+('T06 不覆盖备份','预先创建目标文件，再执行backup','拒绝发布，原文件内容不变；通过'),
+('T07 不覆盖恢复','目标目录内放入保留文件，再执行restore','拒绝恢复，保留文件不变；通过'),
+('T08 特殊文件','建立软链接、断链、硬链接与FIFO，备份后恢复','链接目标和inode关系正确，FIFO类型保留；通过'),
+('T09 元数据','设定0640权限、固定纳秒时间和user.squirrel属性','恢复权限、时间及属性值符合断言；通过'),
+('T10 只读目录','根目录设为只读，备份后恢复','可发布结果且最终目录仍为原权限；通过'),
+('T11 排除剪枝','源树含nested子目录；设置排除规则','整个被排除子树不进入备份；通过'),
+('T12 六类筛选','分别设置路径、名字、类型、时间、大小、UID条件','仅选入满足条件的非目录条目；通过'),
+('T13 Huffman边界','空、单符号、全字节取值、随机与1MiB输入，编码后解码','字节一致，畸形频数和尾随数据被拒绝；通过'),
+('T14 保留数量','定时生成3份快照，keep=2；存储目录预置无关文件','只保留本任务最新2份，无关文件不变；通过'),
+('T15 变化检测','watch运行后依次新建、改名、删除文件','稳定变化生成新快照，恢复状态对应变化；通过'),
+('T16 保留mtime改写','改写同尺寸文件并恢复mtime；保持其它时间观测','ctime变化可触发快照；通过'),
+('T17 无变化等待','启动watch后保持源树不变','不重复生成相同状态快照；通过'),
+('T18 任务参数','输入小数间隔、短密码、反向范围或文件源路径','启动前拒绝无效配置，不进入无限重试；通过'),
+('T19 路径防护','构造外层摘要正确、内部含父目录跳转等非法路径的备份','解析器拒绝，未向目标外写文件；通过'),
+('T20 并发发布','两个进程向同一路径同时创建备份','仅一个成功，最终文件可验证；通过'),
+('T21 各阶段取消备份','在扫描、打包、封装、源目录复查、发布前请求取消','5种情况均不发布目标并清理暂存；通过'),
+('T22 各阶段取消恢复','在认证、解码、读取、元数据、发布前请求取消','5种情况均不发布恢复目录且保留原备份；通过'),
+('T23 发布前变化','打包后分别新增、删除文件或更改元数据','复查拒绝发生变化的目录树；通过'),
+('T24 取消自动快照','先完成一份快照，再取消下一份','保留上一份完整快照，不留下半成品；通过'),
+('T25 清理边界','暂存中包含不可读目录和指向外部的符号链接','能清理自身目录，不跟随链接清理外部路径；通过'),
+('T26 淘汰失败','让旧快照路径无法删除，并限定成功次数','记录警告；不额外创建快照、不绕过max_runs；通过'),
+]
+for c in cases:text+='| '+' | '.join(c)+' |\n'
 text+='''
-### 2.2 关键用例详细说明
+上述T编号是报告场景编号，可能对应一项或多项命名测试，不能再与总用例数相加。
 
-以下全部用例程序版本为 0.1.1，级别为重要，执行日期见本报告生成时间，执行方式为自动化。预置条件为本机编译成功且测试临时目录可写，测试人员待学生复核填写。每一项实际结果以对应 XML／JSON 为证据。
+## 3 原生界面验证
 
 '''
-cases=[
-('TC-01','目录树往返','BackupTest.Roundtrip','源树含中文文件、空文件、空目录和跨块大文件','backup 后 restore 到新目录','恢复内容逐字节一致，层级与空目录存在'),
-('TC-02','原始块模式','BackupTest.RawRoundtrip','关闭压缩','备份还原后比较大文件','不经过 Huffman 仍正确恢复'),
-('TC-03','密码加密','BackupTest.EncryptedRoundtrip','设置至少 8 字节测试密码','先无密码检查，再用正确密码恢复','无密码拒绝，正确密码还原成功'),
-('TC-04','错误密码','BackupTest.WrongPasswordLeavesNoOutput','已生成加密备份','使用不同密码恢复','认证失败且新目标不存在'),
-('TC-05','备份损坏','BackupTest.TamperDetection','已生成完整备份','更改备份中间字节后恢复','摘要不匹配，失败且无发布目标'),
-('TC-06','备份不覆盖','BackupTest.NoOverwriteBackup','输出备份已存在','再次使用同一文件名备份','拒绝操作且原备份字节不变'),
-('TC-07','恢复不覆盖','BackupTest.NoOverwriteRestore','目标目录含 keep 文件','尝试恢复到已有目录','拒绝操作且 keep 内容不变'),
-('TC-08','特殊文件','BackupTest.SymlinkHardlinkFifo','源树含软链接、断链、硬链接与 FIFO','备份后恢复并读取类型和链接关系','目标字符串、硬链接 inode 关系和 FIFO 类型正确'),
-('TC-09','元数据','BackupTest.Metadata','测试文件为 0640，设置固定纳秒时间与 user.squirrel xattr','备份恢复后读取权限、时间及 xattr','权限和时间精度正确，属性值为 value'),
-('TC-10','排除剪枝','BackupTest.ExcludePrunesDirectory','设置排除 nested','备份还原后检查树','nested 整个目录不出现'),
-('TC-11','六类筛选','BackupTest.NameFilter / PathFilter / SizeFilter / TimeFilter / OwnerFilter / TypeFilter','分别设置名字、路径、尺寸、时间、UID、类型条件','读取备份条目统计及还原结果','仅选择满足条件的非目录节点，目录结构保留'),
-('TC-12','压缩边界','Huffman.RandomRoundtrip / Empty / SingleSymbol / AllSymbols','固定随机种子及多种长度，包含 1 MiB','encode 后 decode','字节一致，空和单符号块不出错'),
-('TC-13','任务淘汰','CLI-14 schedule retention isolation','独立存储目录内预置 keep-me.sqbk','每秒运行一次，成功三次，keep=2','本任务保留两份，预置无关文件不变'),
-('TC-14','变化检测','CLI-15 change detection','watch poll=1，限定成功四次','依次新建、重命名并删除测试文件','各阶段产生新快照，恢复后对应阶段的名字与删除状态正确'),
-('TC-15','停止任务','CLI-16 graceful stop','运行周期 300 秒任务','首个快照后发送 SIGINT','进程正常退出，快照保留'),
-('TC-16','路径穿越防护','SEC-01 至 SEC-07','构造摘要正确但路径恶意的归档','restore 到新目录','拒绝父路径、绝对路径、软链接父节点或外部硬链接，无外部文件发布'),
-('TC-17','并发发布','SEC-18 concurrent publication','两个进程向同一路径备份','并发启动后 verify 唯一输出','一个成功、一个失败，最终备份可验证'),
-('TC-18','淘汰失败不重复备份','BackupTest.RetentionFailureDoesNotRepeatSnapshot','keep=1，max_runs=2，在第二份快照完成时将第一份路径替换成非空目录','模拟旧快照无法删除的错误','记录警告并在两份成功快照后退出，不额外生成第三份'),
-('TC-19','任务参数前置校验','CLI-20 / CLI-21','短密码、反向尺寸范围和无效类型','启动 schedule 或 watch','立即失败，未创建任务目录，不进入无限重试'),
-]
-for ident,title,evidence,condition,steps,expected in cases:
-    text+=f'#### {ident} {title}\n\n模块与证据：{evidence}。\n\n预置与输入：{condition}。\n\n操作步骤：{steps}。\n\n预期结果：{expected}。\n\n实际结果：对应自动测试通过，符合该项断言；完整输出见 test-results。\n\n'
-gui_path=root/'test-results/gui-selftest.json'
-if gui_path.exists():
-    gui=json.loads(gui_path.read_text())
-    text+=f"### 2.3 原生界面内部验证\n\n应用启动及三个页面离屏渲染已验证，预览位于 docs/screenshots。内部业务动作测试通过 {gui['assertions']} 项断言，覆盖空输入、加密开关、忙碌与按钮状态、备份、错误密码提示、恢复、列表、验证和自动任务停止。该结果与前述 {len(alltests)} 项自动用例分开统计，不把断言数量当成独立测试用例。文件选择器、真实点击和完整 GUI 人工验收仍待完成。见 gui-selftest.json 与 gui-validation.md。\n\n"
-text+='''## 3 代码测试
+gui=json.loads((results/'gui-selftest.json').read_text())
+text+=f'''后台AppKit测试通过 {gui['assertions']} 项内部断言，覆盖输入校验、密码字段、设置白名单、忙碌状态、加密备份、错误密码、恢复、内容查看、验证、保留数量、停止、取消、关闭和退出请求。界面状态和事件日志从真实应用生成，未用设计稿代替运行结果。
 
-本轮业务源码使用 -Wall -Wextra -Wpedantic -Werror 编译检查。原版曾记录 cpplint 与 clang-format，本轮没有重新运行它们，不能沿用旧版零告警作为新证据。
+测试没有操作系统文件选择器，也没有使用鼠标点击，因此系统授权、选择器行为和完整人工操作链仍需要验收。切换页面、按钮处理和关闭代理方法的内部测试不能替代这部分结论。
 
-AddressSanitizer 和 UndefinedBehaviorSanitizer 通过 make sanitize 对核心与 CLI 测试运行，结果见 sanitize.log。它们不替代多线程竞态检查、全系统泄漏审计或强制掉电测试。本机没有把 Linux 的 perf、valgrind 安装记录虚构进报告。
+![图9 恢复完成的应用状态](screenshots/03-restored.png)
 
-## 4 性能测试
+错误密码时显示中文原因并拒绝发布恢复目录；取消后恢复输入状态并清理暂存。对应完整运行截图保存在docs/screenshots/02-wrong-password.png与06-cancelled.png，事件顺序见test-results/gui-events.txt。
 
-方法为临时生成数据，使用单调高精度时钟统计 CLI 完整备份和恢复耗时，再比较恢复 SHA256。单次运行、同机本地卷、可能受文件系统缓存和负载影响，不作多次统计结论。本轮仅测墙钟时间，没有测峰值 RSS。
+## 4 编译检查与动态内存检查
 
-| 数据集 | 原始字节 | 备份字节 | 备份秒 | 恢复秒 | 哈希 |
+业务代码以-Wall -Wextra -Wpedantic -Werror编译通过。CommonCrypto系统接口的弃用告警按项目构建选项单独处理。make sanitize以AddressSanitizer与UndefinedBehaviorSanitizer运行相同的 {len(alltests)} 项测试，未报告错误，原始日志为test-results/sanitize-020.log。
+
+这两类工具不覆盖所有数据竞争、系统资源泄漏和断电场景。工具未覆盖的情形继续保留为验证边界。
+
+## 5 性能与兼容性
+
+单次本地测量如下。备份和恢复时间包含CLI进程开销，测量期间存在其它后台任务，文件系统缓存也可能影响结果；不据此给出稳定吞吐率承诺。
+
+| 数据集 | 输入字节 | 归档字节 | 备份秒 | 恢复秒 | SHA256 |
 | --- | --- | --- | --- | --- | --- |
 '''
-for b in benchmark:
-    text+=f'| {b["workload"]} | {b["source_bytes"]} | {b["archive_bytes"]} | {b["backup_seconds"]:.4f} | {b["restore_seconds"]:.4f} | 一致 |\n'
-text+='''
-重复单字节数据主要验证单符号 Huffman 分支，压缩率不代表真实文档；随机数据验证自动回退原始块，输出略大于输入来自头部与记录开销。没有执行多 GiB 压力测试或整夜持续稳定性测试，不把格式上限作为实测容量。
+extra=''
+if (results/'signals-020.json').exists():
+    signals=json.loads((results/'signals-020.json').read_text())
+    passed=sum(case['passed'] for case in signals['results'])
+    extra+=f"操作系统信号补充测试通过{passed}/{len(signals['results'])}种组合：向正在读写的明文／加密backup、restore、verify、list进程发送SIGINT或SIGTERM，单次操作均返回130且清理暂存；定时与watch任务在下一份备份进行中停止，返回0并保留前一份可验证快照。源文件和原归档哈希未变。证据为signals-020.json，独立于核心命名用例统计。\n\n"
+if (results/'lint-020.json').exists():
+    lint=json.loads((results/'lint-020.json').read_text())
+    extra+=f"cpplint 2.0.2检查结果：{'通过' if lint['passed'] else '未通过'}。范围为Makefile列出的C++头文件、业务源码与测试，未包含Objective-C++；原始日志见lint-020.log。\n\n"
+if (results/'fuzz.json').exists():
+    fuzz=json.loads((results/'fuzz.json').read_text())
+    extra+=f"Huffman随机输入测试运行{fuzz['seconds']:.1f}秒、{fuzz['iterations']}次，结果{'通过' if fuzz['passed'] else '未通过'}，固定种子{fuzz['seed']}。它是随机输入驱动，并非覆盖率引导的libFuzzer；使用ASan/UBSan，次数不计入命名用例总数。证据为fuzz.json及fuzz.log。\n\n"
+text=text.replace('## 5 性能与兼容性',extra+'## 5 性能与兼容性')
 
-## 5 健壮性与安全测试
+for b in json.loads((results/'benchmark.json').read_text()):
+    text+=f'| {"重复单字节" if b["workload"]=="repeated" else "随机数据"} | {b["source_bytes"]} | {b["archive_bytes"]} | {b["backup_seconds"]:.4f} | {b["restore_seconds"]:.4f} | 一致 |\n'
+text+='\n重复单字节数据主要覆盖Huffman单符号分支；随机数据主要验证压缩无收益时回退原始块。这里没有测峰值RSS，格式中的1TiB单文件上限也不等于已完成该容量实测。\n\n'
+cp=results/'compatibility-020.json'
+if cp.exists():
+    comp=json.loads(cp.read_text())
+    text+=f"0.1.0与{version}之间的双向恢复已检查明文和加密共{len(comp['results'])}种组合，均通过内容与链接关系比对。测试时间{readable_time(comp['tested_at'])}（北京时间），见compatibility-020.json。这些兼容性场景单独列出，不并入核心命名用例总数。\n\n"
+text+='## 6 持续运行测试\n\n'
+soak_path=results/'soak-20h.json'
+if not soak_path.exists():soak_path=root.parent/'soak-20h-020/status.json'
+if soak_path.exists():
+    soak=json.loads(soak_path.read_text());elapsed=soak.get('elapsed_seconds',0);cp=soak.get('checkpoints',[])
+    text+=f"计划连续运行20小时，同时执行定时任务和加密watch任务，每5分钟检查保留份数、verify、恢复哈希、软硬链接、FIFO及只读目录。记录开始时间为{readable_time(soak['started_at'])}（北京时间）；报告读取时已运行{elapsed/3600:.2f}小时，完成{len(cp)}次检查。当前状态为{soak['status']}。\n\n"
+    if soak['status']=='passed':text+='本次持续运行测试已结束并通过，完成时间和原始检查记录随test-results/soak-20h.json交付。\n\n'
+    else:text+='尚未达到结束条件，当前不能写为“20小时通过”。最终报告应在进程结束后重新生成。\n\n'
+    text+=f"长期测试冻结的CLI与本报告构建的CLI哈希{'相同' if sha==soak['binary_sha256'] else '不同，结论只适用于各自记录的二进制'}。完整SHA256分别保存在长期测试记录和test-results/summary.json中。\n\n"
+    comparison=results/'lint-rebuild-comparison.json'
+    if sha!=soak['binary_sha256'] and comparison.exists():
+        diff=json.loads(comparison.read_text())
+        if diff['after_sha256']==sha and diff['before_sha256']==soak['binary_sha256'] and diff['identical_sections']:
+            text+='长测启动后的源码整理仅为头文件包含、等价类型转换和长字符串换行。重建前后Mach-O文件映射节逐字节一致，见lint-rebuild-comparison.json；完整文件仍有调试或链接信息差异，因此保留两份哈希与适用范围。\n\n'
 
-已覆盖短密码、缺失密码变量、未知参数、无效数值、错误范围、截断、篡改、重复路径、非法类型、超大长度、路径跳转、畸形 Huffman、尾随数据和并发发布等情况。恶意归档带正确的未加密 SHA256，确保测试进入树解析器而非全部停在外层校验。
+else:text+='未找到长期运行结果，不能据此声称长期测试通过。\n\n'
+text+='''## 7 结论和验收边界
 
-没有完成：磁盘真实耗尽、掉电持久性、强制 kill 后清理、持续竞争修改源目录、超大 xattrs、多用户属主迁移、网络卷、外置文件系统兼容性，以及 GUI 文件选择器／按钮点击／窗口关闭人工验收。当前不提供后台守护、网络或增量功能，其对应测试不适用。
+已覆盖的备份、验证、恢复、取消和自动任务路径均满足对应断言。发布前复查能发现已测的源树变化，但不能提供多文件事务一致性；应用不支持网络备份、增量备份、系统守护和重启后自动续跑。
 
-## 6 测试结果分析
+仍需真实环境检查的项目包括系统文件选择器、跨机器运行、外置卷和网络卷、磁盘耗尽、强制终止、掉电持久性、异属主恢复、ACL与文件flags。未实现的功能不作为本轮通过项。
 
-已验证的核心路径形成从备份到验证、内容查看、安全恢复和自动任务的闭环。当前自动用例全部通过，修订版可进入人工验收与受控演示。GUI 已完成编译、签名、离屏渲染与内部动作验证；本轮未操作系统文件选择器，GUI 端到端人工验收仍属于待办，不填写为通过。
-
-重现命令：make test、make sanitize、python3 tests/benchmark.py build/squirrel。测试源码与 XML／JSON／日志随源码和发布包交付。后续修改格式或核心逻辑后需重新运行并重新生成报告。
+复现方式：make test；make sanitize；python3 tests/benchmark.py build/squirrel；应用可执行文件加--self-test与一个新的测试目录路径。长期测试使用tests/soak.py，运行目录必须为新目录；不要将工作用文件夹作为压力测试数据。
 '''
-for filename,heading in [('fuzz.json','7 种子变异与随机输入测试'),('stability.json','7 持续运行与反复修改测试')]:
-    p=root/'test-results'/filename
-    if p.exists():
-        data=json.loads(p.read_text())
-        text+='\n## '+heading+'\n\n'
-        if filename=='fuzz.json':
-            text+=f"固定种子 {data['seed']}，运行 {data['seconds']:.1f} 秒，执行 {data['iterations']} 次输入处理，Sanitizer 下未发现失败。该驱动混合有效 Huffman 编码、位变异和随机字节，且包含编码往返断言。采用项目自有的有界驱动，不是覆盖率引导模糊测试，不代表穷尽输入空间。\n"
-        else:
-            text+=f"运行 {data['duration_seconds']:.1f} 秒，原子替换源文件 {data['edits']} 次，完成 {data['completed_snapshots']} 份快照。停止后保留 {data['retained']} 份，全部通过 verify，恢复固定文件 SHA256 一致。该结果是有界持续运行检查，不是整夜或长期可靠性证明。\n"
-review_path=root/'test-results/review-stability.json'
-if review_path.exists():
-    data=json.loads(review_path.read_text())
-    text+=f"\n## 9 本轮复核与修正\n\n本轮新增淘汰失败与启动参数回归检查。成功快照先提交计时和监测状态，再尽力执行淘汰；淘汰失败不会重复生成备份，也不会绕过 max_runs。短密码、非法范围或类型在创建任务前拒绝。更新后的程序另连续运行 {data['duration_seconds']:.1f} 秒，生成 {data['completed_snapshots']} 份快照，保留 {data['retained']} 份且全部验证通过。第 8 节十分钟记录来自初版正常路径，作为历史测试保留，不等同于本轮重新运行十分钟。\n"
-text += "\n## 8 修订版验收边界\n\n原始压缩包的 72 项用例已在本轮修复前复跑通过。新版总数来自上表，GUI 断言、Sanitizer 重复运行和稳定性循环不叠加进命名用例总数。新版测试用于证明已覆盖场景，不能据此声称所有文件系统状态、磁盘故障和用户交互都已验收。\n\n本轮重点覆盖只读目录恢复、异常清理、扫描后源内容变化、自动任务源路径拒绝、无效模式选项、保留 mtime 的变化检测与无变化时不重复快照。完整命名和断言以源码及结果为准。另有新旧版本双向恢复的4个兼容场景（明文与加密）通过，见 compatibility.json；这4项未计入82项命名用例。\n"
-(root/'docs/03_软件测试报告.md').write_text(text)
-(root/'test-results/summary.json').write_text(json.dumps(dict(generated_at=now,unit=len(unit),integration=len(integration),security=len(security),workflow=len(workflow),version='0.1.1',total=len(alltests),passed=sum(x['passed'] for x in alltests)),ensure_ascii=False,indent=2))
+(docs/'03_软件测试报告.md').write_text(text)
+print(json.dumps(summary,ensure_ascii=False))

@@ -1,15 +1,17 @@
-# 原版演示草稿状态
+# 第3组答辩材料
 
-本目录保留输入压缩包中的 0.1.0 演示文件，未随 0.1.1 程序重新制作。72 项测试、12 项 GUI 断言、历史稳定性数字、成员 A/B/C 与部分后续计划均须根据新版 docs/03 和 docs/08 更新。请补真实日期甘特图、在线 Git 仓库和实际贡献，再进行 3 分钟试讲。提交视频上限 2 分钟，与 PPT 讲解时长不同。
+第3组_松鼠备份_答辩.pptx是0.2.0的9页16:9可编辑演示稿，包含原生文本、表格、模块图、甘特图、实际应用截图和逐页讲者备注。配套PDF用于阅读，演示讲稿.md用于三分钟排练。中文字体为PingFang SC，换机器后需检查字体替换和实际放映。
 
-以下是原版说明，仅作来源记录。
+视频video/松鼠备份_115秒演示.mp4为115.003秒、1440×1080的实际程序演示，含中文字幕，无音轨。后台定时调用生产按钮处理流程，直接渲染AppKit视图；不截取桌面，不移动鼠标，不操作系统选择器。13个实际事件、恢复比对及完整解码结果在test-results/gui-demo-evidence.json、gui-demo-events.txt和video-validation.json。视频包含演示目录路径与公开测试密码对应的密文，未使用个人工作文件。
 
-# 演示稿使用说明
+## 重新生成
 
-松鼠备份_三分钟演示.pptx 为八页 16:9 可编辑演示稿，包含原生文字、表格、嵌入的应用预览和逐页讲者备注。演示讲稿.md 提供独立讲稿；PDF 用于快速阅读和打印。
+PPT使用托管的@oai/artifact-tool运行时生成：设置ARTIFACT_NODE_MODULES指向包含该包的node_modules，然后执行node scripts/build_presentation.mjs。默认输出在.preflight/ppt-build；PPT_BUILD_DIR可指定目录。构建结果是候选稿，仍需结构、渲染和人工逐页检查后放入本目录。
 
-建议在本机 PowerPoint 中打开 PPTX，按三人方案把 A/B/C 换成姓名，检查本机字体和放映效果，再排练约三分钟。页面中的 30 点是计划工作量，不是已发生贡献或成绩。不要把角色分工直接当成代码作者记录。
+PDF使用scripts/render_presentation.sh，要求SOFFICE指向可用的LibreOffice命令行程序。脚本以独立配置目录无窗口转换，不启动桌面Office。导出成功不等于已在PowerPoint人工验收。
 
-本机未提供可用的托管 Artifact Tool 依赖，且 PowerPoint 自动操作未获准，所以本稿通过 JavaScript 编写标准 OOXML 文件生成，未安装替代制稿库。已使用结构检查、字体和几何检查，以及 macOS Quick Look 对实际 PPTX 的逐页渲染检查；没有宣称在 PowerPoint 中完成真实操作验收。主题字体为本机已有 Arial Unicode MS，其他电脑可能替换字体。
+视频使用make gui-demo video-inspector；运行build/gui_demo /已存在父目录/新的演示目录，115秒左右生成MP4和JSON证据。再运行build/video_inspect /MP4绝对路径 /校验目录，完整解码并导出13张抽样帧。GUI运行需要图形登录会话，即使窗口不显示也受系统会话权限约束。
 
-讲稿对应功能、模块、算法依赖、72 项测试、三人分工、现场演示和初版边界。源码与生成入口为 scripts/build_presentation.mjs；scripts/render_ppt_preview.mm 仅负责离屏渲染 Quick Look 的预览 HTML，不参与业务备份功能。没有生成 UML 图。
+## 现场使用
+
+三分钟讲稿、七分钟老师或助教操作步骤见docs/06_演示与答辩指南.md。三人职责按均衡安排，实际贡献和个人体会须本人确认。在线仓库和证书不包含虚构记录。持续运行测试状态只引用当前报告，尚未完成时不写通过。
