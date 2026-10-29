@@ -72,9 +72,11 @@ try:
     run('git-history',['git','clone',release/'source-history.bundle',history])
     run('git-bundle',['git','bundle','verify',release/'source-history.bundle'],cwd=history)
     commit=subprocess.check_output(['git','rev-parse','HEAD'],cwd=history,text=True).strip()
-    assert commit==(source/'历史基线提交.txt').read_text().strip()==manifest['source_head']
+    assert commit==(release/'version-history/历史基线提交.txt').read_text().strip()==manifest['source_head']
     names=subprocess.check_output(['git','ls-files','-z'],cwd=history).decode().rstrip('\0').split('\0')
     assert len(names)==manifest['tracked_source_files']
+    actual={path.relative_to(source).as_posix() for path in source.rglob('*') if path.is_file()}
+    assert actual==set(names), 'Packaged source file set differs from the committed tree'
     for name in names:
         assert (history/name).read_bytes()==(source/name).read_bytes(), 'Source differs from history: '+name
     result['source_files_matched_to_history']=len(names)

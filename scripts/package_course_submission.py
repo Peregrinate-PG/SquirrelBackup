@@ -100,7 +100,10 @@ def main():
                 copy_file(file.relative_to(release), Path('06_设计与验证附件/阅读文档') / file.name)
         copy_file('source-history.bundle', '06_设计与验证附件/版本记录/source-history.bundle')
         for name in ['版本管理记录.txt', '历史基线提交.txt']:
-            copy_file('source/' + name, '06_设计与验证附件/版本记录/' + name)
+            metadata = 'version-history/' + name
+            if args.layout_check and not (release / metadata).exists():
+                metadata = 'source/' + name
+            copy_file(metadata, '06_设计与验证附件/版本记录/' + name)
         readme = source / 'resources/submission-guide/00_阅读说明.pdf'
         if readme.exists():
             copy_file(readme.relative_to(release), '00_阅读说明.pdf')

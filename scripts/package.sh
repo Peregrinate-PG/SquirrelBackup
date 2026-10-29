@@ -36,9 +36,10 @@ cp -R "$RELEASE/source/docs/." "$RELEASE/documents/"
 cp -R "$RELEASE/source/presentations" "$RELEASE/presentations"
 cp -R "$RELEASE/source/test-results/." "$RELEASE/test-results/"
 git bundle create "$RELEASE/source-history.bundle" --all
-git log --date=iso-strict --format='%h %ad %an %s' > "$RELEASE/source/版本管理记录.txt"
-git status --porcelain > "$RELEASE/source/打包时工作区状态.txt"
-git rev-parse HEAD > "$RELEASE/source/历史基线提交.txt"
+mkdir -p "$RELEASE/version-history"
+git log --date=iso-strict --format='%h %ad %an %s' > "$RELEASE/version-history/版本管理记录.txt"
+git status --porcelain > "$RELEASE/version-history/打包时工作区状态.txt"
+git rev-parse HEAD > "$RELEASE/version-history/历史基线提交.txt"
 cat > "$RELEASE/打开说明.txt" <<NOTE
 松鼠备份 ${VERSION} · 第3组
 
@@ -51,6 +52,7 @@ cat > "$RELEASE/打开说明.txt" <<NOTE
 答辩：presentations/第3组_松鼠备份_答辩.pptx、PDF及三分钟讲稿。
 视频：presentations/video/松鼠备份_115秒演示.mp4，中文字幕，无音轨。
 源码：source 中执行 make all、make test，可离线构建和验证。
+历史：source-history.bundle保留Git历史，version-history记录本次打包提交；source内旧版本记录原样保留。
 证据：test-results 与 documents/03_软件测试报告.md，持续运行按实际状态记录。
 
 视频来自真实应用后台操作，不包含系统选择器与真人鼠标验收。
